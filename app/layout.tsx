@@ -9,12 +9,12 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'InFusion - AI-Powered Cross-Chain DeFi',
-  description: 'Revolutionary DeFi platform combining AI with cross-chain atomic swaps across 17+ blockchain networks',
+  description: 'AI-powered DeFi protocol for Cross-Chain swaps and portfolio management',
   authors: [{ name: 'InFusion Team' }],
   keywords: ['DeFi', 'AI', 'Cross-Chain', 'Bitcoin', 'Ethereum', 'NEAR', 'Solana', 'Atomic Swaps'],
   openGraph: {
     title: 'InFusion - AI-Powered Cross-Chain DeFi',
-    description: 'Revolutionary DeFi platform combining AI with cross-chain atomic swaps',
+    description: 'AI-powered DeFi protocol for Cross-Chain swaps and portfolio management',
     url: 'https://infusion.defi',
     type: 'website',
   },

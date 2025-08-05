@@ -123,27 +123,4 @@ export class AgentManager {
 }
 
 // Export singleton instance
-const agentManager = new AgentManager();
-module.exports = { agentManager };
-
-// Start the agent manager if this file is run directly
-if (require.main === module) {
-  (async () => {
-    try {
-      console.log('🚀 Starting InFusion Agent Manager...');
-      
-      const isHealthy = await agentManager.healthCheck();
-      if (isHealthy) {
-        console.log('✅ Agent Manager is healthy and ready');
-        console.log('📊 Agent Status:', agentManager.getAgentStatus());
-      } else {
-        console.error('❌ Agent Manager health check failed');
-        process.exit(1);
-      }
-
-    } catch (error) {
-      console.error('❌ Failed to start Agent Manager:', error);
-      process.exit(1);
-    }
-  })();
-} 
+export const agentManager = new AgentManager(); 

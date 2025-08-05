@@ -31,7 +31,7 @@ export { Progress } from './ui/progress'
 export { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
 export { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs'
 export { Alert, AlertDescription } from './ui/alert'
-export { Toast, useToast } from './ui/toast'
+export { Toast } from './ui/toast'
 export { Toaster } from './ui/toaster'
 
 // Wallet Components

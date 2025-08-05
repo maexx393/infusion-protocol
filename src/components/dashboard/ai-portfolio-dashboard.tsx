@@ -422,7 +422,7 @@ export const AIPortfolioDashboard: React.FC = () => {
                         {strategy.status}
                       </Badge>
                       <Button
-                        variant="outline"
+                        variant="neutral-secondary"
                         size="sm"
                         onClick={() => handleStrategyToggle(strategy.id)}
                       >

@@ -3,6 +3,19 @@
 import { Button } from '@/components/ui/button'
 import { HeaderWallet } from '@/components/header-wallet'
 
+// InFusion Logo Component
+function InFusionLogo() {
+  return (
+    <img 
+      src="/infusion.png" 
+      alt="InFusion Logo" 
+      width="120" 
+      height="32"
+      className="h-8 w-auto"
+    />
+  )
+}
+
 export function Header() {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-black/20 backdrop-blur-md border-b border-white/10">
@@ -11,10 +24,7 @@ export function Header() {
           {/* Logo and Brand */}
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">U</span>
-              </div>
-              <h1 className="text-xl font-bold text-white">InFusion</h1>
+              <InFusionLogo />
             </div>
             <div className="hidden md:flex items-center space-x-2 text-sm text-gray-300">
               <span>•</span>

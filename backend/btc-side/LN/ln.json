@@ -1,0 +1,122 @@
+[
+  {
+    "alias": "alice",
+    "docker_image": "polarlightning/lnd:0.19.1-beta",
+    "rest_port": "8081",
+    "macaroons": [
+      {
+        "type": "admin",
+        "path": "/Users/cryptodelic/.polar/networks/1/volumes/lnd/alice/data/chain/bitcoin/regtest/admin.macaroon"
+      },
+      {
+        "type": "chainnotifier",
+        "path": "/Users/cryptodelic/.polar/networks/1/volumes/lnd/alice/data/chain/bitcoin/regtest/chainnotifier.macaroon"
+      },
+      {
+        "type": "invoice",
+        "path": "/Users/cryptodelic/.polar/networks/1/volumes/lnd/alice/data/chain/bitcoin/regtest/invoice.macaroon"
+      },
+      {
+        "type": "invoices",
+        "path": "/Users/cryptodelic/.polar/networks/1/volumes/lnd/alice/data/chain/bitcoin/regtest/invoices.macaroon"
+      },
+      {
+        "type": "readonly",
+        "path": "/Users/cryptodelic/.polar/networks/1/volumes/lnd/alice/data/chain/bitcoin/regtest/readonly.macaroon"
+      },
+      {
+        "type": "router",
+        "path": "/Users/cryptodelic/.polar/networks/1/volumes/lnd/alice/data/chain/bitcoin/regtest/router.macaroon"
+      },
+      {
+        "type": "signer",
+        "path": "/Users/cryptodelic/.polar/networks/1/volumes/lnd/alice/data/chain/bitcoin/regtest/signer.macaroon"
+      },
+      {
+        "type": "walletkit",
+        "path": "/Users/cryptodelic/.polar/networks/1/volumes/lnd/alice/data/chain/bitcoin/regtest/walletkit.macaroon"
+      }
+    ],
+    "channels": []
+  },
+  {
+    "alias": "carol",
+    "docker_image": "polarlightning/lnd:0.19.1-beta",
+    "rest_port": "8088",
+    "macaroons": [
+      {
+        "type": "admin",
+        "path": "/Users/cryptodelic/.polar/networks/1/volumes/lnd/carol/data/chain/bitcoin/regtest/admin.macaroon"
+      },
+      {
+        "type": "chainnotifier",
+        "path": "/Users/cryptodelic/.polar/networks/1/volumes/lnd/carol/data/chain/bitcoin/regtest/chainnotifier.macaroon"
+      },
+      {
+        "type": "invoice",
+        "path": "/Users/cryptodelic/.polar/networks/1/volumes/lnd/carol/data/chain/bitcoin/regtest/invoice.macaroon"
+      },
+      {
+        "type": "invoices",
+        "path": "/Users/cryptodelic/.polar/networks/1/volumes/lnd/carol/data/chain/bitcoin/regtest/invoices.macaroon"
+      },
+      {
+        "type": "readonly",
+        "path": "/Users/cryptodelic/.polar/networks/1/volumes/lnd/carol/data/chain/bitcoin/regtest/readonly.macaroon"
+      },
+      {
+        "type": "router",
+        "path": "/Users/cryptodelic/.polar/networks/1/volumes/lnd/carol/data/chain/bitcoin/regtest/router.macaroon"
+      },
+      {
+        "type": "signer",
+        "path": "/Users/cryptodelic/.polar/networks/1/volumes/lnd/carol/data/chain/bitcoin/regtest/signer.macaroon"
+      },
+      {
+        "type": "walletkit",
+        "path": "/Users/cryptodelic/.polar/networks/1/volumes/lnd/carol/data/chain/bitcoin/regtest/walletkit.macaroon"
+      }
+    ],
+    "channels": []
+  },
+  {
+    "alias": "dave",
+    "docker_image": "polarlightning/lnd:0.19.1-beta",
+    "rest_port": "8085",
+    "macaroons": [
+      {
+        "type": "admin",
+        "path": "/Users/cryptodelic/.polar/networks/1/volumes/lnd/dave/data/chain/bitcoin/regtest/admin.macaroon"
+      },
+      {
+        "type": "chainnotifier",
+        "path": "/Users/cryptodelic/.polar/networks/1/volumes/lnd/dave/data/chain/bitcoin/regtest/chainnotifier.macaroon"
+      },
+      {
+        "type": "invoice",
+        "path": "/Users/cryptodelic/.polar/networks/1/volumes/lnd/dave/data/chain/bitcoin/regtest/invoice.macaroon"
+      },
+      {
+        "type": "invoices",
+        "path": "/Users/cryptodelic/.polar/networks/1/volumes/lnd/dave/data/chain/bitcoin/regtest/invoices.macaroon"
+      },
+      {
+        "type": "readonly",
+        "path": "/Users/cryptodelic/.polar/networks/1/volumes/lnd/dave/data/chain/bitcoin/regtest/readonly.macaroon"
+      },
+      {
+        "type": "router",
+        "path": "/Users/cryptodelic/.polar/networks/1/volumes/lnd/dave/data/chain/bitcoin/regtest/router.macaroon"
+      },
+      {
+        "type": "signer",
+        "path": "/Users/cryptodelic/.polar/networks/1/volumes/lnd/dave/data/chain/bitcoin/regtest/signer.macaroon"
+      },
+      {
+        "type": "walletkit",
+        "path": "/Users/cryptodelic/.polar/networks/1/volumes/lnd/dave/data/chain/bitcoin/regtest/walletkit.macaroon"
+      }
+    ],
+    "channels": []
+  }
+]

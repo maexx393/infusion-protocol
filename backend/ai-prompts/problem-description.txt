@@ -1,0 +1,69 @@
+Task for this hackaton:
+
+Extend Fusion+ to Bitcoin 
+Qualification Requirements:
+- Preserve hashlock and timelock functionality for the non-EVM implementation
+- Swap functionality should be bidirectional (swaps should be possible to and from Ethereum)
+- Onchain (mainnet/L2 or testnet) execution of token transfers should be presented during the final demo (EVM testnets will require the deployment of Limit Order Protocol contracts)
+Stretch goals (not hard requirements):
+- UI
+- Enable partial fills
+
+Intro matherials:
+in project root there are folders:
+cross-chain-sdk - that offers code for fusion and fusin plus implementation - use this code as reference
+we have whitepaper.txt with the idea
+we preer to use Polygon network for this demo as the transactions are cheaper there
+in file SECRETS.py you can find private keys you need to run the demo
+
+Proposed idea:
+
+use lightning network to swap between BTC net and 1inch (polygon net)
+lightning network test net is alredy configured in LN folder
+
+on 1inch side consider using hashlock
+
+previous solutions:
+there is a silution previously implemented located in the folder
+see hashlocked-cli read the readme.md for details
+take in accout revie by the jury:
+"Hashlocked did not fully follow the existing cadence, requiring the user to deploy escrows on the source chain/settle escrows and the resolver to watch for the settlement txn. 
+we'd love to see one that builds on this idea, maybe with PSBT so the user doesn't have to explicitly send their bitcoin, resolver settles the EVM side escrows and an actual relayer system which facilitates handing off orders and secrets
+plus there are other HTLC systems build for bitcoin, so it's not like this is an unsolved problem 😁
+https://garden.finance has an HTLC system, we'd just like to see on build on top of 1inch's fusion+ that follows the existing model"
+
+what is advantage of LN here?
+instant swaps on BTC side for (list reasons why it is good, starting from faster arbitrage compare to atomic swap)
+
+in terms of 1icnh what is resolver here and waht parties are involved
+how the swap scenario works?
+how is 1inch used
+what are the benefits of using 1incn
+what are the benefits of using lightning network
+how 1inch benefits form this?
+
+
+alos explain why we use polygon: it is cheaper anf faster, lower transaction costs
+bu then it is easy to swap it to ETH mainnet once all settlements are done
+the idea is similar to how we use LN over BTC L1 - we run chear zero cost transactions and later settle to mainnet using provided tools - this is for hackaton but can easily be imomenented on production
+on LN there is a solution to swap from LN to L1
+on ETH side: polygon code if fully compatible with eth mainnet so it can be execured directlty on mainnet
+but also it can take advantage of using polygon and later swap to mainnet resulting funds
+using 1inch corsschain swap
+
+so we swap BTC mainnet <-> LN <-> Polygon net  <-> ETH Mainnet 
+in this demo we focus only on LN <-> Polygon net
+
+Output document structure:
+1) briefly explain idea to public audience showing the common good that this project will provide
+1.1) problem description for hackaton
+2) expelain the idea/solution in form of executive summary for CTO, short and clear so we understand the general solution
+2.1) explain the solution
+3) then arcitecture
+4) roles stackeholders and participants
+5) main user scenario for the demo
+6) technical details for developers and jury
+6.1) address concerns by 1inch
+7) clarify usage of polygon in details and other ress relevant remaning issues
+
+Output: produce new Readme.md file from scratch

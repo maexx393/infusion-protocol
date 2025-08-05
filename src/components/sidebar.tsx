@@ -1,15 +1,20 @@
 'use client'
 
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+
 interface SidebarProps {
   activeTab: string
   onTabChange: (tab: string) => void
 }
 
 export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
+  const pathname = usePathname()
   const tabs = [
     {
       id: 'dashboard',
       label: 'Dashboard',
+      href: '/',
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z" />
@@ -20,6 +25,7 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
     {
       id: 'ai',
       label: 'AI Automation',
+      href: '/ai-automation',
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
@@ -29,6 +35,7 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
     {
       id: 'swap',
       label: 'Cross-Chain Swap',
+      href: '/',
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
@@ -38,6 +45,7 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
     {
       id: 'portfolio',
       label: 'Portfolio',
+      href: '/',
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -47,6 +55,7 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
     {
       id: 'trading',
       label: 'Trading',
+      href: '/',
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
@@ -56,25 +65,28 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
   ]
 
   return (
-    <aside className="w-64 bg-black/20 backdrop-blur-sm border-r border-white/10">
+    <aside className="w-64 bg-black/20 backdrop-blur-sm border-r border-white/10 h-screen sticky top-16 overflow-y-auto">
       <div className="p-6">
         <nav className="space-y-2">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => onTabChange(tab.id)}
-              className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-all duration-200 ${
-                activeTab === tab.id
-                  ? 'bg-gradient-to-r from-purple-600/20 to-blue-600/20 text-white border border-purple-500/30'
-                  : 'text-gray-300 hover:text-white hover:bg-white/5'
-              }`}
-            >
-              <span className={`${activeTab === tab.id ? 'text-purple-400' : 'text-gray-400'}`}>
-                {tab.icon}
-              </span>
-              <span className="font-medium">{tab.label}</span>
-            </button>
-          ))}
+          {tabs.map((tab) => {
+            const isActive = pathname === tab.href || (pathname === '/' && tab.id === 'dashboard')
+            return (
+              <Link
+                key={tab.id}
+                href={tab.href}
+                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-all duration-200 ${
+                  isActive
+                    ? 'bg-gradient-to-r from-purple-600/20 to-blue-600/20 text-white border border-purple-500/30'
+                    : 'text-gray-300 hover:text-white hover:bg-white/5'
+                }`}
+              >
+                <span className={`${isActive ? 'text-purple-400' : 'text-gray-400'}`}>
+                  {tab.icon}
+                </span>
+                <span className="font-medium">{tab.label}</span>
+              </Link>
+            )
+          })}
         </nav>
 
         {/* Quick Stats */}

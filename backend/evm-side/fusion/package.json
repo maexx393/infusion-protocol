@@ -1,0 +1,35 @@
+{
+  "name": "fusion",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node src/swap.ts",
+    "build": "tsc",
+    "dev": "ts-node --watch src/swap.ts",
+    "swap": "ts-node src/swap.ts",
+    "check": "ts-node src/check_fusion.ts",
+    "allowance": "ts-node src/check_allowance.ts",
+    "ethereum-allowance": "ts-node src/check_ethereum_allowance.ts",
+    "balance": "ts-node src/check_balance.ts",
+    "example": "ts-node src/example-usage.ts",
+    "crosschain": "ts-node src/check_crosschain.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@1inch/cross-chain-sdk": "^0.1.15",
+    "@1inch/fusion-sdk": "^2.3.5",
+    "@types/node": "^24.1.0",
+    "@types/web3": "^1.0.20",
+    "axios": "^1.11.0",
+    "dotenv": "^17.2.1",
+    "ethers": "^6.15.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3",
+    "web3": "^4.16.0"
+  }
+}
