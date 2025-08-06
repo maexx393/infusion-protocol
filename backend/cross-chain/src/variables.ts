@@ -9,6 +9,14 @@ export const ALICE_PRIVATE_KEY = process.env.ALICE_PRIVATE_KEY || '';
 export const CAROL_PRIVATE_KEY = process.env.CAROL_PRIVATE_KEY || '';
 export const DEV_PORTAL_API_TOKEN = process.env.DEV_PORTAL_API_TOKEN || '';
 
+// NEAR Configuration
+export const NEAR_NETWORK = process.env.NEAR_NETWORK || 'testnet';
+export const NEAR_OWNER_ACCOUNT = process.env.NEAR_OWNER_ACCOUNT || 'defiunite.testnet';
+export const NEAR_ESCROW_CONTRACT = process.env.NEAR_ESCROW_CONTRACT || 'escrow.defiunite.testnet';
+export const NEAR_SOLVER_CONTRACT = process.env.NEAR_SOLVER_CONTRACT || 'solver.defiunite.testnet';
+export const NEAR_POOL_CONTRACT = process.env.NEAR_POOL_CONTRACT || 'pool.defiunite.testnet';
+export const NEAR_NODE_URL = process.env.NEAR_NODE_URL || 'https://rpc.testnet.near.org';
+
 // Network configuration
 export const NETWORK = process.env.NETWORK || 'POLYGON_AMOY';
 
@@ -109,5 +117,25 @@ export const getNativeTokenAddress = (): string => {
 
 // Get escrow contract address
 export const getEscrowContractAddress = (): string => {
-  return '0xC1fc3412DA2D1960F8f4e5c80C1630C048c24303';
+  return '0x41d3151f0eC68aAB26302164F9E00268A99dB783';
+};
+
+// NEAR Configuration helpers
+export const getNEARConfig = () => {
+  return {
+    network: NEAR_NETWORK,
+    nodeUrl: NEAR_NODE_URL,
+    ownerAccount: NEAR_OWNER_ACCOUNT,
+    escrowContract: NEAR_ESCROW_CONTRACT,
+    solverContract: NEAR_SOLVER_CONTRACT,
+    poolContract: NEAR_POOL_CONTRACT,
+  };
+};
+
+export const getNEARExplorerUrl = (accountId: string): string => {
+  return `https://explorer.testnet.near.org/accounts/${accountId}`;
+};
+
+export const getNEARTransactionUrl = (txHash: string): string => {
+  return `https://explorer.testnet.near.org/transactions/${txHash}`;
 };

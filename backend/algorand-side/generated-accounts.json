@@ -1,0 +1,34 @@
+[
+  {
+    "name": "deployer",
+    "description": "Account used for deploying contracts",
+    "address": "6XUCBPC3ERAJN63K67JVRC2ZVJV6HTXSI24HJWANPM5WOGB3PDEJJJIWIU",
+    "privateKey": "ciV/0EhIj5J1i6M0snqpVA6TXw4u5niBHeG/UgvqnSb16CC8WyRAlvtq99NYi1mqa+PO8ka4dNgNeztnGDt4yA==",
+    "publicKey": "6XUCBPC3ERAJN63K67JVRC2ZVJV6HTXSI24HJWANPM5WOGB3PDEJJJIWIU",
+    "mnemonic": "purity wish habit loyal burden gorilla forum phone educate turn feed torch champion obey idea tower congress invite vacuum cloud birth kind crunch ability capital"
+  },
+  {
+    "name": "alice",
+    "description": "Alice account for testing swaps",
+    "address": "UGIZF2BAMX24PRVQEU2DW4UDG6P5R7UKTFHSE5J75Q6XESHP4WQIBGH6QU",
+    "privateKey": "RbsfL8UHJk0AkhyK9rZuQgNE2AwTHeekTDrldZcmSfKhkZLoIGX1x8awJTQ7coM3n9j+iplPInU/7D1ySO/loA==",
+    "publicKey": "UGIZF2BAMX24PRVQEU2DW4UDG6P5R7UKTFHSE5J75Q6XESHP4WQIBGH6QU",
+    "mnemonic": "hamster leave nurse labor equal battle mosquito broken spend swift dance crouch marine current observe brown ostrich crater outdoor furnace confirm endless myself abstract wrist"
+  },
+  {
+    "name": "carol",
+    "description": "Carol account for testing swaps",
+    "address": "4VZTY6CVXP2GGTICCNU5E4AMQRKNVDHHDGAIKWPKACNM2RTSEM64OXIK4Y",
+    "privateKey": "kOwAu3TV4aeun0Ei9Q4kz5AeHa67d4vbxOik2Px4Ffzlczx4Vbv0Y00CE2nScAyEVNqM5xmAhVnqAJrNRnIjPQ==",
+    "publicKey": "4VZTY6CVXP2GGTICCNU5E4AMQRKNVDHHDGAIKWPKACNM2RTSEM64OXIK4Y",
+    "mnemonic": "must admit frown firm senior prepare word dose picture design must artefact diamond mansion talent jeans imitate beach inner medal whale funny thing abstract victory"
+  },
+  {
+    "name": "resolver",
+    "description": "Resolver account for cross-chain operations",
+    "address": "5KUWYUYVK64M6EW6LYBKO53WP7T4XMON5JJE7UUDUTAKBUAXDOQPURVCY4",
+    "privateKey": "EzFH2xC8oXwg6ZzjA9YGH7/fXwdzfPVH/J4Ow9Y2aFXqqWxTFVe4zxLeXgKnd3Z/58uxzepST9KDpMCg0BcboA==",
+    "publicKey": "5KUWYUYVK64M6EW6LYBKO53WP7T4XMON5JJE7UUDUTAKBUAXDOQPURVCY4",
+    "mnemonic": "carbon broom horror scissors drop busy empower ostrich ladder fix lock vehicle satoshi subject oblige ladder wrong valve exhaust couch pulse asset prize able bacon"
+  }
+]

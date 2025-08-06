@@ -1,9 +1,21 @@
-import { OrderBTC2EVM, OrderEVM2BTC, OrderBTC2EVMResponse, OrderEVM2BTCResponse } from '../api/order';
+import { 
+  OrderBTC2EVM, OrderEVM2BTC, OrderBTC2EVMResponse, OrderEVM2BTCResponse,
+  OrderNEAR2EVM, OrderEVM2NEAR, OrderNEAR2EVMResponse, OrderEVM2NEARResponse,
+  OrderAlgorand2EVM, OrderEVM2Algorand, OrderAlgorand2EVMResponse, OrderEVM2AlgorandResponse
+} from '../api/order';
 import { ResolverBTC2EVM, OrderBTC2EVMResult } from './resolver_btc2evm';
 import { ResolverEVM2BTC } from './resolver_evm2btc';
+import { ResolverNEAR2EVM, ResolverResponse as NEARResolverResponse } from './resolver_near2evm';
+import { ResolverEVM2NEAR, OrderEVM2NEARResult } from './resolver_evm2near';
+import { ResolverAlgorand2EVM, ResolverResponse as AlgorandResolverResponse } from './resolver_algorand2evm';
+import { ResolverEVM2Algorand, OrderEVM2AlgorandResult } from './resolver_evm2algorand';
 
 const resolverEVM2BTC = new ResolverEVM2BTC();
 const resolverBTC2EVM = new ResolverBTC2EVM();
+const resolverNEAR2EVM = new ResolverNEAR2EVM();
+const resolverEVM2NEAR = new ResolverEVM2NEAR();
+const resolverAlgorand2EVM = new ResolverAlgorand2EVM();
+const resolverEVM2Algorand = new ResolverEVM2Algorand();
 
 export class Relay {
   private invoiceStartTime: number = 0;
@@ -43,6 +55,60 @@ export class Relay {
     // this.startInvoicePaymentCheck(result, order);
     
     return new OrderBTC2EVMResponse(result.lightningInvoice);
+  }
+
+  // NEAR Orders
+  processOrderNEAR2EVM(order: OrderNEAR2EVM): OrderNEAR2EVMResponse {
+    console.log('🔄 Processing NEAR to EVM order...');
+    console.log('📋 Order Type: Single Fill Order (100% Fill)');
+    console.log('Order Details:', {
+      amountNear: order.amountNear,
+      amountEth: order.amountEth,
+      ethAddress: order.ethAddress
+    });
+
+    const resolverResponse = resolverNEAR2EVM.sendToResolver(order);
+    return new OrderNEAR2EVMResponse(resolverResponse.ethAddress);
+  }
+
+  async processOrderEVM2NEAR(order: OrderEVM2NEAR): Promise<OrderEVM2NEARResponse> {
+    console.log('🔄 Processing EVM to NEAR order...');
+    console.log('📋 Order Type: Single Fill Order (100% Fill)');
+    console.log('Order Details:', {
+      amountNear: order.amountNear,
+      nearInvoice: order.nearInvoice,
+      amountEth: order.amountEth
+    });
+
+    const result: OrderEVM2NEARResult = await resolverEVM2NEAR.sendToResolver(order);
+    return new OrderEVM2NEARResponse(result.nearInvoice);
+  }
+
+  // Algorand Orders
+  processOrderAlgorand2EVM(order: OrderAlgorand2EVM): OrderAlgorand2EVMResponse {
+    console.log('🔄 Processing Algorand to EVM order...');
+    console.log('📋 Order Type: Single Fill Order (100% Fill)');
+    console.log('Order Details:', {
+      amountAlgo: order.amountAlgo,
+      amountEth: order.amountEth,
+      ethAddress: order.ethAddress
+    });
+
+    const resolverResponse = resolverAlgorand2EVM.sendToResolver(order);
+    return new OrderAlgorand2EVMResponse(resolverResponse.ethAddress);
+  }
+
+  async processOrderEVM2Algorand(order: OrderEVM2Algorand): Promise<OrderEVM2AlgorandResponse> {
+    console.log('🔄 Processing EVM to Algorand order...');
+    console.log('📋 Order Type: Single Fill Order (100% Fill)');
+    console.log('Order Details:', {
+      amountAlgo: order.amountAlgo,
+      algorandInvoice: order.algorandInvoice,
+      amountEth: order.amountEth
+    });
+
+    const result: OrderEVM2AlgorandResult = await resolverEVM2Algorand.sendToResolver(order);
+    return new OrderEVM2AlgorandResponse(result.algorandInvoice);
   }
   
   private async startInvoicePaymentCheck(result: OrderBTC2EVMResult, order: OrderBTC2EVM): Promise<void> {

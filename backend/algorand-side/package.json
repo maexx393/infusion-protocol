@@ -1,0 +1,30 @@
+{
+  "name": "algorand-fusion",
+  "version": "1.0.0",
+  "description": "Algorand Fusion Contracts for Cross-Chain Swaps",
+  "main": "index.js",
+  "scripts": {
+    "build": "python -m contracts build",
+    "deploy": "python -m contracts deploy",
+    "test": "python -m pytest",
+    "check-balances": "node scripts/check-balances.js",
+    "create-accounts": "node scripts/create-accounts.js"
+  },
+  "dependencies": {
+    "algosdk": "^2.12.0",
+    "@algorandfoundation/algokit-utils": "^9.1.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  },
+  "keywords": [
+    "algorand",
+    "cross-chain",
+    "swaps",
+    "fusion",
+    "defi"
+  ],
+  "author": "UniteDeFi",
+  "license": "MIT"
+}

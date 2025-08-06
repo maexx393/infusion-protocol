@@ -1,0 +1,21 @@
+{
+  "deployment_status": {
+    "escrow_contract": "simulated_deployment",
+    "solver_contract": "simulated_deployment",
+    "pool_contract": "simulated_deployment"
+  },
+  "network": "testnet",
+  "contract_addresses": {
+    "escrow_contract": "SIMULATED_ESCROW_ID",
+    "solver_contract": "SIMULATED_SOLVER_ID",
+    "pool_contract": "SIMULATED_POOL_ID"
+  },
+  "explorer_urls": {
+    "escrow_contract": "https://testnet.algoexplorer.io/application/SIMULATED_ESCROW_ID",
+    "solver_contract": "https://testnet.algoexplorer.io/application/SIMULATED_SOLVER_ID",
+    "pool_contract": "https://testnet.algoexplorer.io/application/SIMULATED_POOL_ID"
+  },
+  "deployer_address": "SIMULATED_DEPLOYER_ADDRESS",
+  "deployment_timestamp": "2024-01-15T12:00:00Z",
+  "notes": "This is a simulation. For real deployment, use the working example structure."
+}

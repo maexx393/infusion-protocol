@@ -1,0 +1,20 @@
+{
+  "network": "testnet",
+  "ownerAccount": "defiunite.testnet",
+  "escrowContract": "escrow.defiunite.testnet",
+  "solverContract": "solver.defiunite.testnet",
+  "poolContract": "pool.defiunite.testnet",
+  "nodeUrl": "https://rpc.testnet.near.org",
+  "explorerUrl": "https://explorer.testnet.near.org",
+  "deploymentStatus": {
+    "escrowContract": "deployed",
+    "solverContract": "pending_creation",
+    "poolContract": "pending_creation"
+  },
+  "explorerUrls": {
+    "ownerAccount": "https://explorer.testnet.near.org/accounts/defiunite.testnet",
+    "escrowContract": "https://explorer.testnet.near.org/accounts/escrow.defiunite.testnet",
+    "solverContract": "https://explorer.testnet.near.org/accounts/solver.defiunite.testnet",
+    "poolContract": "https://explorer.testnet.near.org/accounts/pool.defiunite.testnet"
+  }
+} 

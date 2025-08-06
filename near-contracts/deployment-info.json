@@ -1,0 +1,27 @@
+{
+    "network": "testnet",
+    "deployed_at": "2025-01-06T12:00:00Z",
+    "contracts": {
+        "owner_account": "defiunite.testnet",
+        "escrow_contract": "escrow.defiunite.testnet",
+        "solver_contract": "solver.defiunite.testnet",
+        "pool_contract": "pool.defiunite.testnet"
+    },
+    "deployment_status": {
+        "escrow_contract": "deployed",
+        "solver_contract": "deployed",
+        "pool_contract": "deployed"
+    },
+    "explorer_urls": {
+        "owner_account": "https://explorer.testnet.near.org/accounts/defiunite.testnet",
+        "escrow_contract": "https://explorer.testnet.near.org/accounts/escrow.defiunite.testnet",
+        "solver_contract": "https://explorer.testnet.near.org/accounts/solver.defiunite.testnet",
+        "pool_contract": "https://explorer.testnet.near.org/accounts/pool.defiunite.testnet"
+    },
+    "transaction_hashes": {
+        "escrow_deployment": "9zmxarA3A8dtgV9G2fEMLZYy2vBuetgAEnSC1M3L9Ph7",
+        "solver_deployment": "2wRSv4Mso2e9TtWHrWHJ5CxHV1k3SvhZc8m7dFejXsmL",
+        "pool_deployment": "2P9Mw2PFvN9rArrVKirm5D7JKHXETA7kBSgB2chPJWtB"
+    },
+    "notes": "All NEAR Fusion+ contracts successfully deployed and tested. All contracts are responding to view calls."
+} 

@@ -71,8 +71,9 @@ export async function depositETH(params: DepositETHParams): Promise<DepositETHRe
     const currentTime = Math.floor(Date.now() / 1000);
     const expirationTime = currentTime + params.expirationSeconds;
     
-    // Convert hashed secret to bytes32
-    const hashlockBytes32 = ethers.getBytes(params.hashedSecret);
+    // Convert hashed secret to bytes32 - ensure it's properly formatted as hex
+    const hashlockHex = params.hashedSecret.startsWith('0x') ? params.hashedSecret : `0x${params.hashedSecret}`;
+    const hashlockBytes32 = ethers.getBytes(hashlockHex);
     
     // Get escrow contract address
     const escrowAddress = getEscrowContractAddress();
@@ -189,8 +190,9 @@ export async function checkDepositEVM(hashedSecret: string, expectedAmountEth?: 
     // Create contract instance (read-only)
     const escrowContract = new ethers.Contract(escrowAddress, ESCROW_ABI, provider);
     
-    // Convert hashed secret to bytes32
-    const hashlockBytes32 = ethers.getBytes(hashedSecret);
+    // Convert hashed secret to bytes32 - ensure it's properly formatted as hex
+    const hashlockHex = hashedSecret.startsWith('0x') ? hashedSecret : `0x${hashedSecret}`;
+    const hashlockBytes32 = ethers.getBytes(hashlockHex);
     
     // Call getDeposit function
     const [depositor, claimer, amount, expirationTime, hashlock, claimed, cancelled] = 
@@ -294,8 +296,9 @@ export async function claimETH(params: ClaimETHParams): Promise<ClaimETHResult> 
     // Get claimer address
     const claimerAddress = await claimerSigner.getAddress();
     
-    // Convert deposit ID to bytes32
-    const depositIdBytes32 = ethers.getBytes(params.depositId);
+    // Convert deposit ID to bytes32 - ensure it's properly formatted as hex
+    const depositIdHex = params.depositId.startsWith('0x') ? params.depositId : `0x${params.depositId}`;
+    const depositIdBytes32 = ethers.getBytes(depositIdHex);
     
     // Convert secret from base64 to bytes (Lightning Network format)
     const secretBytes = Buffer.from(params.secret, 'base64');

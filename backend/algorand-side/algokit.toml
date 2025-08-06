@@ -1,0 +1,34 @@
+[algokit]
+min_version = "v2.0.0"
+
+[project]
+type = 'contract'
+name = 'algorand-fusion'
+artifacts = 'contracts/artifacts'
+
+[project.deploy]
+command = "python -m contracts deploy"
+
+[project.deploy.testnet]
+environment_secrets = [
+  "DEPLOYER_MNEMONIC",
+  "DISPENSER_MNEMONIC",
+]
+
+[project.deploy.mainnet]
+environment_secrets = [
+  "DEPLOYER_MNEMONIC",
+  "DISPENSER_MNEMONIC",
+]
+
+[project.run]
+# Commands intended for use locally and in CI
+build = { commands = [
+  'python -m contracts build',
+], description = 'Build all smart contracts in the project' }
+test = { commands = [
+  'python -m pytest',
+], description = 'Run smart contract tests' }
+deploy = { commands = [
+  'python -m contracts deploy',
+], description = 'Deploy contracts to the specified network' } 

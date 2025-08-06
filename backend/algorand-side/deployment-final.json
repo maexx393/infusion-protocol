@@ -1,0 +1,44 @@
+{
+    "deployment_status": {
+        "escrow_contract": "ready_for_deployment_v2",
+        "solver_contract": "ready_for_deployment_v2",
+        "pool_contract": "ready_for_deployment_v2"
+    },
+    "network": "testnet",
+    "account_status": {
+        "deployer": "FUNDED (20 ALGO)",
+        "alice": "FUNDED (20 ALGO)",
+        "carol": "FUNDED (10 ALGO)",
+        "resolver": "FUNDED (10 ALGO)"
+    },
+    "contract_addresses": {
+        "escrow_contract": "TO_BE_DEPLOYED",
+        "solver_contract": "TO_BE_DEPLOYED",
+        "pool_contract": "TO_BE_DEPLOYED"
+    },
+    "new_deployment_commands": [
+        "python -m contracts build",
+        "python -m contracts deploy"
+    ],
+    "alternative_deployment_script": [
+        "./scripts/deploy-contracts-new.sh"
+    ],
+    "algokit_commands": [
+        "algokit project run build",
+        "algokit project deploy"
+    ],
+    "notes": "Updated for AlgoKit v2.0.0+ with new contract structure using algopy. All accounts are funded. Contracts are ready for deployment.",
+    "next_steps": [
+        "Run: ./scripts/deploy-contracts-new.sh",
+        "Or run: python -m contracts build && python -m contracts deploy",
+        "Update contract addresses after deployment",
+        "Test contract interactions",
+        "Run cross-chain swap tests"
+    ],
+    "project_structure": {
+        "contracts": "Converted from PyTeal to algopy format",
+        "deployment": "Updated for AlgoKit v2.0.0+",
+        "configuration": "Updated algokit.toml for new structure",
+        "dependencies": "Added requirements.txt for Python dependencies"
+    }
+}

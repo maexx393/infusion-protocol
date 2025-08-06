@@ -1,0 +1,22 @@
+[project]
+name = "algorand-fusion"
+version = "1.0.0"
+description = "Algorand Fusion Contracts for Cross-Chain Swaps"
+
+[project.contracts]
+escrow = { name = "FusionEscrow", path = "contracts/escrow.py" }
+solver = { name = "FusionSolver", path = "contracts/solver.py" }
+pool = { name = "FusionPool", path = "contracts/pool.py" }
+
+[project.networks]
+testnet = { name = "testnet", algod = "https://testnet-api.algonode.cloud", indexer = "https://testnet-idx.algonode.cloud" }
+
+[project.accounts]
+deployer = { name = "deployer", description = "Account used for deploying contracts" }
+
+[project.deploy]
+testnet = [
+    "algokit project deploy escrow --network testnet",
+    "algokit project deploy solver --network testnet",
+    "algokit project deploy pool --network testnet"
+]

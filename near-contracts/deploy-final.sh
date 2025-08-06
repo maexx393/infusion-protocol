@@ -15,9 +15,9 @@ NC='\033[0m' # No Color
 # Configuration
 NETWORK="testnet"
 OWNER_ACCOUNT="${OWNER_ACCOUNT:-defiunite.testnet}"
-ESCROW_CONTRACT="escrow.${OWNER_ACCOUNT#*.}"
-SOLVER_CONTRACT="solver.${OWNER_ACCOUNT#*.}"
-POOL_CONTRACT="pool.${OWNER_ACCOUNT#*.}"
+ESCROW_CONTRACT="escrow.${OWNER_ACCOUNT}"
+SOLVER_CONTRACT="solver.${OWNER_ACCOUNT}"
+POOL_CONTRACT="pool.${OWNER_ACCOUNT}"
 
 # Function to print colored output
 print_status() {
