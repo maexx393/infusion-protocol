@@ -1,6 +1,7 @@
 """
 Algorand Fusion Pool Contract
 Real PyTeal implementation for liquidity management
+Compatible with PyTeal 0.10.1
 """
 
 from pyteal import *
@@ -193,9 +194,9 @@ def clear_state_program():
 
 if __name__ == "__main__":
     with open("pool_approval.teal", "w") as f:
-        compiled = compileTeal(approval_program(), mode=Mode.Application, version=6)
+        compiled = compileTeal(approval_program(), mode=Mode.Application, version=5)
         f.write(compiled)
     
     with open("pool_clear.teal", "w") as f:
-        compiled = compileTeal(clear_state_program(), mode=Mode.Application, version=6)
+        compiled = compileTeal(clear_state_program(), mode=Mode.Application, version=5)
         f.write(compiled) 

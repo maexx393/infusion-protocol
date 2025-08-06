@@ -2,12 +2,14 @@
 """
 Production Algorand Contract Deployment Script
 Deploys real PyTeal contracts to Algorand testnet
+Compatible with Python 3.9 and PyTeal 0.10.1
 """
 
 import os
 import sys
 import json
 import time
+import base64
 from pathlib import Path
 from typing import Dict, Any
 
@@ -45,81 +47,89 @@ class AlgorandDeployer:
         """Compile a PyTeal contract"""
         print(f"🔨 Compiling {contract_name} contract...")
         
-        # Import and compile the contract
-        if contract_name == "escrow":
-            from contracts.escrow import approval_program, clear_state_program
-        elif contract_name == "solver":
-            from contracts.solver import approval_program, clear_state_program
-        elif contract_name == "pool":
-            from contracts.pool import approval_program, clear_state_program
-        else:
-            raise ValueError(f"Unknown contract: {contract_name}")
-        
-        # Compile approval program
-        approval_ast = approval_program()
-        approval_teal = algosdk.logic.compileTeal(approval_ast, mode=algosdk.logic.Mode.Application, version=6)
-        approval_response = self.algod_client.compile(approval_teal)
-        approval_program_bytes = base64.b64decode(approval_response['result'])
-        
-        # Compile clear state program
-        clear_ast = clear_state_program()
-        clear_teal = algosdk.logic.compileTeal(clear_ast, mode=algosdk.logic.Mode.Application, version=6)
-        clear_response = self.algod_client.compile(clear_teal)
-        clear_program_bytes = base64.b64decode(clear_response['result'])
-        
-        return {
-            'approval_program': approval_program_bytes,
-            'clear_program': clear_program_bytes,
-            'approval_teal': approval_teal,
-            'clear_teal': clear_teal
-        }
+        try:
+            # Import and compile the contract
+            if contract_name == "escrow":
+                from contracts.escrow import approval_program, clear_state_program
+            elif contract_name == "solver":
+                from contracts.solver import approval_program, clear_state_program
+            elif contract_name == "pool":
+                from contracts.pool import approval_program, clear_state_program
+            else:
+                raise ValueError(f"Unknown contract: {contract_name}")
+            
+            # Compile approval program
+            approval_ast = approval_program()
+            approval_teal = algosdk.logic.compileTeal(approval_ast, mode=algosdk.logic.Mode.Application, version=5)
+            approval_response = self.algod_client.compile(approval_teal)
+            approval_program_bytes = base64.b64decode(approval_response['result'])
+            
+            # Compile clear state program
+            clear_ast = clear_state_program()
+            clear_teal = algosdk.logic.compileTeal(clear_ast, mode=algosdk.logic.Mode.Application, version=5)
+            clear_response = self.algod_client.compile(clear_teal)
+            clear_program_bytes = base64.b64decode(clear_response['result'])
+            
+            return {
+                'approval_program': approval_program_bytes,
+                'clear_program': clear_program_bytes,
+                'approval_teal': approval_teal,
+                'clear_teal': clear_teal
+            }
+        except Exception as e:
+            print(f"❌ Error compiling {contract_name}: {e}")
+            raise
     
     def deploy_contract(self, contract_name: str, compiled_contract: Dict[str, Any]) -> Dict[str, Any]:
         """Deploy a compiled contract"""
         print(f"🚀 Deploying {contract_name} contract...")
         
-        # Get suggested parameters
-        params = self.algod_client.suggested_params()
-        
-        # Create unsigned transaction
-        txn = ApplicationCreateTxn(
-            sender=self.deployer_address,
-            sp=params,
-            on_complete=transaction.OnComplete.NoOpOC,
-            approval_program=compiled_contract['approval_program'],
-            clear_program=compiled_contract['clear_program'],
-            global_schema=transaction.StateSchema(num_uints=5, num_byte_slices=0),
-            local_schema=transaction.StateSchema(num_uints=10, num_byte_slices=5)
-        )
-        
-        # Sign transaction
-        signed_txn = txn.sign(self.deployer_private_key)
-        
-        # Submit transaction
-        tx_id = self.algod_client.send_transaction(signed_txn)
-        print(f"📤 Transaction submitted: {tx_id}")
-        
-        # Wait for confirmation
-        confirmed_txn = self.wait_for_confirmation(tx_id)
-        
-        # Get application ID
-        app_id = confirmed_txn['application-index']
-        
-        return {
-            'contract_name': contract_name,
-            'app_id': app_id,
-            'tx_id': tx_id,
-            'deployer_address': self.deployer_address,
-            'explorer_url': f"https://testnet.algoexplorer.io/application/{app_id}",
-            'deployment_time': time.time()
-        }
+        try:
+            # Get suggested parameters
+            params = self.algod_client.suggested_params()
+            
+            # Create unsigned transaction
+            txn = ApplicationCreateTxn(
+                sender=self.deployer_address,
+                sp=params,
+                on_complete=transaction.OnComplete.NoOpOC,
+                approval_program=compiled_contract['approval_program'],
+                clear_program=compiled_contract['clear_program'],
+                global_schema=transaction.StateSchema(num_uints=5, num_byte_slices=0),
+                local_schema=transaction.StateSchema(num_uints=10, num_byte_slices=5)
+            )
+            
+            # Sign transaction
+            signed_txn = txn.sign(self.deployer_private_key)
+            
+            # Submit transaction
+            tx_id = self.algod_client.send_transaction(signed_txn)
+            print(f"📤 Transaction submitted: {tx_id}")
+            
+            # Wait for confirmation
+            confirmed_txn = self.wait_for_confirmation(tx_id)
+            
+            # Get application ID
+            app_id = confirmed_txn['application-index']
+            
+            return {
+                'contract_name': contract_name,
+                'app_id': app_id,
+                'tx_id': tx_id,
+                'deployer_address': self.deployer_address,
+                'explorer_url': f"https://testnet.algoexplorer.io/application/{app_id}",
+                'deployment_time': time.time()
+            }
+        except Exception as e:
+            print(f"❌ Error deploying {contract_name}: {e}")
+            raise
     
     def wait_for_confirmation(self, tx_id: str, timeout: int = 30) -> Dict[str, Any]:
         """Wait for transaction confirmation"""
         start_time = time.time()
         while time.time() - start_time < timeout:
             try:
-                confirmed_txn = self.algod_client.pending_transaction_info(tx_id)
+                confirmed_txn = self.algod_client.pending_transaction_information(tx_id)
                 if confirmed_txn.get('confirmed-round', 0) > 0:
                     return confirmed_txn
             except AlgodHTTPError:
@@ -129,8 +139,12 @@ class AlgorandDeployer:
     
     def check_balance(self) -> int:
         """Check deployer account balance"""
-        account_info = self.algod_client.account_info(self.deployer_address)
-        return account_info['amount']
+        try:
+            account_info = self.algod_client.account_information(self.deployer_address)
+            return account_info['amount']
+        except Exception as e:
+            print(f"❌ Error checking balance: {e}")
+            return 0
     
     def deploy_all_contracts(self) -> Dict[str, Any]:
         """Deploy all contracts"""

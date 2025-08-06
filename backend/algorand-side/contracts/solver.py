@@ -1,6 +1,7 @@
 """
 Algorand Fusion Solver Contract
 Real PyTeal implementation for solver management
+Compatible with PyTeal 0.20.0+
 """
 
 from pyteal import *

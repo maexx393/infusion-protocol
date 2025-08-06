@@ -1,6 +1,7 @@
 """
 Algorand Fusion Escrow Contract
 Real PyTeal implementation for cross-chain swaps
+Compatible with PyTeal 0.20.0+
 """
 
 from pyteal import *
