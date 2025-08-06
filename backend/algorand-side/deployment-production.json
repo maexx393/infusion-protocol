@@ -1,0 +1,32 @@
+{
+  "deployment_status": "success",
+  "network": "testnet",
+  "deployer_address": "5KUWYUYVK64M6EW6LYBKO53WP7T4XMON5JJE7UUDUTAKBUAXDOQPURVCY4",
+  "deployment_timestamp": 1754476962.4675899,
+  "contracts": {
+    "escrow": {
+      "contract_name": "escrow",
+      "app_id": 743864631,
+      "tx_id": "CZSQ5VVPINRAIQMCMUKSM5QFN527F4IQJDCWZUO4SC4R7LWBT5PA",
+      "deployer_address": "5KUWYUYVK64M6EW6LYBKO53WP7T4XMON5JJE7UUDUTAKBUAXDOQPURVCY4",
+      "explorer_url": "https://testnet.algoexplorer.io/application/743864631",
+      "deployment_time": 1754476949.1354082
+    },
+    "solver": {
+      "contract_name": "solver",
+      "app_id": 743864632,
+      "tx_id": "FZG2UPFQZR2O5YRGQIPV7LHFXVI4K2A2WK7OP4JJNBM5RGYE6TGA",
+      "deployer_address": "5KUWYUYVK64M6EW6LYBKO53WP7T4XMON5JJE7UUDUTAKBUAXDOQPURVCY4",
+      "explorer_url": "https://testnet.algoexplorer.io/application/743864632",
+      "deployment_time": 1754476954.736704
+    },
+    "pool": {
+      "contract_name": "pool",
+      "app_id": 743864633,
+      "tx_id": "GVR4ITOXABDAASGLJMU5ZEREDZLLWJ6FJLOA77AQZ6NIN57ABYXA",
+      "deployer_address": "5KUWYUYVK64M6EW6LYBKO53WP7T4XMON5JJE7UUDUTAKBUAXDOQPURVCY4",
+      "explorer_url": "https://testnet.algoexplorer.io/application/743864633",
+      "deployment_time": 1754476962.467519
+    }
+  }
+}
