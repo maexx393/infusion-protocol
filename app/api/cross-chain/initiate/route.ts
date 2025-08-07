@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createFusionPlusL1Extension, CrossChainSwapRequest } from '../../../../src/services/fusion-plus-l1-extension';
+import { initiateRealCrossChainSwap } from '../../../../src/services/real-cross-chain-executor';
 
 export async function POST(request: NextRequest) {
   try {
@@ -23,11 +23,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Initialize the fusion extension
-    const fusionExtension = createFusionPlusL1Extension();
-
-    // Create the swap request
-    const swapRequest: CrossChainSwapRequest = {
+    // Initiate real cross-chain swap
+    const swap = await initiateRealCrossChainSwap({
       fromChain,
       toChain,
       fromToken,
@@ -36,10 +33,7 @@ export async function POST(request: NextRequest) {
       userAddress,
       slippageTolerance,
       strategy
-    };
-
-    // Initiate the cross-chain swap
-    const swap = await fusionExtension.initiateCrossChainSwap(swapRequest);
+    });
 
     return NextResponse.json({
       success: true,

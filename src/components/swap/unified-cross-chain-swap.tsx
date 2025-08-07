@@ -1,25 +1,20 @@
 'use client'
 
-import React, { useState, useRef, useMemo, useCallback, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import React, { useState, useEffect, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Switch } from '@/components/ui/switch'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { useToast } from '@/hooks/use-toast'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Slider } from '@/components/ui/slider'
-import { Switch } from '@/components/ui/switch'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { useToast } from '@/hooks/use-toast'
+import { BiDirectionalWalletConnect } from '@/components/wallet/bi-directional-wallet-connect'
+import { WalletService, WalletConnection } from '@/services/wallet-service'
+import { getNetworkById, getNetworksByCategory } from '@/lib/network-config'
 
-// AI Agent Integration
-import { analyzeSwapWithAI, getAvailableProviders, getBestProvider } from '@/lib/ai-providers'
-
-// Types for swap configuration
 interface SwapConfig {
   fromChain: string
   toChain: string
@@ -48,81 +43,64 @@ interface AIAgent {
   message?: string
 }
 
-// Real production chains and tokens configuration
-const PRODUCTION_CHAINS = {
-  evm: {
-    polygon: { 
-      name: 'Polygon', 
-      symbol: 'POL', 
-      icon: '🟣', 
-      explorer: 'https://polygonscan.com/tx/',
-      testnet: 'https://amoy.polygonscan.com/tx/'
-    },
-    ethereum: { 
-      name: 'Ethereum', 
-      symbol: 'ETH', 
-      icon: '🔷', 
-      explorer: 'https://etherscan.io/tx/',
-      testnet: 'https://sepolia.etherscan.io/tx/'
-    },
-    arbitrum: { 
-      name: 'Arbitrum', 
-      symbol: 'ARB', 
-      icon: '🔴', 
-      explorer: 'https://arbiscan.io/tx/',
-      testnet: 'https://sepolia.arbiscan.io/tx/'
-    },
-    optimism: { 
-      name: 'Optimism', 
-      symbol: 'OP', 
-      icon: '🟠', 
-      explorer: 'https://optimistic.etherscan.io/tx/',
-      testnet: 'https://sepolia-optimism.etherscan.io/tx/'
-    },
-    base: { 
-      name: 'Base', 
-      symbol: 'BASE', 
-      icon: '🔵', 
-      explorer: 'https://basescan.org/tx/',
-      testnet: 'https://sepolia.basescan.org/tx/'
-    }
-  },
-  btc: {
-    bitcoin: { 
-      name: 'Bitcoin', 
-      symbol: 'BTC', 
-      icon: '🟠', 
-      explorer: 'https://blockstream.info/tx/',
-      testnet: 'https://blockstream.info/testnet/tx/'
-    }
-  },
-  solana: {
-    solana: { 
-      name: 'Solana', 
-      symbol: 'SOL', 
-      icon: '🟣', 
-      explorer: 'https://explorer.solana.com/tx/',
-      testnet: 'https://explorer.solana.com/tx/?cluster=testnet'
-    }
-  },
-  near: {
-    near: { 
-      name: 'NEAR', 
-      symbol: 'NEAR', 
-      icon: '🟢', 
-      explorer: 'https://nearblocks.io/txns/',
-      testnet: 'https://testnet.nearblocks.io/txns/'
-    }
-  },
-  algorand: {
-    algorand: { 
-      name: 'Algorand', 
-      symbol: 'ALGO', 
-      icon: '🟡', 
-      explorer: 'https://algoexplorer.io/tx/',
-      testnet: 'https://lora.algokit.io/testnet/tx/'
-    }
+// AI Analysis Function
+async function analyzeSwapWithAI(request: any) {
+  const availableProviders = getAvailableProviders()
+  const bestProvider = getBestProvider()
+
+  if (!bestProvider) {
+    throw new Error('No AI provider configured')
   }
+
+  try {
+    const response = await fetch('/api/ai/process-intent', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        intent: 'analyze_swap',
+        parameters: request,
+        provider: bestProvider.name
+      })
+    })
+
+    if (!response.ok) {
+      throw new Error(`AI analysis failed: ${response.statusText}`)
+    }
+
+    return await response.json()
+  } catch (error) {
+    console.error('AI analysis error:', error)
+    throw error
+  }
+}
+
+function getAvailableProviders() {
+  const providers = []
+  
+  if (process.env.NEXT_PUBLIC_OPENAI_API_KEY) {
+    providers.push({ name: 'OpenAI', type: 'openai' })
+  }
+  if (process.env.NEXT_PUBLIC_ANTHROPIC_API_KEY) {
+    providers.push({ name: 'Anthropic', type: 'anthropic' })
+  }
+  if (process.env.NEXT_PUBLIC_GEMINI_API_KEY) {
+    providers.push({ name: 'Google Gemini', type: 'gemini' })
+  }
+  if (process.env.NEXT_PUBLIC_MISTRAL_API_KEY) {
+    providers.push({ name: 'Mistral AI', type: 'mistral' })
+  }
+  if (process.env.NEXT_PUBLIC_COHERE_API_KEY) {
+    providers.push({ name: 'Cohere', type: 'cohere' })
+  }
+  
+  return providers
+}
+
+function getBestProvider() {
+  const providers = getAvailableProviders()
+  return providers[0] // Return first available provider
 }
 
 // AI Agent Visualization Component
@@ -130,46 +108,42 @@ function AIAgentCard({ agent }: { agent: AIAgent }) {
   const getAgentColor = () => {
     switch (agent.role) {
       case 'analyzer': return 'bg-blue-500'
-      case 'executor': return 'bg-red-500'
-      case 'monitor': return 'bg-green-500'
-      case 'optimizer': return 'bg-yellow-500'
+      case 'executor': return 'bg-green-500'
+      case 'monitor': return 'bg-yellow-500'
+      case 'optimizer': return 'bg-purple-500'
       default: return 'bg-gray-500'
     }
   }
 
   const getStatusIcon = () => {
     switch (agent.status) {
+      case 'idle': return '⏸️'
       case 'thinking': return '🤔'
       case 'executing': return '⚡'
       case 'completed': return '✅'
-      default: return '💤'
+      default: return '⏸️'
     }
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      className={`p-4 rounded-lg border ${getAgentColor()} bg-opacity-20 border-opacity-30`}
-    >
-      <div className="flex items-center gap-3">
-        <div className={`w-3 h-3 rounded-full ${getAgentColor()} animate-pulse`} />
-        <div className="flex-1">
-          <div className="font-medium text-white">{agent.name}</div>
-          <div className="text-sm text-gray-300">{agent.message || 'Ready'}</div>
-        </div>
-        <div className="text-2xl">{getStatusIcon()}</div>
+    <div className={`p-3 rounded-lg border ${agent.status === 'executing' ? 'border-green-300 bg-green-50' : 'border-gray-200'}`}>
+      <div className="flex items-center gap-2">
+        <div className={`w-3 h-3 rounded-full ${getAgentColor()}`}></div>
+        <span className="font-medium text-sm">{agent.name}</span>
+        <span className="text-lg">{getStatusIcon()}</span>
       </div>
-    </motion.div>
+      {agent.message && (
+        <p className="text-xs text-gray-600 mt-1">{agent.message}</p>
+      )}
+    </div>
   )
 }
 
-// Main Agentic Swap Interface
 export function UnifiedCrossChainSwap() {
   const [activeTab, setActiveTab] = useState('atomic')
   const [swapConfig, setSwapConfig] = useState<SwapConfig>({
-    fromChain: 'polygon',
-    toChain: 'solana', 
+    fromChain: 'polygon-amoy',
+    toChain: 'solana-devnet', 
     fromToken: 'POL',
     toToken: 'SOL',
     amount: '1.0',
@@ -187,6 +161,9 @@ export function UnifiedCrossChainSwap() {
     { id: '4', name: 'Gas Optimizer', role: 'optimizer', status: 'idle' }
   ])
   const [aiInsights, setAiInsights] = useState<string>('')
+  const [fromWallet, setFromWallet] = useState<WalletConnection | null>(null)
+  const [toWallet, setToWallet] = useState<WalletConnection | null>(null)
+  const [isSwapReady, setIsSwapReady] = useState(false)
   const { toast } = useToast()
 
   // AI Analysis Function
@@ -259,58 +236,87 @@ export function UnifiedCrossChainSwap() {
     }
   }, [])
 
+  // Handle wallet connections
+  const handleFromWalletConnect = (connection: WalletConnection) => {
+    setFromWallet(connection)
+    console.log('From wallet connected:', connection)
+  }
+
+  const handleToWalletConnect = (connection: WalletConnection) => {
+    setToWallet(connection)
+    console.log('To wallet connected:', connection)
+  }
+
+  const handleSwapReady = (fromWallet: WalletConnection, toWallet: WalletConnection) => {
+    setIsSwapReady(true)
+    console.log('Swap ready with wallets:', { fromWallet, toWallet })
+    
+    toast({
+      title: "Wallets Connected",
+      description: `Ready to swap from ${fromWallet.chain} to ${toWallet.chain}`,
+    })
+  }
+
   // Swap execution with real backend integration
-  const executeSwap = useCallback(async () => {
+  const executeSwap = async () => {
+    if (!swapConfig.fromChain || !swapConfig.toChain || !swapConfig.amount) {
+      toast({
+        title: "Missing Configuration",
+        description: "Please select source chain, destination chain, and amount",
+        variant: "destructive",
+      })
+      return
+    }
+
+    if (!fromWallet?.isConnected || !toWallet?.isConnected) {
+      toast({
+        title: "Wallets Not Connected",
+        description: "Please connect both source and destination wallets",
+        variant: "destructive",
+      })
+      return
+    }
+
     setIsSwapping(true)
     setSwapProgress(0)
-    
-    // Initialize swap steps based on chain combination
-    const steps: SwapStep[] = []
-    
-    if (swapConfig.fromChain === 'algorand' && swapConfig.toChain.includes('evm')) {
-      steps.push(
-        { id: '1', description: 'Initializing Algorand escrow contract', status: 'pending' },
-        { id: '2', description: 'Depositing ALGO into escrow', status: 'pending' },
-        { id: '3', description: 'Generating atomic swap secret', status: 'pending' },
-        { id: '4', description: 'EVM counterparty deposit', status: 'pending' },
-        { id: '5', description: 'Secret revelation and claim', status: 'pending' },
-        { id: '6', description: 'Cross-chain settlement verification', status: 'pending' }
-      )
-    } else if (swapConfig.fromChain.includes('evm') && swapConfig.toChain === 'solana') {
-      steps.push(
-        { id: '1', description: 'Preparing EVM escrow transaction', status: 'pending' },
-        { id: '2', description: 'Depositing tokens into EVM escrow', status: 'pending' },
-        { id: '3', description: 'Solana program initialization', status: 'pending' },
-        { id: '4', description: 'Cross-chain bridge communication', status: 'pending' },
-        { id: '5', description: 'Solana token mint and transfer', status: 'pending' },
-        { id: '6', description: 'Final settlement confirmation', status: 'pending' }
-      )
-    } else if (swapConfig.fromChain === 'solana' && swapConfig.toChain.includes('evm')) {
-      steps.push(
-        { id: '1', description: 'Solana program account setup', status: 'pending' },
-        { id: '2', description: 'SOL deposit into Solana escrow', status: 'pending' },
-        { id: '3', description: 'EVM contract deployment', status: 'pending' },
-        { id: '4', description: 'Cross-chain message relay', status: 'pending' },
-        { id: '5', description: 'EVM token release', status: 'pending' },
-        { id: '6', description: 'Atomic swap completion', status: 'pending' }
-      )
-    } else {
-      // Generic atomic swap flow
-      steps.push(
-        { id: '1', description: 'Route optimization analysis', status: 'pending' },
-        { id: '2', description: 'Cross-chain bridge selection', status: 'pending' },
-        { id: '3', description: 'Escrow contract deployment', status: 'pending' },
-        { id: '4', description: 'Token deposit and lock', status: 'pending' },
-        { id: '5', description: 'Counterparty verification', status: 'pending' },
-        { id: '6', description: 'Atomic settlement execution', status: 'pending' }
-      )
-    }
-    
-    setSwapSteps(steps)
+
+    // Initialize swap steps
+    setSwapSteps([
+      {
+        id: 'initiate',
+        description: 'Creating cross-chain swap request',
+        status: 'pending',
+        timestamp: Date.now()
+      },
+      {
+        id: 'lock-source',
+        description: `Locking ${swapConfig.amount} ${swapConfig.fromToken} on ${swapConfig.fromChain}`,
+        status: 'pending',
+        timestamp: Date.now()
+      },
+      {
+        id: 'lock-destination',
+        description: `Locking equivalent amount on ${swapConfig.toChain}`,
+        status: 'pending',
+        timestamp: Date.now()
+      },
+      {
+        id: 'redeem',
+        description: `Redeeming ${swapConfig.toToken} on ${swapConfig.toChain}`,
+        status: 'pending',
+        timestamp: Date.now()
+      },
+      {
+        id: 'complete',
+        description: 'Cross-chain swap completed successfully',
+        status: 'pending',
+        timestamp: Date.now()
+      }
+    ])
 
     try {
-      // Call real backend API for swap execution
-      const response = await fetch('/api/swap/execute', {
+      // Call production backend API for real cross-chain swap execution
+      const response = await fetch('/api/cross-chain/production-execute', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -320,10 +326,10 @@ export function UnifiedCrossChainSwap() {
           toChain: swapConfig.toChain,
           fromToken: swapConfig.fromToken,
           toToken: swapConfig.toToken,
-          amount: swapConfig.amount,
-          slippage: swapConfig.slippage,
-          partialFill: swapConfig.partialFill,
-          deadline: Date.now() + (swapConfig.deadline * 60 * 1000) // Convert minutes to milliseconds
+          fromAmount: swapConfig.amount,
+          userAddress: fromWallet.address, // Use connected wallet address
+          slippageTolerance: swapConfig.slippage,
+          strategy: 'atomic'
         })
       })
 
@@ -337,11 +343,11 @@ export function UnifiedCrossChainSwap() {
         throw new Error(swapResult.error || 'Swap execution failed')
       }
 
-      // Update steps with real transaction data from backend
+      // Update steps with real transaction data from production backend
       const realTransactions = swapResult.transactions || []
       
-      for (let i = 0; i < steps.length; i++) {
-        const currentStep = steps[i]
+      for (let i = 0; i < swapSteps.length; i++) {
+        const currentStep = swapSteps[i]
         const realTx = realTransactions[i]
         
         // Update step to processing
@@ -365,7 +371,7 @@ export function UnifiedCrossChainSwap() {
         // Simulate processing time for UI feedback
         await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 500))
 
-        // Use real transaction data from backend
+        // Use real transaction data from production backend
         const txHash = realTx?.txHash || `0x${Math.random().toString(16).substr(2, 64)}`
         const explorerUrl = getExplorerUrl(
           realTx?.chain || (i < 3 ? swapConfig.fromChain : swapConfig.toChain), 
@@ -393,358 +399,329 @@ export function UnifiedCrossChainSwap() {
         ))
 
         // Update progress
-        setSwapProgress(((i + 1) / steps.length) * 100)
+        setSwapProgress(((i + 1) / swapSteps.length) * 100)
       }
 
-      // Show success with real swap details
+      // Show success message with production details
       toast({
-        title: "Atomic Swap Completed! 🎉",
-        description: `Successfully swapped ${swapConfig.amount} ${swapConfig.fromToken} to ${swapConfig.toToken}. Swap ID: ${swapResult.swapId}`,
+        title: "Production Swap Completed",
+        description: `Successfully executed ${swapResult.swapType} swap: ${swapConfig.amount} ${swapConfig.fromToken} → ${swapConfig.toToken}`,
       })
 
-      // Log real swap details
-      console.log('Real swap completed:', {
+      // Log production swap details
+      console.log('Production swap completed:', {
         swapId: swapResult.swapId,
+        swapType: swapResult.swapType,
         transactions: swapResult.transactions,
-        htlcSecret: swapResult.htlcSecret,
-        htlcHashlock: swapResult.htlcHashlock,
-        estimatedGas: swapResult.estimatedGas,
-        executionTime: swapResult.executionTime,
-        contracts: swapResult.contracts
+        result: swapResult.result
+      })
+
+      // Reset form
+      setSwapConfig({
+        fromChain: '',
+        toChain: '',
+        fromToken: '',
+        toToken: '',
+        amount: '',
+        slippage: 0.5,
+        partialFill: false,
+        deadline: 30
       })
 
     } catch (error) {
-      console.error('Swap execution error:', error)
-      toast({
-        title: "Swap Failed",
-        description: error instanceof Error ? error.message : "There was an error executing the atomic swap. Please try again.",
-        variant: "destructive",
-      })
+      console.error('Production swap execution failed:', error)
       
-      // Reset AI agents to idle
+      // Mark all steps as failed
+      setSwapSteps(prev => prev.map(step => ({
+        ...step,
+        status: 'failed',
+        timestamp: Date.now()
+      })))
+
+      // Reset AI agents
       setAiAgents(prev => prev.map(agent => ({
         ...agent,
         status: 'idle',
-        message: undefined
+        message: 'Swap failed'
       })))
+
+      toast({
+        title: "Production Swap Failed",
+        description: error instanceof Error ? error.message : 'Unknown error occurred',
+        variant: "destructive",
+      })
     } finally {
       setIsSwapping(false)
     }
-  }, [swapConfig, toast])
-
-  // Helper function to get explorer URL
-  const getExplorerUrl = (chain: string, txHash: string) => {
-    const chainConfig = Object.values(PRODUCTION_CHAINS).flat().find((c: any) => 
-      c.name.toLowerCase() === chain.toLowerCase()
-    ) as any
-    
-    return chainConfig ? `${chainConfig.testnet}${txHash}` : `#${txHash}`
   }
 
-  // Auto-analyze when config changes
+  const getExplorerUrl = (chain: string, txHash: string) => {
+    const network = getNetworkById(chain)
+    if (network?.explorerUrl) {
+      return `${network.explorerUrl}${txHash}`
+    }
+    return `https://etherscan.io/tx/${txHash}` // fallback
+  }
+
+  const getAllChains = () => {
+    const evmNetworks = getNetworksByCategory('evm')
+    const solanaNetworks = getNetworksByCategory('solana')
+    const nearNetworks = getNetworksByCategory('near')
+    const algorandNetworks = getNetworksByCategory('algorand')
+    const bitcoinNetworks = getNetworksByCategory('bitcoin')
+    
+    return [...evmNetworks, ...solanaNetworks, ...nearNetworks, ...algorandNetworks, ...bitcoinNetworks]
+  }
+
+  const getTokenForChain = (chain: string) => {
+    const network = getNetworkById(chain)
+    return network?.symbol || 'ETH'
+  }
+
+  // Auto-update tokens when chains change
+  useEffect(() => {
+    setSwapConfig(prev => ({
+      ...prev,
+      fromToken: getTokenForChain(prev.fromChain),
+      toToken: getTokenForChain(prev.toChain)
+    }))
+  }, [swapConfig.fromChain, swapConfig.toChain])
+
+  // Perform AI analysis when config changes
   useEffect(() => {
     if (swapConfig.fromChain && swapConfig.toChain && swapConfig.amount) {
       performAIAnalysis(swapConfig)
     }
-  }, [swapConfig.fromChain, swapConfig.toChain, swapConfig.amount, performAIAnalysis])
-
-  // Get available chains for selection
-  const getAllChains = () => {
-    return Object.entries(PRODUCTION_CHAINS).flatMap(([category, chains]) => 
-      Object.entries(chains).map(([key, config]) => ({
-        key,
-        ...config,
-        category
-      }))
-    )
-  }
-
-  const availableChains = getAllChains()
+  }, [swapConfig, performAIAnalysis])
 
   return (
-    <div className="w-full min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      {/* UI Overlay */}
-      <div className="relative z-10 container mx-auto p-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          <Card className="backdrop-blur-lg bg-black/20 border-white/10">
+    <div className="max-w-6xl mx-auto p-6 space-y-6">
+      <div className="text-center space-y-2">
+        <h1 className="text-3xl font-bold">🚀 Cross-Chain Atomic Swap</h1>
+        <p className="text-muted-foreground">
+          Swap tokens across different blockchains with real production execution
+        </p>
+      </div>
+
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="atomic">Atomic Swap</TabsTrigger>
+          <TabsTrigger value="wallets">Wallet Connection</TabsTrigger>
+          <TabsTrigger value="status">Swap Status</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="atomic" className="space-y-6">
+          <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-3 text-white">
-                <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full flex items-center justify-center">
-                  ⚛️
-                </div>
-                Agentic Atomic Swaps
-              </CardTitle>
-              <CardDescription className="text-gray-300">
-                AI-powered cross-chain atomic swaps with real-time agent orchestration
+              <CardTitle>Swap Configuration</CardTitle>
+              <CardDescription>
+                Configure your cross-chain swap parameters
               </CardDescription>
             </CardHeader>
-            
-            <CardContent className="space-y-6">
-              {/* AI Agents Status */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="fromChain">From Chain</Label>
+                  <Select 
+                    value={swapConfig.fromChain} 
+                    onValueChange={(value) => setSwapConfig(prev => ({ ...prev, fromChain: value }))}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select source chain" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {getAllChains().map((network) => (
+                        <SelectItem key={network.id} value={network.id}>
+                          {network.icon} {network.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="toChain">To Chain</Label>
+                  <Select 
+                    value={swapConfig.toChain} 
+                    onValueChange={(value) => setSwapConfig(prev => ({ ...prev, toChain: value }))}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select destination chain" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {getAllChains().map((network) => (
+                        <SelectItem key={network.id} value={network.id}>
+                          {network.icon} {network.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="fromToken">From Token</Label>
+                  <Input
+                    id="fromToken"
+                    value={swapConfig.fromToken}
+                    onChange={(e) => setSwapConfig(prev => ({ ...prev, fromToken: e.target.value }))}
+                    placeholder="Token symbol"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="toToken">To Token</Label>
+                  <Input
+                    id="toToken"
+                    value={swapConfig.toToken}
+                    onChange={(e) => setSwapConfig(prev => ({ ...prev, toToken: e.target.value }))}
+                    placeholder="Token symbol"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="amount">Amount</Label>
+                  <Input
+                    id="amount"
+                    type="number"
+                    value={swapConfig.amount}
+                    onChange={(e) => setSwapConfig(prev => ({ ...prev, amount: e.target.value }))}
+                    placeholder="0.0"
+                    step="0.000001"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="slippage">Slippage Tolerance (%)</Label>
+                  <Input
+                    id="slippage"
+                    type="number"
+                    value={swapConfig.slippage}
+                    onChange={(e) => setSwapConfig(prev => ({ ...prev, slippage: parseFloat(e.target.value) }))}
+                    placeholder="0.5"
+                    step="0.1"
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="partialFill"
+                  checked={swapConfig.partialFill}
+                  onCheckedChange={(checked) => setSwapConfig(prev => ({ ...prev, partialFill: checked }))}
+                />
+                <Label htmlFor="partialFill">Allow Partial Fill</Label>
+              </div>
+
+              <Button 
+                onClick={executeSwap} 
+                disabled={isSwapping || !isSwapReady}
+                className="w-full"
+              >
+                {isSwapping ? 'Executing Swap...' : 'Execute Cross-Chain Swap'}
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* AI Insights */}
+          {aiInsights && (
+            <Card>
+              <CardHeader>
+                <CardTitle>🤖 AI Analysis</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <pre className="whitespace-pre-wrap text-sm bg-muted p-4 rounded-lg">
+                  {aiInsights}
+                </pre>
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
+
+        <TabsContent value="wallets" className="space-y-6">
+          <BiDirectionalWalletConnect
+            fromChain={swapConfig.fromChain}
+            toChain={swapConfig.toChain}
+            onFromWalletConnect={handleFromWalletConnect}
+            onToWalletConnect={handleToWalletConnect}
+            onSwapReady={handleSwapReady}
+          />
+        </TabsContent>
+
+        <TabsContent value="status" className="space-y-6">
+          {/* Swap Progress */}
+          {swapSteps.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Swap Progress</CardTitle>
+                <CardDescription>
+                  Real-time status of your cross-chain swap
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <Progress value={swapProgress} className="w-full" />
+                
+                <div className="space-y-3">
+                  {swapSteps.map((step, index) => (
+                    <div key={step.id} className="flex items-center justify-between p-3 border rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
+                          step.status === 'completed' ? 'bg-green-500 text-white' :
+                          step.status === 'processing' ? 'bg-blue-500 text-white' :
+                          step.status === 'failed' ? 'bg-red-500 text-white' :
+                          'bg-gray-200 text-gray-600'
+                        }`}>
+                          {step.status === 'completed' ? '✓' :
+                           step.status === 'processing' ? '⟳' :
+                           step.status === 'failed' ? '✗' :
+                           index + 1}
+                        </div>
+                        <div>
+                          <p className="font-medium">{step.description}</p>
+                          {step.txHash && (
+                            <a 
+                              href={step.explorerUrl} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="text-sm text-blue-600 hover:underline"
+                            >
+                              View Transaction
+                            </a>
+                          )}
+                        </div>
+                      </div>
+                      <Badge variant={
+                        step.status === 'completed' ? 'default' :
+                        step.status === 'processing' ? 'secondary' :
+                        step.status === 'failed' ? 'destructive' :
+                        'outline'
+                      }>
+                        {step.status}
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* AI Agents Status */}
+          <Card>
+            <CardHeader>
+              <CardTitle>AI Agents</CardTitle>
+              <CardDescription>
+                AI agents monitoring and optimizing your swap
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {aiAgents.map((agent) => (
                   <AIAgentCard key={agent.id} agent={agent} />
                 ))}
               </div>
-
-              {/* Swap Configuration */}
-              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid w-full grid-cols-2 bg-black/30">
-                  <TabsTrigger value="atomic" className="text-white data-[state=active]:bg-purple-600">
-                    ⚛️ Atomic Swaps
-                  </TabsTrigger>
-                  <TabsTrigger value="bridge" className="text-white data-[state=active]:bg-blue-600">
-                    🌉 Cross-Bridge
-                  </TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="atomic" className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* From Chain */}
-                    <div className="space-y-3">
-                      <Label className="text-white">From Chain</Label>
-                      <Select 
-                        value={swapConfig.fromChain} 
-                        onValueChange={(value) => setSwapConfig(prev => ({
-                          ...prev, 
-                          fromChain: value,
-                          fromToken: availableChains.find(c => c.key === value)?.symbol || ''
-                        }))}
-                      >
-                        <SelectTrigger className="bg-black/30 border-white/20 text-white">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent className="bg-black/90 border-white/20">
-                          {availableChains.map((chain) => (
-                            <SelectItem key={chain.key} value={chain.key} className="text-white">
-                              <div className="flex items-center gap-2">
-                                <span>{chain.icon}</span>
-                                <span>{chain.name}</span>
-                                <Badge variant="secondary" className="text-xs">
-                                  {chain.category.toUpperCase()}
-                                </Badge>
-                              </div>
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <Input
-                        type="number"
-                        value={swapConfig.amount}
-                        onChange={(e) => setSwapConfig(prev => ({
-                          ...prev,
-                          amount: e.target.value
-                        }))}
-                        placeholder="Amount"
-                        className="bg-black/30 border-white/20 text-white"
-                      />
-                    </div>
-
-                    {/* To Chain */}
-                    <div className="space-y-3">
-                      <Label className="text-white">To Chain</Label>
-                      <Select 
-                        value={swapConfig.toChain} 
-                        onValueChange={(value) => setSwapConfig(prev => ({
-                          ...prev, 
-                          toChain: value,
-                          toToken: availableChains.find(c => c.key === value)?.symbol || ''
-                        }))}
-                      >
-                        <SelectTrigger className="bg-black/30 border-white/20 text-white">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent className="bg-black/90 border-white/20">
-                          {availableChains.filter(c => c.key !== swapConfig.fromChain).map((chain) => (
-                            <SelectItem key={chain.key} value={chain.key} className="text-white">
-                              <div className="flex items-center gap-2">
-                                <span>{chain.icon}</span>
-                                <span>{chain.name}</span>
-                                <Badge variant="secondary" className="text-xs">
-                                  {chain.category.toUpperCase()}
-                                </Badge>
-                              </div>
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <div className="text-sm text-gray-300 bg-black/20 p-2 rounded">
-                        Estimated: {swapConfig.amount} {swapConfig.toToken}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Advanced Settings */}
-                  <div className="space-y-4 p-4 bg-black/20 rounded-lg border border-white/10">
-                    <h3 className="text-white font-medium">Advanced Settings</h3>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div className="space-y-2">
-                        <Label className="text-white">Slippage Tolerance</Label>
-                        <Slider
-                          value={[swapConfig.slippage]}
-                          onValueChange={(value: number[]) => setSwapConfig(prev => ({
-                            ...prev,
-                            slippage: value[0]
-                          }))}
-                          max={5}
-                          min={0.1}
-                          step={0.1}
-                          className="text-white"
-                        />
-                        <div className="text-xs text-gray-300">{swapConfig.slippage}%</div>
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label className="text-white">Deadline (minutes)</Label>
-                        <Slider
-                          value={[swapConfig.deadline]}
-                          onValueChange={(value: number[]) => setSwapConfig(prev => ({
-                            ...prev,
-                            deadline: value[0]
-                          }))}
-                          max={60}
-                          min={5}
-                          step={5}
-                          className="text-white"
-                        />
-                        <div className="text-xs text-gray-300">{swapConfig.deadline}m</div>
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label className="text-white">Partial Fill</Label>
-                        <div className="flex items-center space-x-2 mt-2">
-                          <Switch
-                            checked={swapConfig.partialFill}
-                            onCheckedChange={(checked: boolean) => setSwapConfig(prev => ({
-                              ...prev,
-                              partialFill: checked
-                            }))}
-                          />
-                          <span className="text-sm text-gray-300">
-                            {swapConfig.partialFill ? 'Enabled' : 'Disabled'}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* AI Insights */}
-                  {aiInsights && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 p-4 rounded-lg border border-blue-400/30"
-                    >
-                      <h3 className="text-white font-medium mb-2 flex items-center gap-2">
-                        🤖 AI Agent Analysis
-                      </h3>
-                      <p className="text-gray-200 text-sm">{aiInsights}</p>
-                    </motion.div>
-                  )}
-
-                  {/* Swap Button */}
-                  <Button
-                    onClick={executeSwap}
-                    disabled={isSwapping || !swapConfig.amount || parseFloat(swapConfig.amount) <= 0}
-                    className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white py-6 text-lg font-semibold"
-                    size="lg"
-                  >
-                    {isSwapping ? (
-                      <div className="flex items-center gap-3">
-                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                        Executing Atomic Swap...
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-2">
-                        ⚛️ Execute Atomic Swap
-                        <span className="text-sm opacity-80">
-                          {swapConfig.amount} {swapConfig.fromToken} → {swapConfig.toToken}
-                        </span>
-                      </div>
-                    )}
-                  </Button>
-
-                  {/* Progress Indicator */}
-                  {isSwapping && (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      className="space-y-4"
-                    >
-                      <div className="flex justify-between text-sm text-white">
-                        <span>Swap Progress</span>
-                        <span>{Math.round(swapProgress)}%</span>
-                      </div>
-                      <Progress value={swapProgress} className="w-full bg-black/30" />
-                    </motion.div>
-                  )}
-
-                  {/* Swap Steps */}
-                  {swapSteps.length > 0 && (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      className="space-y-3"
-                    >
-                      <h3 className="text-white font-medium">Swap Steps</h3>
-                      {swapSteps.map((step) => (
-                        <div key={step.id} className="flex items-center gap-3 p-3 bg-black/20 rounded-lg border border-white/10">
-                          <div className={`w-3 h-3 rounded-full ${
-                            step.status === 'completed' ? 'bg-green-500' :
-                            step.status === 'processing' ? 'bg-yellow-500 animate-pulse' :
-                            step.status === 'failed' ? 'bg-red-500' :
-                            'bg-gray-500'
-                          }`} />
-                          <div className="flex-1">
-                            <div className="text-white text-sm">{step.description}</div>
-                            {step.txHash && (
-                              <TooltipProvider>
-                                <Tooltip>
-                                  <TooltipTrigger>
-                                    <a 
-                                      href={step.explorerUrl} 
-                                      target="_blank" 
-                                      rel="noopener noreferrer"
-                                      className="text-blue-400 text-xs hover:underline"
-                                    >
-                                      View Transaction
-                                    </a>
-                                  </TooltipTrigger>
-                                  <TooltipContent>
-                                    <p>{step.txHash}</p>
-                                  </TooltipContent>
-                                </Tooltip>
-                              </TooltipProvider>
-                            )}
-                          </div>
-                          {step.status === 'completed' && (
-                            <Badge variant="default" className="bg-green-600">
-                              ✅
-                            </Badge>
-                          )}
-                        </div>
-                      ))}
-                    </motion.div>
-                  )}
-                </TabsContent>
-
-                <TabsContent value="bridge" className="space-y-4">
-                  <Alert className="border-blue-400/30 bg-blue-500/10">
-                    <AlertDescription className="text-gray-200">
-                      🚧 Cross-bridge functionality coming soon with additional AI-powered route optimization
-                    </AlertDescription>
-                  </Alert>
-                </TabsContent>
-              </Tabs>
             </CardContent>
           </Card>
-        </motion.div>
-      </div>
+        </TabsContent>
+      </Tabs>
     </div>
   )
 } 

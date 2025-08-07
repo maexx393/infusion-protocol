@@ -2,25 +2,24 @@
 // Comprehensive L1 blockchain network support
 
 export interface NetworkConfig {
-  id: number | string
-  name: string
-  symbol: string
-  icon: string
-  rpcUrl: string
-  explorerUrl: string
-  testnetRpcUrl?: string
-  testnetExplorerUrl?: string
-  nativeCurrency: {
-    name: string
-    symbol: string
-    decimals: number
-  }
-  category: 'evm' | 'solana' | 'bitcoin' | 'near' | 'algorand'
-  isTestnet?: boolean
+  id: string | number;
+  name: string;
+  symbol: string;
+  icon: string;
+  rpcUrl: string;
+  explorerUrl: string;
+  nativeCurrency?: {
+    name: string;
+    symbol: string;
+    decimals: number;
+  };
+  category: 'evm' | 'solana' | 'bitcoin' | 'near' | 'algorand';
+  isTestnet?: boolean;
+  isMainnet?: boolean;
 }
 
 export const NETWORK_CONFIGS: NetworkConfig[] = [
-  // Ethereum Networks
+  // EVM Networks
   {
     id: 1,
     name: 'Ethereum',
@@ -29,7 +28,8 @@ export const NETWORK_CONFIGS: NetworkConfig[] = [
     rpcUrl: process.env.NEXT_PUBLIC_ETHEREUM_RPC || 'https://eth-mainnet.g.alchemy.com/v2/demo',
     explorerUrl: 'https://etherscan.io',
     nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
-    category: 'evm'
+    category: 'evm',
+    isMainnet: true
   },
   {
     id: 11155111,
@@ -42,8 +42,6 @@ export const NETWORK_CONFIGS: NetworkConfig[] = [
     category: 'evm',
     isTestnet: true
   },
-
-  // Polygon Networks
   {
     id: 137,
     name: 'Polygon',
@@ -52,7 +50,8 @@ export const NETWORK_CONFIGS: NetworkConfig[] = [
     rpcUrl: process.env.NEXT_PUBLIC_POLYGON_RPC || 'https://polygon-rpc.com',
     explorerUrl: 'https://polygonscan.com',
     nativeCurrency: { name: 'POL', symbol: 'POL', decimals: 18 },
-    category: 'evm'
+    category: 'evm',
+    isMainnet: true
   },
   {
     id: 80002,
@@ -65,45 +64,43 @@ export const NETWORK_CONFIGS: NetworkConfig[] = [
     category: 'evm',
     isTestnet: true
   },
-
-  // Arbitrum Networks
   {
     id: 42161,
     name: 'Arbitrum One',
-    symbol: 'ARB',
-    icon: '🔴',
+    symbol: 'ETH',
+    icon: '🔵',
     rpcUrl: process.env.NEXT_PUBLIC_ARBITRUM_RPC || 'https://arb1.arbitrum.io/rpc',
     explorerUrl: 'https://arbiscan.io',
     nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
-    category: 'evm'
+    category: 'evm',
+    isMainnet: true
   },
   {
     id: 421614,
     name: 'Arbitrum Sepolia',
-    symbol: 'ARB',
-    icon: '🔴',
+    symbol: 'ETH',
+    icon: '🔵',
     rpcUrl: process.env.NEXT_PUBLIC_ARBITRUM_SEPOLIA_RPC || 'https://sepolia-rollup.arbitrum.io/rpc',
     explorerUrl: 'https://sepolia.arbiscan.io',
     nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
     category: 'evm',
     isTestnet: true
   },
-
-  // Base Networks
   {
     id: 8453,
     name: 'Base',
-    symbol: 'BASE',
+    symbol: 'ETH',
     icon: '🔵',
     rpcUrl: process.env.NEXT_PUBLIC_BASE_RPC || 'https://mainnet.base.org',
     explorerUrl: 'https://basescan.org',
     nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
-    category: 'evm'
+    category: 'evm',
+    isMainnet: true
   },
   {
     id: 84532,
     name: 'Base Sepolia',
-    symbol: 'BASE',
+    symbol: 'ETH',
     icon: '🔵',
     rpcUrl: process.env.NEXT_PUBLIC_BASE_SEPOLIA_RPC || 'https://sepolia.base.org',
     explorerUrl: 'https://sepolia.basescan.org',
@@ -111,31 +108,28 @@ export const NETWORK_CONFIGS: NetworkConfig[] = [
     category: 'evm',
     isTestnet: true
   },
-
-  // Optimism Networks
   {
     id: 10,
     name: 'Optimism',
-    symbol: 'OP',
-    icon: '🟠',
+    symbol: 'ETH',
+    icon: '🔴',
     rpcUrl: process.env.NEXT_PUBLIC_OPTIMISM_RPC || 'https://mainnet.optimism.io',
     explorerUrl: 'https://optimistic.etherscan.io',
     nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
-    category: 'evm'
+    category: 'evm',
+    isMainnet: true
   },
   {
     id: 11155420,
     name: 'Optimism Sepolia',
-    symbol: 'OP',
-    icon: '🟠',
+    symbol: 'ETH',
+    icon: '🔴',
     rpcUrl: process.env.NEXT_PUBLIC_OPTIMISM_SEPOLIA_RPC || 'https://sepolia.optimism.io',
     explorerUrl: 'https://sepolia-optimism.etherscan.io',
     nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
     category: 'evm',
     isTestnet: true
   },
-
-  // BSC Networks
   {
     id: 56,
     name: 'BNB Smart Chain',
@@ -144,7 +138,8 @@ export const NETWORK_CONFIGS: NetworkConfig[] = [
     rpcUrl: process.env.NEXT_PUBLIC_BSC_RPC || 'https://bsc-dataseed1.binance.org',
     explorerUrl: 'https://bscscan.com',
     nativeCurrency: { name: 'BNB', symbol: 'BNB', decimals: 18 },
-    category: 'evm'
+    category: 'evm',
+    isMainnet: true
   },
   {
     id: 97,
@@ -157,17 +152,16 @@ export const NETWORK_CONFIGS: NetworkConfig[] = [
     category: 'evm',
     isTestnet: true
   },
-
-  // Avalanche Networks
   {
     id: 43114,
-    name: 'Avalanche C-Chain',
+    name: 'Avalanche',
     symbol: 'AVAX',
     icon: '🔴',
     rpcUrl: process.env.NEXT_PUBLIC_AVALANCHE_RPC || 'https://api.avax.network/ext/bc/C/rpc',
     explorerUrl: 'https://snowtrace.io',
-    nativeCurrency: { name: 'Avalanche', symbol: 'AVAX', decimals: 18 },
-    category: 'evm'
+    nativeCurrency: { name: 'AVAX', symbol: 'AVAX', decimals: 18 },
+    category: 'evm',
+    isMainnet: true
   },
   {
     id: 43113,
@@ -176,21 +170,20 @@ export const NETWORK_CONFIGS: NetworkConfig[] = [
     icon: '🔴',
     rpcUrl: process.env.NEXT_PUBLIC_AVALANCHE_FUJI_RPC || 'https://api.avax-test.network/ext/bc/C/rpc',
     explorerUrl: 'https://testnet.snowtrace.io',
-    nativeCurrency: { name: 'Avalanche', symbol: 'AVAX', decimals: 18 },
+    nativeCurrency: { name: 'AVAX', symbol: 'AVAX', decimals: 18 },
     category: 'evm',
     isTestnet: true
   },
-
-  // Fantom Networks
   {
     id: 250,
-    name: 'Fantom Opera',
+    name: 'Fantom',
     symbol: 'FTM',
     icon: '🔵',
     rpcUrl: process.env.NEXT_PUBLIC_FANTOM_RPC || 'https://rpc.ftm.tools',
     explorerUrl: 'https://ftmscan.com',
-    nativeCurrency: { name: 'Fantom', symbol: 'FTM', decimals: 18 },
-    category: 'evm'
+    nativeCurrency: { name: 'FTM', symbol: 'FTM', decimals: 18 },
+    category: 'evm',
+    isMainnet: true
   },
   {
     id: 4002,
@@ -199,7 +192,7 @@ export const NETWORK_CONFIGS: NetworkConfig[] = [
     icon: '🔵',
     rpcUrl: process.env.NEXT_PUBLIC_FANTOM_TESTNET_RPC || 'https://rpc.testnet.fantom.network',
     explorerUrl: 'https://testnet.ftmscan.com',
-    nativeCurrency: { name: 'Fantom', symbol: 'FTM', decimals: 18 },
+    nativeCurrency: { name: 'FTM', symbol: 'FTM', decimals: 18 },
     category: 'evm',
     isTestnet: true
   },
@@ -213,7 +206,8 @@ export const NETWORK_CONFIGS: NetworkConfig[] = [
     rpcUrl: process.env.NEXT_PUBLIC_SOLANA_MAINNET_RPC || 'https://api.mainnet-beta.solana.com',
     explorerUrl: 'https://explorer.solana.com',
     nativeCurrency: { name: 'Solana', symbol: 'SOL', decimals: 9 },
-    category: 'solana'
+    category: 'solana',
+    isMainnet: true
   },
   {
     id: 'solana-devnet',
@@ -236,7 +230,8 @@ export const NETWORK_CONFIGS: NetworkConfig[] = [
     rpcUrl: process.env.NEXT_PUBLIC_BITCOIN_MAINNET_RPC || 'https://blockstream.info/api',
     explorerUrl: 'https://blockstream.info',
     nativeCurrency: { name: 'Bitcoin', symbol: 'BTC', decimals: 8 },
-    category: 'bitcoin'
+    category: 'bitcoin',
+    isMainnet: true
   },
   {
     id: 'bitcoin-testnet',
@@ -259,7 +254,8 @@ export const NETWORK_CONFIGS: NetworkConfig[] = [
     rpcUrl: process.env.NEXT_PUBLIC_NEAR_MAINNET_RPC || 'https://rpc.mainnet.near.org',
     explorerUrl: 'https://nearblocks.io',
     nativeCurrency: { name: 'NEAR', symbol: 'NEAR', decimals: 24 },
-    category: 'near'
+    category: 'near',
+    isMainnet: true
   },
   {
     id: 'near-testnet',
@@ -278,48 +274,40 @@ export const NETWORK_CONFIGS: NetworkConfig[] = [
     id: 'algorand-mainnet',
     name: 'Algorand',
     symbol: 'ALGO',
-    icon: '🟡',
+    icon: '🔵',
     rpcUrl: process.env.NEXT_PUBLIC_ALGORAND_MAINNET_RPC || 'https://mainnet-api.algonode.cloud',
     explorerUrl: 'https://algoexplorer.io',
     nativeCurrency: { name: 'Algorand', symbol: 'ALGO', decimals: 6 },
-    category: 'algorand'
+    category: 'algorand',
+    isMainnet: true
   },
   {
     id: 'algorand-testnet',
     name: 'Algorand Testnet',
     symbol: 'ALGO',
-    icon: '🟡',
+    icon: '🔵',
     rpcUrl: process.env.NEXT_PUBLIC_ALGORAND_TESTNET_RPC || 'https://testnet-api.algonode.cloud',
     explorerUrl: 'https://testnet.algoexplorer.io',
     nativeCurrency: { name: 'Algorand', symbol: 'ALGO', decimals: 6 },
     category: 'algorand',
     isTestnet: true
   }
-]
+];
 
-// Helper functions
-export const getNetworkById = (id: number | string): NetworkConfig | undefined => {
-  return NETWORK_CONFIGS.find(network => network.id === id)
+export function getNetworkById(id: string | number): NetworkConfig | undefined {
+  return NETWORK_CONFIGS.find(network => network.id === id);
 }
 
-export const getNetworksByCategory = (category: string): NetworkConfig[] => {
-  return NETWORK_CONFIGS.filter(network => network.category === category)
+export function getNetworksByCategory(category: NetworkConfig['category']): NetworkConfig[] {
+  return NETWORK_CONFIGS.filter(network => network.category === category);
 }
 
-export const getMainnetNetworks = (): NetworkConfig[] => {
-  return NETWORK_CONFIGS.filter(network => !network.isTestnet)
+export function getMainnetNetworks(): NetworkConfig[] {
+  return NETWORK_CONFIGS.filter(network => network.isMainnet);
 }
 
-export const getTestnetNetworks = (): NetworkConfig[] => {
-  return NETWORK_CONFIGS.filter(network => network.isTestnet)
-}
-
-export const getEVMNetworks = (): NetworkConfig[] => {
-  return getNetworksByCategory('evm')
-}
-
-export const getNonEVMNetworks = (): NetworkConfig[] => {
-  return NETWORK_CONFIGS.filter(network => network.category !== 'evm')
+export function getTestnetNetworks(): NetworkConfig[] {
+  return NETWORK_CONFIGS.filter(network => network.isTestnet);
 }
 
 // Network status checker

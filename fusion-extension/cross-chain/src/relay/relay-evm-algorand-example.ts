@@ -66,8 +66,8 @@ async function runEvmToAlgorandExample() {
 
     // Step 2: Get account addresses
     printInfo('Step 2: Setting up account addresses...');
-    const aliceAddress = getAccountAddress('alice');
-    const carolAddress = getAccountAddress('carol');
+    const aliceAddress = getAccountAddress('stacy');
+          const carolAddress = getAccountAddress('silvio');
     const resolverAddress = getAccountAddress('resolver');
     
     printSuccess(`Alice (EVM): ${carolAddress}`);
