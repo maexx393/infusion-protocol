@@ -72,14 +72,14 @@
 ### 📁 **New Files Created**
 
 #### Real NEAR Integration
-- `infusion/cross-chain/src/utils/near-real.ts` - **REAL NEAR contract interactions**
-- `infusion/cross-chain/production-evm2near-real.ts` - **Production script with real NEAR integration**
+- `fusion-extension/cross-chain/src/utils/near-real.ts` - **REAL NEAR contract interactions**
+- `fusion-extension/cross-chain/production-evm2near-real.ts` - **Production script with real NEAR integration**
 - `near-contracts/manual-deploy.js` - Manual deployment helper
 - `near-contracts/request-tokens.js` - NEAR token request helper
 
 #### Updated Files
-- `infusion/cross-chain/src/variables.ts` - Added NEAR configuration
-- `infusion/cross-chain/src/utils/near.ts` - Enhanced with real contract support
+- `fusion-extension/cross-chain/src/variables.ts` - Added NEAR configuration
+- `fusion-extension/cross-chain/src/utils/near.ts` - Enhanced with real contract support
 - `near-contracts/deployment-info.json` - Updated deployment status
 
 ### 🚀 **How to Use Real NEAR Integration**
@@ -94,7 +94,7 @@ export DEV_PORTAL_API_TOKEN="your_api_token"
 
 #### Run Real NEAR Integration
 ```bash
-cd infusion/cross-chain
+cd fusion-extension/cross-chain
 source .env
 
 # Test real NEAR contract connectivity

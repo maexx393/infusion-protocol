@@ -81,7 +81,7 @@ npx ts-node test-ln-config.ts
 
 You should see:
 ```
-✅ Found config at btc-evm path
+✅ Found config at btc path
 📋 Configuration loaded successfully!
    Number of nodes: 2
    Node 1: alice (port: 8081)
@@ -122,7 +122,7 @@ Now you can test the cross-chain examples:
 
 The following files are automatically configured:
 
-- `fusion-extension/btc-evm/LN/ln.json` - Main Lightning Network configuration
+- `fusion-extension/btc/LN/ln.json` - Main Lightning Network configuration
 - `fusion-extension/cross-chain/src/ln.json` - Copy for cross-chain module
 - `fusion-extension/cross-chain/.env` - Environment variables
 

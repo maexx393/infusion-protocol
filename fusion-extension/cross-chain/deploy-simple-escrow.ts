@@ -109,10 +109,10 @@ async function main() {
   // or try to deploy using a simpler method
   
   console.log('⚠️  Note: Direct source code deployment is not supported in this environment.');
-  console.log('💡 Alternative: Let\'s use the existing escrow contract from the evm-btc directory.');
+  console.log('💡 Alternative: Let\'s use the existing escrow contract from the evm directory.');
   
   // Try to copy the existing escrow contract
-  const evmEscrowPath = '../evm-btc/eth-escrow/contracts/escrow.sol';
+  const evmEscrowPath = '../evm/eth-escrow/contracts/escrow.sol';
   if (fs.existsSync(evmEscrowPath)) {
     console.log('✅ Found existing escrow contract, copying...');
     const escrowSource = fs.readFileSync(evmEscrowPath, 'utf8');

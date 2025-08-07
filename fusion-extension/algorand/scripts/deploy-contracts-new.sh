@@ -34,7 +34,7 @@ print_error() {
 
 # Check if we're in the right directory
 if [ ! -f "algokit.toml" ]; then
-    print_error "algokit.toml not found. Please run this script from the evm-algorand directory."
+    print_error "algokit.toml not found. Please run this script from the algorand directory."
     exit 1
 fi
 

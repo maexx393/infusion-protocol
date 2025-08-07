@@ -1,7 +1,7 @@
 {
-  "name": "evm-algorand",
+  "name": "Algorand",
   "version": "1.0.0",
-  "description": "evm-algorand integration for cross-chain swaps",
+  "description": "Algorand integration for cross-chain swaps",
   "main": "src/index.ts",
   "scripts": {
     "build": "tsc",

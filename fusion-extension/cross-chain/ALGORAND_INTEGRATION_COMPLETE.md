@@ -5,7 +5,7 @@
 ### 🚀 **What We Accomplished**
 
 1. **✅ Complete Algorand Infrastructure**
-   - Created dedicated `evm-algorand` module following the same pattern as NEAR integration
+   - Created dedicated `algorand` module following the same pattern as NEAR integration
    - Implemented PyTeal smart contracts for escrow, solver, and pool functionality
    - Set up AlgoKit configuration for fast development and deployment
    - Created comprehensive TypeScript utilities for Algorand integration
@@ -49,14 +49,14 @@
 ### 📁 **Complete File Structure**
 
 #### Algorand Integration Files
-- `/evm-algorand/` - Complete evm-algorand module
-- `/evm-algorand/contracts/escrow.py` - **PyTeal escrow contract**
-- `/evm-algorand/contracts/solver.py` - **PyTeal solver contract**
-- `/evm-algorand/contracts/pool.py` - **PyTeal pool contract**
-- `/evm-algorand/config/network-config.ts` - Algorand network configuration
-- `/evm-algorand/utils/escrow.ts` - Algorand escrow utilities
-- `/evm-algorand/scripts/deploy-contracts.sh` - Contract deployment script
-- `/evm-algorand/algokit.toml` - AlgoKit configuration
+- `/algorand/` - Complete algorand module
+- `/algorand/contracts/escrow.py` - **PyTeal escrow contract**
+- `/algorand/contracts/solver.py` - **PyTeal solver contract**
+- `/algorand/contracts/pool.py` - **PyTeal pool contract**
+- `/algorand/config/network-config.ts` - Algorand network configuration
+- `/algorand/utils/escrow.ts` - Algorand escrow utilities
+- `/algorand/scripts/deploy-contracts.sh` - Contract deployment script
+- `/algorand/algokit.toml` - AlgoKit configuration
 
 #### Cross-Chain Integration Files
 - `/cross-chain/src/utils/algorand.ts` - **Algorand integration utilities**
@@ -83,7 +83,7 @@ export DEV_PORTAL_API_TOKEN="your_api_token"
 
 #### Deploy Algorand Contracts
 ```bash
-cd /evm-algorand
+cd /algorand
 ./scripts/deploy-contracts.sh
 ```
 
@@ -165,7 +165,7 @@ The system is now **FULLY COMPLETE** and ready for:
 | Feature | NEAR Integration | Algorand Integration | Status |
 |---------|------------------|---------------------|---------|
 | **Smart Contracts** | Rust/NEAR | PyTeal/Algorand | ✅ Both Complete |
-| **Bi-Directional** | EVM↔NEAR | evm-algorand | ✅ Both Complete |
+| **Bi-Directional** | EVM↔NEAR | algorand | ✅ Both Complete |
 | **Production Scripts** | 2 scripts | 2 scripts | ✅ Both Complete |
 | **Real Transactions** | ✅ Working | ✅ Working | ✅ Both Complete |
 | **HTLC Atomic Swaps** | ✅ Implemented | ✅ Implemented | ✅ Both Complete |

@@ -6,7 +6,7 @@ This project has been completely updated to work with the latest AlgoKit version
 
 ## 📋 **Overview**
 
-The Algorand Fusion Contracts provide the evm-algorand infrastructure for cross-chain swaps between EVM chains (Polygon) and Algorand. This implementation includes:
+The Algorand Fusion Contracts provide the Algorand infrastructure for cross-chain swaps between EVM chains (Polygon) and Algorand. This implementation includes:
 
 - **Fusion Escrow Contract**: Handles HTLC-based atomic swaps
 - **Fusion Solver Contract**: Manages solver registration and swap execution
@@ -69,7 +69,7 @@ algokit project deploy
 ## 📁 **Project Structure**
 
 ```
-evm-algorand/
+Algorand/
 ├── contracts/                 # Smart contracts (algopy format)
 │   ├── __init__.py
 │   ├── __main__.py           # Build and deploy entry point
@@ -227,8 +227,8 @@ python -m contracts deploy
 ## 🔗 **Related Projects**
 
 - **Cross-Chain Module**: `../cross-chain/` - Main cross-chain integration
-- **EVM Side**: `../evm-btc/` - Polygon/Ethereum contracts
-- **NEAR Side**: `../evm-near/` - NEAR Protocol integration
+- **EVM Side**: `../evm/` - Polygon/Ethereum contracts
+- **NEAR Side**: `../near/` - NEAR Protocol integration
 
 ## 📄 **License**
 

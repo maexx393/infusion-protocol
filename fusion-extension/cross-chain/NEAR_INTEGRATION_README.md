@@ -15,7 +15,7 @@ The NEAR integration enables atomic cross-chain swaps between:
 ### Directory Structure
 ```
 infusion/
-├── evm-near/                    # NEAR-specific utilities
+├── near/                    # NEAR-specific utilities
 │   ├── config/
 │   │   └── network-config.ts     # NEAR network configuration
 │   ├── utils/
@@ -76,9 +76,9 @@ infusion/
 ## 🏗️ Contract Deployment
 
 ### Deploy NEAR Contracts
-1. **Navigate to evm-near directory**:
+1. **Navigate to near directory**:
    ```bash
-   cd infusion/evm-near
+   cd infusion/near
    ```
 
 2. **Deploy contracts**:
@@ -119,13 +119,13 @@ After deployment, you'll get:
 
 ### EVM to NEAR Swap
 ```bash
-cd infusion/cross-chain
+cd fusion-extension/cross-chain
 ./run-production-evm2near.sh
 ```
 
 ### NEAR to EVM Swap
 ```bash
-cd infusion/cross-chain
+cd fusion-extension/cross-chain
 ./run-production-near2evm.sh
 ```
 

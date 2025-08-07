@@ -13,7 +13,7 @@
 | **Configuration Setup** | ✅ **COMPLETE** | All config files generated and working |
 | **Cross-Chain Integration** | ✅ **COMPLETE** | Full integration with cross-chain module |
 | **Relayer System** | ✅ **COMPLETE** | Algorand resolvers implemented |
-| **Production Scripts** | ✅ **COMPLETE** | evm-algorand swap scripts ready |
+| **Production Scripts** | ✅ **COMPLETE** | algorand swap scripts ready |
 | **AlgoKit Setup** | ✅ **COMPLETE** | Project bootstrapped and configured |
 | **Balance Verification** | ✅ **COMPLETE** | Real balance checking working |
 | **TypeScript Integration** | ✅ **COMPLETE** | All TypeScript errors fixed |
@@ -41,27 +41,27 @@
 ## 📁 **Files Successfully Created/Updated**
 
 ### **Core Files**
-1. ✅ `fusion-extension/evm-algorand/contracts/escrow.py` - Real HTLC escrow contract
-2. ✅ `fusion-extension/evm-algorand/contracts/solver.py` - Real solver management contract
-3. ✅ `fusion-extension/evm-algorand/contracts/pool.py` - Real liquidity pool contract
-4. ✅ `fusion-extension/evm-algorand/scripts/deploy-contracts-production.py` - Production deployment script
-5. ✅ `fusion-extension/evm-algorand/scripts/deploy-production.sh` - Automated deployment script
-6. ✅ `fusion-extension/evm-algorand/requirements.txt` - Production dependencies
-7. ✅ `fusion-extension/evm-algorand/deployment-production.json` - Deployment info
-8. ✅ `fusion-extension/evm-algorand/ALGORAND_PRODUCTION_DEPLOYMENT_COMPLETE.md` - Complete documentation
+1. ✅ `fusion-extension/algorand/contracts/escrow.py` - Real HTLC escrow contract
+2. ✅ `fusion-extension/algorand/contracts/solver.py` - Real solver management contract
+3. ✅ `fusion-extension/algorand/contracts/pool.py` - Real liquidity pool contract
+4. ✅ `fusion-extension/algorand/scripts/deploy-contracts-production.py` - Production deployment script
+5. ✅ `fusion-extension/algorand/scripts/deploy-production.sh` - Automated deployment script
+6. ✅ `fusion-extension/algorand/requirements.txt` - Production dependencies
+7. ✅ `fusion-extension/algorand/deployment-production.json` - Deployment info
+8. ✅ `fusion-extension/algorand/ALGORAND_PRODUCTION_DEPLOYMENT_COMPLETE.md` - Complete documentation
 
 ### **Cross-Chain Integration Files**
 9. ✅ `fusion-extension/cross-chain/src/utils/algorand.ts` - Production-ready Algorand utilities
 10. ✅ `fusion-extension/cross-chain/src/config/algorand-addresses.ts` - Cross-chain config
 11. ✅ `fusion-extension/cross-chain/src/relay/relay-algorand-evm-example.ts` - Algorand→EVM example
-12. ✅ `fusion-extension/cross-chain/src/relay/relay-evm-algorand-example.ts` - EVM→Algorand example
+12. ✅ `fusion-extension/cross-chain/src/relay/relay-algorand-example.ts` - EVM→Algorand example
 13. ✅ `fusion-extension/cross-chain/src/relay/resolver_evm2algorand.ts` - EVM→Algorand resolver
 14. ✅ `fusion-extension/cross-chain/src/relay/resolver_algorand2evm.ts` - Algorand→EVM resolver
 15. ✅ `fusion-extension/cross-chain/test-algorand-only.ts` - Integration test script
 
 ### **Documentation Files**
-16. ✅ `fusion-extension/evm-algorand/README.md` - Comprehensive README
-17. ✅ `fusion-extension/evm-algorand/PRODUCTION_ENHANCEMENT_SUMMARY.md` - Production summary
+16. ✅ `fusion-extension/algorand/README.md` - Comprehensive README
+17. ✅ `fusion-extension/algorand/PRODUCTION_ENHANCEMENT_SUMMARY.md` - Production summary
 
 ---
 
@@ -181,6 +181,6 @@ All technical components are ready and working:
 - ✅ All TypeScript errors fixed
 - ✅ Integration tests passing
 
-**🎯 Mission Accomplished: Bi-directional cross-chain swaps for EVM-NEAR and EVM-Algorand are now fully implemented and production-ready!**
+**🎯 Mission Accomplished: Bi-directional cross-chain swaps for Near and EVM-Algorand are now fully implemented and production-ready!**
 
 **🚀 Your cross-chain swap system now supports 6 different swap directions across 4 different blockchains!** 

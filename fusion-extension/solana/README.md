@@ -1,6 +1,6 @@
 # 🚀 Solana Cross-Chain Integration
 
-This directory contains the evm-solana integration for cross-chain swaps between Solana and EVM chains (Polygon Amoy).
+This directory contains the solana integration for cross-chain swaps between Solana and EVM chains (Polygon Amoy).
 
 ## 📋 Overview
 
@@ -119,7 +119,7 @@ npm run deploy
 ## 📁 File Structure
 
 ```
-evm-solana/
+solana/
 ├── config/
 │   ├── network-config.ts      # Network configuration
 │   └── solana-addresses.ts    # Solana account addresses

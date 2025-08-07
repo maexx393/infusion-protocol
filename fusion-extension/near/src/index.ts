@@ -1,4 +1,4 @@
-// evm-near utilities for cross-chain swaps
+// Near utilities for cross-chain swaps
 export * from '../config/network-config';
 export * from '../utils/escrow';
 

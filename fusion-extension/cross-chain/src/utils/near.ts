@@ -1,6 +1,6 @@
 import { ethers } from 'ethers';
 import * as crypto from 'crypto';
-// Import NEAR utilities (these will be available after building the evm-near package)
+// Import NEAR utilities (these will be available after building the Near package)
 // For now, we'll define the interfaces locally
 interface NEARConfig {
   networkId: string;

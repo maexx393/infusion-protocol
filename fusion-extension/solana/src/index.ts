@@ -8,4 +8,4 @@ export {
   SolanaEscrowManager
 };
 
-console.log('🚀 evm-solana integration loaded successfully!'); 
+console.log('🚀 solana integration loaded successfully!'); 

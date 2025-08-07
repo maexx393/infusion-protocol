@@ -80,7 +80,7 @@
 ### 📁 **Files Created/Modified**
 
 #### New Files
-- `fusion-extension/evm-near/` - Complete evm-near module
+- `fusion-extension/Near/` - Complete Near module
 - `fusion-extension/cross-chain/production-evm2near.ts` - EVM to NEAR script
 - `fusion-extension/cross-chain/production-near2evm.ts` - NEAR to EVM script
 - `fusion-extension/cross-chain/run-production-evm2near.sh` - Shell wrapper
@@ -122,7 +122,7 @@ source .env
 1. **Complete NEAR Contract Deployment**
    - Get more NEAR tokens for subaccount creation
    - Deploy solver and pool contracts
-   - Enable full evm-near functionality
+   - Enable full Near functionality
 
 2. **Real NEAR Integration**
    - Replace simulated NEAR deposits with real contract calls

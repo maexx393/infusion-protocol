@@ -48,7 +48,7 @@ Your Algorand-EVM cross-chain integration has been **successfully deployed to pr
 ## 📁 **Updated File Structure**
 
 ```
-fusion-extension/evm-algorand/
+fusion-extension/algorand/
 ├── contracts/                 # ✅ DEPLOYED - Real PyTeal contracts
 │   ├── escrow.py             # ✅ DEPLOYED - Real HTLC escrow contract
 │   ├── solver.py             # ✅ DEPLOYED - Real solver management contract
@@ -120,7 +120,7 @@ ts-node src/relay/relay-algorand2evm-example.ts
 
 ### **2. Verify Contract Functionality**
 ```bash
-cd fusion-extension/evm-algorand
+cd fusion-extension/algorand
 
 # Check contract state
 python3.11 scripts/check-contract-state.py

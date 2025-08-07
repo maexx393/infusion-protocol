@@ -45,7 +45,7 @@ Your Algorand project has been completely updated and fixed to work with the lat
 ## 📁 **Updated File Structure**
 
 ```
-fusion-extension/evm-algorand/
+fusion-extension/algorand/
 ├── contracts/                 # ✅ UPDATED - Smart contracts (simplified Python)
 │   ├── __init__.py           # ✅ NEW - Module initialization
 │   ├── __main__.py           # ✅ NEW - Build and deploy entry point
@@ -66,7 +66,7 @@ fusion-extension/evm-algorand/
 
 ### **Quick Test**
 ```bash
-cd fusion-extension/evm-algorand
+cd fusion-extension/algorand
 
 # Test building
 python3 -m contracts build
@@ -111,7 +111,7 @@ python3 -m contracts deploy
 ### **For Development/Testing**
 ```bash
 # Your current setup works perfectly for development
-cd fusion-extension/evm-algorand
+cd fusion-extension/algorand
 python3 -m contracts build
 python3 -m contracts deploy
 ```

@@ -30,7 +30,7 @@ Your Algorand-EVM integration has been completely enhanced for production deploy
 ## 📁 **Enhanced File Structure**
 
 ```
-fusion-extension/evm-algorand/
+fusion-extension/algorand/
 ├── contracts/                 # ✅ ENHANCED - Real PyTeal contracts
 │   ├── escrow.py             # ✅ NEW - Real HTLC escrow contract
 │   ├── solver.py             # ✅ NEW - Real solver management contract
@@ -56,7 +56,7 @@ export DEPLOYER_MNEMONIC='your deployer mnemonic phrase here'
 
 ### **Step 2: Install Dependencies**
 ```bash
-cd fusion-extension/evm-algorand
+cd fusion-extension/algorand
 pip3 install -r requirements.txt
 ```
 
@@ -176,7 +176,7 @@ const order = await escrowManager.createOrder({
 
 ### **1. Deploy Contracts**
 ```bash
-cd fusion-extension/evm-algorand
+cd fusion-extension/algorand
 export DEPLOYER_MNEMONIC='your mnemonic'
 ./scripts/deploy-production.sh
 ```

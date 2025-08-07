@@ -80,8 +80,8 @@ build_contracts() {
     print_status "Building fusion-solver contract..."
     cd fusion-solver && cargo near build non-reproducible-wasm && cd ..
     
-    # Return to evm-near directory
-    cd ../fusion-extension/evm-near
+    # Return to near directory
+    cd ../fusion-extension/near
     
     print_success "Contracts built successfully"
 }

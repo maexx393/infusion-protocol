@@ -33,8 +33,8 @@ Since AlgoKit doesn't have a direct `account create` command, we'll use the Algo
 
 #### **Option A: Using Algorand SDK (Recommended)**
 ```bash
-# Navigate to the evm-algorand directory
-cd /evm-algorand
+# Navigate to the algorand directory
+cd /algorand
 
 # Install dependencies if not already installed
 npm install
@@ -129,9 +129,9 @@ console.log('Mnemonic:', algosdk.secretKeyToMnemonic(resolver.sk));
 
 ### **Step 4: Deploy Algorand Contracts**
 
-1. **Navigate to evm-algorand**:
+1. **Navigate to algorand**:
    ```bash
-   cd /evm-algorand
+   cd /algorand
    ```
 
 2. **Initialize AlgoKit project** (if not already done):

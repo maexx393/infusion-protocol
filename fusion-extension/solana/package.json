@@ -1,7 +1,7 @@
 {
   "name": "evm-solana",
   "version": "1.0.0",
-  "description": "evm-solana integration for cross-chain swaps",
+  "description": "Solana integration for cross-chain swaps",
   "main": "src/index.ts",
   "scripts": {
     "build": "tsc",

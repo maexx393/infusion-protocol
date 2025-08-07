@@ -2,19 +2,19 @@
 
 ## 🎯 What We've Accomplished
 
-We have successfully implemented bi-directional cross-chain swaps for EVM-NEAR and NEAR-EVM, following the same architecture as the existing EVM-BTC swaps. This creates a comprehensive cross-chain swap ecosystem supporting multiple blockchain networks.
+We have successfully implemented bi-directional cross-chain swaps for Near and NEAR-EVM, following the same architecture as the existing EVM-BTC swaps. This creates a comprehensive cross-chain swap ecosystem supporting multiple blockchain networks.
 
 ## 📁 New NEAR Integration Files Created
 
-### evm-near Infrastructure (`infusion/evm-near/`)
-1. **`package.json`** - evm-near package configuration with dependencies
+### near Infrastructure (`infusion/near/`)
+1. **`package.json`** - near package configuration with dependencies
 2. **`tsconfig.json`** - TypeScript configuration for NEAR utilities
 3. **`config/network-config.ts`** - NEAR network configuration and utilities
 4. **`utils/escrow.ts`** - NEAR escrow contract utilities
 5. **`src/index.ts`** - Main NEAR exports and types
 6. **`scripts/deploy-contracts.sh`** - NEAR contract deployment script
 
-### Cross-Chain Integration (`infusion/cross-chain/`)
+### Cross-Chain Integration (`fusion-extension/cross-chain/`)
 1. **`src/utils/near.ts`** - NEAR integration utilities for cross-chain swaps
 2. **`production-evm2near.ts`** - Production EVM to NEAR swap script
 3. **`production-near2evm.ts`** - Production NEAR to EVM swap script
@@ -74,7 +74,7 @@ We have successfully implemented bi-directional cross-chain swaps for EVM-NEAR a
 ## 📊 Current Status
 
 ### ✅ Completed
-- [x] evm-near infrastructure setup
+- [x] near infrastructure setup
 - [x] NEAR network configuration and utilities
 - [x] NEAR escrow contract utilities
 - [x] Cross-chain integration utilities
@@ -109,13 +109,13 @@ We have successfully implemented bi-directional cross-chain swaps for EVM-NEAR a
 
 2. **Deploy NEAR Contracts** (if needed):
    ```bash
-   cd infusion/evm-near
+   cd infusion/near
    ./scripts/deploy-contracts.sh
    ```
 
 3. **Run Cross-Chain Swaps**:
    ```bash
-   cd infusion/cross-chain
+   cd fusion-extension/cross-chain
    
    # EVM to NEAR
    ./run-production-evm2near.sh
@@ -217,4 +217,4 @@ export DEBUG=true
 
 ---
 
-**🎯 Mission Accomplished**: We have successfully implemented bi-directional cross-chain swaps for EVM-NEAR and NEAR-EVM, creating a comprehensive cross-chain swap ecosystem that supports multiple blockchain networks with production-ready implementations, real blockchain transactions, and comprehensive security features. 
+**🎯 Mission Accomplished**: We have successfully implemented bi-directional cross-chain swaps for Near and NEAR-EVM, creating a comprehensive cross-chain swap ecosystem that supports multiple blockchain networks with production-ready implementations, real blockchain transactions, and comprehensive security features. 

@@ -43,7 +43,7 @@
 ## 📁 **Enhanced File Structure**
 
 ```
-infusion/evm-algorand/
+infusion/algorand/
 ├── contracts/                 # ✅ ENHANCED - Real PyTeal contracts
 │   ├── escrow.py             # ✅ NEW - Real HTLC escrow contract
 │   ├── solver.py             # ✅ NEW - Real solver management contract
@@ -54,7 +54,7 @@ infusion/evm-algorand/
 ├── requirements.txt          # ✅ UPDATED - Production dependencies
 └── README.md                # ✅ UPDATED - Production documentation
 
-infusion/cross-chain/src/utils/
+fusion-extension/cross-chain/src/utils/
 ├── algorand-real.ts         # ✅ NEW - Real Algorand SDK integration
 └── algorand.ts              # ✅ MAINTAINED - Backward compatibility
 ```
@@ -70,7 +70,7 @@ export DEPLOYER_MNEMONIC='your deployer mnemonic phrase here'
 
 ### **Step 2: Install Dependencies**
 ```bash
-cd infusion/evm-algorand
+cd infusion/algorand
 pip3 install -r requirements.txt
 ```
 
@@ -85,8 +85,8 @@ python3 scripts/deploy-contracts-production.py
 
 ### **Step 4: Update Configuration**
 After deployment, update the contract addresses in:
-- `infusion/cross-chain/src/utils/algorand-real.ts`
-- `infusion/evm-algorand/config/real-addresses.ts`
+- `fusion-extension/cross-chain/src/utils/algorand-real.ts`
+- `infusion/algorand/config/real-addresses.ts`
 
 ---
 
@@ -216,7 +216,7 @@ async getOrderInfo(orderId: string): Promise<any> {
 
 ### **1. Deploy Contracts**
 ```bash
-cd infusion/evm-algorand
+cd infusion/algorand
 export DEPLOYER_MNEMONIC='your mnemonic'
 ./scripts/deploy-production.sh
 ```
@@ -233,7 +233,7 @@ updateContractAddresses({
 
 ### **3. Test Integration**
 ```bash
-cd infusion/cross-chain
+cd fusion-extension/cross-chain
 npm run test:algorand-production
 ```
 

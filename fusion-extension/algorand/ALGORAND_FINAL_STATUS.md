@@ -12,7 +12,7 @@
 | **Configuration Setup** | ✅ **COMPLETE** | All config files generated and working |
 | **Cross-Chain Integration** | ✅ **COMPLETE** | Full integration with cross-chain module |
 | **Relayer System** | ✅ **COMPLETE** | Algorand resolvers implemented |
-| **Production Scripts** | ✅ **COMPLETE** | evm-algorand swap scripts ready |
+| **Production Scripts** | ✅ **COMPLETE** | Algorand swap scripts ready |
 | **AlgoKit Setup** | ✅ **COMPLETE** | Project bootstrapped and configured |
 | **Balance Verification** | ✅ **COMPLETE** | Real balance checking working |
 | **Contract Deployment** | ⏳ **READY** | Manual deployment required |
@@ -34,19 +34,19 @@
 ## 📁 **Files Successfully Created/Updated**
 
 ### **Core Files**
-1. ✅ `fusion-extension/evm-algorand/scripts/create-accounts.js` - Account generation
-2. ✅ `fusion-extension/evm-algorand/scripts/check-balances.js` - Balance verification
-3. ✅ `fusion-extension/evm-algorand/scripts/deploy-contracts.sh` - Deployment script
-4. ✅ `fusion-extension/evm-algorand/scripts/deploy-contracts-fixed.sh` - Fixed deployment
-5. ✅ `fusion-extension/evm-algorand/scripts/simple-deploy.sh` - Simple deployment
-6. ✅ `fusion-extension/evm-algorand/contracts/escrow.py` - Working escrow contract
-7. ✅ `fusion-extension/evm-algorand/contracts/solver.py` - Working solver contract
-8. ✅ `fusion-extension/evm-algorand/contracts/pool.py` - Working pool contract
-9. ✅ `fusion-extension/evm-algorand/generated-accounts.json` - Account details
-10. ✅ `fusion-extension/evm-algorand/config/real-addresses.ts` - Local config
-11. ✅ `fusion-extension/evm-algorand/deployment-info.json` - Deployment info
-12. ✅ `fusion-extension/evm-algorand/deployment-final.json` - Final deployment info
-13. ✅ `fusion-extension/evm-algorand/algokit.toml` - AlgoKit configuration
+1. ✅ `fusion-extension/Algorand/scripts/create-accounts.js` - Account generation
+2. ✅ `fusion-extension/Algorand/scripts/check-balances.js` - Balance verification
+3. ✅ `fusion-extension/Algorand/scripts/deploy-contracts.sh` - Deployment script
+4. ✅ `fusion-extension/Algorand/scripts/deploy-contracts-fixed.sh` - Fixed deployment
+5. ✅ `fusion-extension/Algorand/scripts/simple-deploy.sh` - Simple deployment
+6. ✅ `fusion-extension/Algorand/contracts/escrow.py` - Working escrow contract
+7. ✅ `fusion-extension/Algorand/contracts/solver.py` - Working solver contract
+8. ✅ `fusion-extension/Algorand/contracts/pool.py` - Working pool contract
+9. ✅ `fusion-extension/Algorand/generated-accounts.json` - Account details
+10. ✅ `fusion-extension/Algorand/config/real-addresses.ts` - Local config
+11. ✅ `fusion-extension/Algorand/deployment-info.json` - Deployment info
+12. ✅ `fusion-extension/Algorand/deployment-final.json` - Final deployment info
+13. ✅ `fusion-extension/Algorand/algokit.toml` - AlgoKit configuration
 
 ### **Cross-Chain Integration Files**
 14. ✅ `fusion-extension/cross-chain/src/config/algorand-addresses.ts` - Cross-chain config
@@ -61,7 +61,7 @@
 23. ✅ `fusion-extension/cross-chain/src/relay/relay.ts` - Main relay (updated)
 
 ### **Documentation Files**
-24. ✅ `fusion-extension/evm-algorand/README.md` - Comprehensive README
+24. ✅ `fusion-extension/Algorand/README.md` - Comprehensive README
 25. ✅ `fusion-extension/cross-chain/ALGORAND_ALGOKIT_SETUP_GUIDE.md` - Setup guide
 26. ✅ `fusion-extension/cross-chain/ALGORAND_INTEGRATION_COMPLETE.md` - Integration summary
 27. ✅ `fusion-extension/cross-chain/RELAY_SYSTEM_COMPLETE.md` - Relayer summary
@@ -89,7 +89,7 @@
 
 ### **Step 1: Try These Commands**
 ```bash
-cd fusion-extension/evm-algorand
+cd fusion-extension/Algorand
 
 # Method 1: Try with project name
 algokit project deploy --project-name escrow --network testnet
@@ -108,7 +108,7 @@ algokit project deploy --path contracts/escrow.py --network testnet
 
 ### **Step 2: Update Contract Addresses**
 After successful deployment, update the contract addresses in:
-- `fusion-extension/evm-algorand/deployment-info.json`
+- `fusion-extension/Algorand/deployment-info.json`
 - `fusion-extension/cross-chain/src/config/algorand-addresses.ts`
 
 ### **Step 3: Test Cross-Chain Integration**
@@ -181,4 +181,4 @@ All technical components are ready and working:
 
 The only remaining step is manual contract deployment, which is a user action due to AlgoKit CLI version differences. The integration is production-ready and waiting for deployment.
 
-**🎯 Mission Accomplished: Bi-directional cross-chain swaps for EVM-NEAR and EVM-Algorand are now fully implemented!** 
+**🎯 Mission Accomplished: Bi-directional cross-chain swaps for Near and Algorand are now fully implemented!** 
