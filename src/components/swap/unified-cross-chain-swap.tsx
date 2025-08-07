@@ -1,21 +1,6 @@
 'use client'
 
 import React, { useState, useRef, useMemo, useCallback, useEffect } from 'react'
-import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { 
-  OrbitControls, 
-  Text, 
-  Sphere, 
-  Box, 
-  Torus, 
-  Float, 
-  Environment, 
-  ContactShadows,
-  useTexture,
-  Html,
-  PerspectiveCamera,
-  Effects
-} from '@react-three/drei'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -30,8 +15,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Slider } from '@/components/ui/slider'
 import { Switch } from '@/components/ui/switch'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import * as THREE from 'three'
-import { useSpring, animated } from '@react-spring/three'
 
 // AI Agent Integration
 import OpenAI from 'openai'
@@ -142,166 +125,42 @@ const PRODUCTION_CHAINS = {
   }
 }
 
-// 3D Swap Visualization Component
-function SwapVisualization({ config, isActive, progress }: { 
-  config: SwapConfig, 
-  isActive: boolean, 
-  progress: number 
-}) {
-  const meshRef = useRef<THREE.Group>()
-  const [hovered, setHovered] = useState(false)
-  
-  const { scale, rotation } = useSpring({
-    scale: isActive ? [1.2, 1.2, 1.2] : [1, 1, 1],
-    rotation: isActive ? [0, Math.PI * 2, 0] : [0, 0, 0],
-    config: { mass: 1, tension: 280, friction: 60 }
-  })
-
-  useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.y += 0.01
-      meshRef.current.position.y = Math.sin(state.clock.elapsedTime) * 0.1
-    }
-  })
-
-  const fromChainColor = config.fromChain === 'solana' ? '#9945FF' : 
-                        config.fromChain === 'near' ? '#00C08B' :
-                        config.fromChain === 'bitcoin' ? '#F7931A' :
-                        config.fromChain === 'algorand' ? '#000000' : '#8247E5'
-
-  const toChainColor = config.toChain === 'solana' ? '#9945FF' : 
-                      config.toChain === 'near' ? '#00C08B' :
-                      config.toChain === 'bitcoin' ? '#F7931A' :
-                      config.toChain === 'algorand' ? '#000000' : '#8247E5'
-
-  return (
-    <animated.group
-      ref={meshRef}
-      scale={scale}
-      rotation={rotation as any}
-      onPointerOver={() => setHovered(true)}
-      onPointerOut={() => setHovered(false)}
-    >
-      {/* From Chain Sphere */}
-      <Float speed={1.5} rotationIntensity={1} floatIntensity={2}>
-        <Sphere position={[-2, 0, 0]} args={[0.5, 32, 32]}>
-          <meshStandardMaterial 
-            color={fromChainColor} 
-            transparent 
-            opacity={hovered ? 0.8 : 0.6}
-            emissive={fromChainColor}
-            emissiveIntensity={hovered ? 0.3 : 0.1}
-          />
-        </Sphere>
-      </Float>
-
-      {/* To Chain Sphere */}
-      <Float speed={1.5} rotationIntensity={1} floatIntensity={2}>
-        <Sphere position={[2, 0, 0]} args={[0.5, 32, 32]}>
-          <meshStandardMaterial 
-            color={toChainColor} 
-            transparent 
-            opacity={hovered ? 0.8 : 0.6}
-            emissive={toChainColor}
-            emissiveIntensity={hovered ? 0.3 : 0.1}
-          />
-        </Sphere>
-      </Float>
-
-      {/* Connection Torus */}
-      <Torus position={[0, 0, 0]} args={[1.5, 0.1, 16, 100]} rotation={[0, 0, Math.PI / 2]}>
-        <meshStandardMaterial 
-          color="#ffffff" 
-          transparent 
-          opacity={0.3}
-          emissive="#ffffff"
-          emissiveIntensity={0.2}
-        />
-      </Torus>
-
-      {/* Progress Indicator */}
-      {isActive && (
-        <Box position={[0, 0, 0]} args={[0.2, 0.2, 0.2]}>
-          <meshStandardMaterial 
-            color="#00ff00" 
-            emissive="#00ff00"
-            emissiveIntensity={0.5}
-          />
-        </Box>
-      )}
-
-      {/* Floating Text */}
-      <Html position={[0, 1.5, 0]} center>
-        <div className="text-white text-sm font-medium bg-black/50 px-2 py-1 rounded backdrop-blur">
-          {config.fromToken} → {config.toToken}
-        </div>
-      </Html>
-    </animated.group>
-  )
-}
-
-// AI Agent Visualization
-function AIAgentSphere({ agent, position }: { 
-  agent: AIAgent, 
-  position: [number, number, number] 
-}) {
-  const meshRef = useRef<THREE.Mesh>()
-  const [hovered, setHovered] = useState(false)
-
-  useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.y += agent.status === 'thinking' ? 0.05 : 0.01
-      meshRef.current.scale.setScalar(
-        1 + Math.sin(state.clock.elapsedTime * 2) * 0.1
-      )
-    }
-  })
-
+// AI Agent Visualization Component
+function AIAgentCard({ agent }: { agent: AIAgent }) {
   const getAgentColor = () => {
     switch (agent.role) {
-      case 'analyzer': return '#3B82F6'
-      case 'executor': return '#EF4444'
-      case 'monitor': return '#10B981'
-      case 'optimizer': return '#F59E0B'
-      default: return '#6B7280'
+      case 'analyzer': return 'bg-blue-500'
+      case 'executor': return 'bg-red-500'
+      case 'monitor': return 'bg-green-500'
+      case 'optimizer': return 'bg-yellow-500'
+      default: return 'bg-gray-500'
     }
   }
 
-  const getStatusIntensity = () => {
+  const getStatusIcon = () => {
     switch (agent.status) {
-      case 'thinking': return 0.8
-      case 'executing': return 1.0
-      case 'completed': return 0.3
-      default: return 0.1
+      case 'thinking': return '🤔'
+      case 'executing': return '⚡'
+      case 'completed': return '✅'
+      default: return '💤'
     }
   }
 
   return (
-    <Float speed={2} rotationIntensity={2} floatIntensity={3}>
-      <Sphere 
-        ref={meshRef}
-        position={position} 
-        args={[0.3, 16, 16]}
-        onPointerOver={() => setHovered(true)}
-        onPointerOut={() => setHovered(false)}
-      >
-        <meshStandardMaterial 
-          color={getAgentColor()} 
-          transparent 
-          opacity={0.7}
-          emissive={getAgentColor()}
-          emissiveIntensity={getStatusIntensity()}
-        />
-      </Sphere>
-      <Html position={[position[0], position[1] + 0.8, position[2]]} center>
-        <div className="text-white text-xs bg-black/70 px-2 py-1 rounded backdrop-blur">
-          {agent.name}
-          {agent.status === 'thinking' && <span className="ml-1 animate-pulse">🤔</span>}
-          {agent.status === 'executing' && <span className="ml-1 animate-spin">⚡</span>}
-          {agent.status === 'completed' && <span className="ml-1">✅</span>}
+    <motion.div
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      className={`p-4 rounded-lg border ${getAgentColor()} bg-opacity-20 border-opacity-30`}
+    >
+      <div className="flex items-center gap-3">
+        <div className={`w-3 h-3 rounded-full ${getAgentColor()} animate-pulse`} />
+        <div className="flex-1">
+          <div className="font-medium text-white">{agent.name}</div>
+          <div className="text-sm text-gray-300">{agent.message || 'Ready'}</div>
         </div>
-      </Html>
-    </Float>
+        <div className="text-2xl">{getStatusIcon()}</div>
+      </div>
+    </motion.div>
   )
 }
 
@@ -561,39 +420,6 @@ export function UnifiedCrossChainSwap() {
 
   return (
     <div className="w-full min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      {/* 3D Canvas Background */}
-      <div className="fixed inset-0 -z-10">
-        <Canvas>
-          <PerspectiveCamera makeDefault position={[0, 0, 10]} />
-          <ambientLight intensity={0.5} />
-          <pointLight position={[10, 10, 10]} />
-          <Environment preset="night" />
-          
-          {/* Main Swap Visualization */}
-          <SwapVisualization 
-            config={swapConfig} 
-            isActive={isSwapping} 
-            progress={swapProgress} 
-          />
-          
-          {/* AI Agents */}
-          {aiAgents.map((agent, index) => (
-            <AIAgentSphere 
-              key={agent.id}
-              agent={agent}
-              position={[
-                (index - 1.5) * 3, 
-                Math.cos(index * Math.PI / 2) * 2 + 3, 
-                -2
-              ] as [number, number, number]}
-            />
-          ))}
-          
-          <ContactShadows position={[0, -3, 0]} opacity={0.4} scale={20} blur={2} far={4} />
-          <OrbitControls enablePan={false} enableZoom={false} maxPolarAngle={Math.PI / 2} />
-        </Canvas>
-      </div>
-
       {/* UI Overlay */}
       <div className="relative z-10 container mx-auto p-6">
         <motion.div
@@ -615,6 +441,13 @@ export function UnifiedCrossChainSwap() {
             </CardHeader>
             
             <CardContent className="space-y-6">
+              {/* AI Agents Status */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {aiAgents.map((agent) => (
+                  <AIAgentCard key={agent.id} agent={agent} />
+                ))}
+              </div>
+
               {/* Swap Configuration */}
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                 <TabsList className="grid w-full grid-cols-2 bg-black/30">
@@ -711,9 +544,9 @@ export function UnifiedCrossChainSwap() {
                         <Label className="text-white">Slippage Tolerance</Label>
                         <Slider
                           value={[swapConfig.slippage]}
-                          onValueChange={([value]) => setSwapConfig(prev => ({
+                          onValueChange={(value: number[]) => setSwapConfig(prev => ({
                             ...prev,
-                            slippage: value
+                            slippage: value[0]
                           }))}
                           max={5}
                           min={0.1}
@@ -727,9 +560,9 @@ export function UnifiedCrossChainSwap() {
                         <Label className="text-white">Deadline (minutes)</Label>
                         <Slider
                           value={[swapConfig.deadline]}
-                          onValueChange={([value]) => setSwapConfig(prev => ({
+                          onValueChange={(value: number[]) => setSwapConfig(prev => ({
                             ...prev,
-                            deadline: value
+                            deadline: value[0]
                           }))}
                           max={60}
                           min={5}
@@ -744,7 +577,7 @@ export function UnifiedCrossChainSwap() {
                         <div className="flex items-center space-x-2 mt-2">
                           <Switch
                             checked={swapConfig.partialFill}
-                            onCheckedChange={(checked) => setSwapConfig(prev => ({
+                            onCheckedChange={(checked: boolean) => setSwapConfig(prev => ({
                               ...prev,
                               partialFill: checked
                             }))}

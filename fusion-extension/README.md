@@ -20,18 +20,16 @@ This project extends 1inch Fusion+ to Bitcoin by leveraging the Lightning Networ
 
 ---
 
-## 🎯 **Hackathon Problem Description**
+## 🎯 **Problem Description**
 
 **Extend Fusion+ to Bitcoin**
 
 **Qualification Requirements:**
 - ✅ Preserve hashlock and timelock functionality for the non-EVM implementation
 - ✅ Swap functionality should be bidirectional (swaps should be possible to and from Ethereum)
-- ✅ Onchain (mainnet/L2 or testnet) execution of token transfers should be presented during the final demo
+- ✅ Onchain (mainnet/L2 or testnet) execution of token transfers 
 
-**Stretch Goals:**
-- 🎨 UI
-- 🔄 Enable partial fills
+should be presented during the final demo
 
 ---
 

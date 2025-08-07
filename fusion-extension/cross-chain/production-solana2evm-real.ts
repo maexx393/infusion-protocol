@@ -63,7 +63,6 @@ const printInfo = (text: string) => console.log(`${BLUE}ℹ️ ${text}${NC}`);
 const printWarning = (text: string) => console.log(`${YELLOW}${WARNING} ${text}${NC}`);
 const printError = (text: string) => console.log(`${RED}${ERROR} ${text}${NC}`);
 const printUser = (text: string) => console.log(`${BLUE}${USER} ${text}${NC}`);
-const printRobot = (text: string) => console.log(`${YELLOW}${ROBOT} ${text}${NC}`);
 const printLightning = (text: string) => console.log(`${BLUE}${LIGHTNING} ${text}${NC}`);
 
 const printTransactionDetails = (txHash: string, amount: string, network: string) => {
