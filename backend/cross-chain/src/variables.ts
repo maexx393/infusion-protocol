@@ -9,6 +9,25 @@ export const ALICE_PRIVATE_KEY = process.env.ALICE_PRIVATE_KEY || '';
 export const CAROL_PRIVATE_KEY = process.env.CAROL_PRIVATE_KEY || '';
 export const DEV_PORTAL_API_TOKEN = process.env.DEV_PORTAL_API_TOKEN || '';
 
+// Algorand-specific private keys (to avoid conflicts with EVM)
+export const STACY_PRIVATE_KEY = process.env.STACY_PRIVATE_KEY || '';
+export const SILVIO_PRIVATE_KEY = process.env.SILVIO_PRIVATE_KEY || '';
+
+// Helper functions for Algorand private key validation
+export const hasValidStacyPrivateKey = (): boolean => {
+  return STACY_PRIVATE_KEY.length > 100 && STACY_PRIVATE_KEY.startsWith('0x') && 
+         STACY_PRIVATE_KEY !== '0x1234567890123456789012345678901234567890123456789012345678901234';
+};
+
+export const hasValidSilvioPrivateKey = (): boolean => {
+  return SILVIO_PRIVATE_KEY.length > 100 && SILVIO_PRIVATE_KEY.startsWith('0x') && 
+         SILVIO_PRIVATE_KEY !== '0x1234567890123456789012345678901234567890123456789012345678901234';
+};
+
+export const hasValidAlgorandPrivateKeys = (): boolean => {
+  return hasValidStacyPrivateKey() && hasValidSilvioPrivateKey();
+};
+
 // NEAR Configuration
 export const NEAR_NETWORK = process.env.NEAR_NETWORK || 'testnet';
 export const NEAR_OWNER_ACCOUNT = process.env.NEAR_OWNER_ACCOUNT || 'defiunite.testnet';
@@ -16,6 +35,14 @@ export const NEAR_ESCROW_CONTRACT = process.env.NEAR_ESCROW_CONTRACT || 'escrow.
 export const NEAR_SOLVER_CONTRACT = process.env.NEAR_SOLVER_CONTRACT || 'solver.defiunite.testnet';
 export const NEAR_POOL_CONTRACT = process.env.NEAR_POOL_CONTRACT || 'pool.defiunite.testnet';
 export const NEAR_NODE_URL = process.env.NEAR_NODE_URL || 'https://rpc.testnet.near.org';
+
+// Algorand Configuration
+export const ALGORAND_NETWORK = process.env.ALGORAND_NETWORK || 'testnet';
+export const ALGORAND_ALGOD_URL = process.env.ALGORAND_ALGOD_URL || 'https://testnet-api.algonode.cloud';
+export const ALGORAND_INDEXER_URL = process.env.ALGORAND_INDEXER_URL || 'https://testnet-idx.algonode.cloud';
+export const ALGORAND_ESCROW_CONTRACT = process.env.ALGORAND_ESCROW_CONTRACT || '743881611';
+export const ALGORAND_SOLVER_CONTRACT = process.env.ALGORAND_SOLVER_CONTRACT || '743881612';
+export const ALGORAND_POOL_CONTRACT = process.env.ALGORAND_POOL_CONTRACT || '743881613';
 
 // Network configuration
 export const NETWORK = process.env.NETWORK || 'POLYGON_AMOY';
@@ -138,4 +165,28 @@ export const getNEARExplorerUrl = (accountId: string): string => {
 
 export const getNEARTransactionUrl = (txHash: string): string => {
   return `https://explorer.testnet.near.org/transactions/${txHash}`;
+};
+
+// Algorand Configuration helpers
+export const getAlgorandConfig = () => {
+  return {
+    network: ALGORAND_NETWORK,
+    algodUrl: ALGORAND_ALGOD_URL,
+    indexerUrl: ALGORAND_INDEXER_URL,
+    escrowContract: ALGORAND_ESCROW_CONTRACT,
+    solverContract: ALGORAND_SOLVER_CONTRACT,
+    poolContract: ALGORAND_POOL_CONTRACT,
+  };
+};
+
+export const getAlgorandExplorerUrl = (appId: string): string => {
+  return `https://lora.algokit.io/testnet/application/${appId}`;
+};
+
+export const getAlgorandTransactionUrl = (txHash: string): string => {
+  return `https://lora.algokit.io/testnet/tx/${txHash}`;
+};
+
+export const getAlgorandAddressUrl = (address: string): string => {
+  return `https://lora.algokit.io/testnet/address/${address}`;
 };

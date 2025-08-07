@@ -104,21 +104,22 @@ async function runEvmToAlgorandExample() {
     // For this example, we'll simulate the deposit
     printWarning('Note: This is a simulation. In production, you need private keys.');
     
-    const algorandDeposit = await realDepositAlgorand({
-      amountAlgo: algoAmount,
-      hashedSecret: hashedSecret,
-      expirationSeconds: expirationSeconds,
-      depositorAddress: resolverAddress,
-      depositorPrivateKey: new Uint8Array(32), // Placeholder
-      claimerAddress: aliceAddress,
-      escrowAppId: 743864631 // Real deployed escrow contract
-    });
+    // Simulate the deposit instead of making a real call
+    const simulatedTxId = `SIM_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const algorandDeposit = {
+      depositId: hashedSecret,
+      txHash: simulatedTxId,
+      explorerUrl: `https://testnet.algoexplorer.io/tx/${simulatedTxId}`,
+      escrowAddress: 'SIM_ESCROW_ADDRESS',
+      amountMicroAlgos: (algoAmount * 1000000).toString(),
+      expirationTime: Math.floor(Date.now() / 1000) + expirationSeconds,
+    };
 
-    printSuccess('Algorand deposit created successfully!');
+    printSuccess('Algorand deposit created successfully! (Simulated)');
     printTransactionDetails(
       algorandDeposit.txHash,
       `${algoAmount} ALGO`,
-      'Algorand Testnet'
+      'Algorand Testnet (Simulated)'
     );
     printProgress(4, 6, 'Algorand deposit complete');
 

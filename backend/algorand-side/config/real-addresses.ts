@@ -7,11 +7,11 @@ export const ALGORAND_REAL_ADDRESSES = {
     address: '6XUCBPC3ERAJN63K67JVRC2ZVJV6HTXSI24HJWANPM5WOGB3PDEJJJIWIU',
     mnemonic: 'purity wish habit loyal burden gorilla forum phone educate turn feed torch champion obey idea tower congress invite vacuum cloud birth kind crunch ability capital'
   },
-  alice: {
+  stacy: {
     address: 'UGIZF2BAMX24PRVQEU2DW4UDG6P5R7UKTFHSE5J75Q6XESHP4WQIBGH6QU',
     mnemonic: 'hamster leave nurse labor equal battle mosquito broken spend swift dance crouch marine current observe brown ostrich crater outdoor furnace confirm endless myself abstract wrist'
   },
-  carol: {
+  silvio: {
     address: '4VZTY6CVXP2GGTICCNU5E4AMQRKNVDHHDGAIKWPKACNM2RTSEM64OXIK4Y',
     mnemonic: 'must admit frown firm senior prepare word dose picture design must artefact diamond mansion talent jeans imitate beach inner medal whale funny thing abstract victory'
   },
@@ -23,11 +23,10 @@ export const ALGORAND_REAL_ADDRESSES = {
 
 // Contract addresses (will be populated after deployment)
 export const ALGORAND_CONTRACT_ADDRESSES = {
-  escrow: 'REPLACE_WITH_ESCROW_CONTRACT_ID',
-  solver: 'REPLACE_WITH_SOLVER_CONTRACT_ID', 
-  pool: 'REPLACE_WITH_POOL_CONTRACT_ID'
+  escrow: '743876974',
+  solver: '743876975', 
+  pool: '743876985'
 };
-
 // Network configuration
 export const ALGORAND_NETWORK_CONFIG = {
   testnet: {

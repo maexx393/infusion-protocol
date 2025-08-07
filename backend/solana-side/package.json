@@ -1,0 +1,37 @@
+{
+  "name": "solana-side",
+  "version": "1.0.0",
+  "description": "Solana-side integration for cross-chain swaps",
+  "main": "src/index.ts",
+  "scripts": {
+    "build": "tsc",
+    "start": "ts-node src/index.ts",
+    "test": "jest",
+    "deploy": "ts-node scripts/deploy-contracts.ts",
+    "check-balances": "ts-node scripts/check-balances.ts"
+  },
+  "dependencies": {
+    "@solana/web3.js": "^1.87.6",
+    "@solana/spl-token": "^0.3.9",
+    "@project-serum/anchor": "^0.26.0",
+    "bs58": "^5.0.0",
+    "crypto": "^1.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/bs58": "^4.0.4",
+    "typescript": "^5.3.0",
+    "ts-node": "^10.9.0",
+    "jest": "^29.7.0",
+    "@types/jest": "^29.5.0"
+  },
+  "keywords": [
+    "solana",
+    "cross-chain",
+    "swaps",
+    "htlc",
+    "fusion"
+  ],
+  "author": "UniteDeFi",
+  "license": "MIT"
+} 

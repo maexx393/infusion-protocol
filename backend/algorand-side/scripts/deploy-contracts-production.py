@@ -95,8 +95,8 @@ class AlgorandDeployer:
                 on_complete=transaction.OnComplete.NoOpOC,
                 approval_program=compiled_contract['approval_program'],
                 clear_program=compiled_contract['clear_program'],
-                global_schema=transaction.StateSchema(num_uints=0, num_byte_slices=1),  # Allow 1 byte slice for "owner"
-                local_schema=transaction.StateSchema(num_uints=0, num_byte_slices=1)   # Allow 1 byte slice for "hashlock"
+                global_schema=transaction.StateSchema(num_uints=5, num_byte_slices=1),  # Allow 5 uints for total_orders, total_volume, total_solvers, total_swaps, total_fees and 1 byte slice for "owner"
+                local_schema=transaction.StateSchema(num_uints=8, num_byte_slices=8)   # Allow 8 uints and 8 byte slices for order data (max 16 total)
             )
             
             # Sign transaction

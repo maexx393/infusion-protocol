@@ -300,8 +300,8 @@ export async function claimETH(params: ClaimETHParams): Promise<ClaimETHResult> 
     const depositIdHex = params.depositId.startsWith('0x') ? params.depositId : `0x${params.depositId}`;
     const depositIdBytes32 = ethers.getBytes(depositIdHex);
     
-    // Convert secret from base64 to bytes (Lightning Network format)
-    const secretBytes = Buffer.from(params.secret, 'base64');
+    // Convert secret from hex to bytes (Solana format)
+    const secretBytes = Buffer.from(params.secret, 'hex');
     
     // Get escrow contract address
     const escrowAddress = getEscrowContractAddress();
@@ -337,8 +337,14 @@ export async function claimETH(params: ClaimETHParams): Promise<ClaimETHResult> 
     
     console.log(`✅ Deposit validation passed. Proceeding with claim...`);
     
-    // Create claim transaction
-    const tx = await escrowContract.claim(depositIdBytes32, secretBytes);
+    // Get current nonce to avoid conflicts
+    const nonce = await claimerSigner.getNonce();
+    console.log(`   Current nonce: ${nonce}`);
+    
+    // Create claim transaction with explicit nonce
+    const tx = await escrowContract.claim(depositIdBytes32, secretBytes, {
+      nonce: nonce
+    });
     
     console.log(`⏳ Waiting for transaction confirmation...`);
     console.log(`🔗 Transaction Hash: ${tx.hash}`);

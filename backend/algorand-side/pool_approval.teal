@@ -1,0 +1,258 @@
+#pragma version 6
+txn ApplicationID
+int 0
+==
+bnz main_l22
+txn OnCompletion
+int OptIn
+==
+bnz main_l21
+txn OnCompletion
+int CloseOut
+==
+bnz main_l20
+txn OnCompletion
+int UpdateApplication
+==
+bnz main_l19
+txn OnCompletion
+int DeleteApplication
+==
+bnz main_l18
+txn OnCompletion
+int NoOp
+==
+bnz main_l7
+err
+main_l7:
+txna ApplicationArgs 0
+byte "add_liquidity"
+==
+bnz main_l17
+txna ApplicationArgs 0
+byte "remove_liquidity"
+==
+bnz main_l16
+txna ApplicationArgs 0
+byte "collect_fees"
+==
+bnz main_l15
+txna ApplicationArgs 0
+byte "get_pool_info"
+==
+bnz main_l14
+txna ApplicationArgs 0
+byte "get_provider_info"
+==
+bnz main_l13
+err
+main_l13:
+txn NumAppArgs
+int 1
+==
+assert
+int 1
+return
+main_l14:
+int 1
+return
+main_l15:
+txn NumAppArgs
+int 1
+==
+assert
+gtxn 0 TypeEnum
+int pay
+==
+assert
+gtxn 0 Sender
+txn Sender
+==
+assert
+gtxn 0 Receiver
+global CurrentApplicationAddress
+==
+assert
+gtxn 0 Amount
+txna ApplicationArgs 0
+btoi
+==
+assert
+txna ApplicationArgs 0
+btoi
+int 0
+>
+assert
+byte "total_fees"
+byte "total_fees"
+app_global_get
+txna ApplicationArgs 0
+btoi
++
+app_global_put
+int 1
+return
+main_l16:
+txn NumAppArgs
+int 1
+==
+assert
+txna ApplicationArgs 0
+btoi
+int 0
+>
+assert
+txn Sender
+byte "shares"
+app_local_get
+txna ApplicationArgs 0
+btoi
+>=
+assert
+byte "total_liquidity"
+byte "total_liquidity"
+app_global_get
+txna ApplicationArgs 0
+btoi
+-
+app_global_put
+byte "total_shares"
+byte "total_shares"
+app_global_get
+txna ApplicationArgs 0
+btoi
+-
+app_global_put
+txn Sender
+byte "shares"
+txn Sender
+byte "shares"
+app_local_get
+txna ApplicationArgs 0
+btoi
+-
+app_local_put
+txn Sender
+byte "liquidity"
+txn Sender
+byte "liquidity"
+app_local_get
+txna ApplicationArgs 0
+btoi
+-
+app_local_put
+itxn_begin
+int pay
+itxn_field TypeEnum
+txna ApplicationArgs 0
+btoi
+itxn_field Amount
+txn Sender
+itxn_field Receiver
+int 0
+itxn_field Fee
+itxn_submit
+int 1
+return
+main_l17:
+txn NumAppArgs
+int 1
+==
+assert
+gtxn 0 TypeEnum
+int pay
+==
+assert
+gtxn 0 Sender
+txn Sender
+==
+assert
+gtxn 0 Receiver
+global CurrentApplicationAddress
+==
+assert
+gtxn 0 Amount
+txna ApplicationArgs 0
+btoi
+==
+assert
+txna ApplicationArgs 0
+btoi
+int 0
+>
+assert
+byte "total_liquidity"
+byte "total_liquidity"
+app_global_get
+txna ApplicationArgs 0
+btoi
++
+app_global_put
+byte "total_shares"
+byte "total_shares"
+app_global_get
+txna ApplicationArgs 0
+btoi
++
+app_global_put
+txn Sender
+byte "shares"
+txn Sender
+byte "shares"
+app_local_get
+txna ApplicationArgs 0
+btoi
++
+app_local_put
+txn Sender
+byte "liquidity"
+txn Sender
+byte "liquidity"
+app_local_get
+txna ApplicationArgs 0
+btoi
++
+app_local_put
+txn Sender
+byte "active"
+int 1
+app_local_put
+int 1
+return
+main_l18:
+byte "owner"
+app_global_get
+txn Sender
+==
+assert
+int 1
+return
+main_l19:
+byte "owner"
+app_global_get
+txn Sender
+==
+assert
+int 1
+return
+main_l20:
+int 1
+return
+main_l21:
+int 1
+return
+main_l22:
+byte "owner"
+txn Sender
+app_global_put
+byte "total_liquidity"
+int 0
+app_global_put
+byte "total_shares"
+int 0
+app_global_put
+byte "total_fees"
+int 0
+app_global_put
+int 1
+return

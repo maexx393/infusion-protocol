@@ -84,3 +84,32 @@ export class OrderEVM2AlgorandResponse {
     public algorandInvoice: string
   ) {}
 }
+
+// Solana Orders
+export class OrderSolana2EVM {
+  constructor(
+    public amountSol: number,
+    public amountEth: number,
+    public ethAddress: string
+  ) {}
+}
+
+export class OrderSolana2EVMResponse {
+  constructor(
+    public ethAddress: string
+  ) {}
+}
+
+export class OrderEVM2Solana {
+  constructor(
+    public amountSol: number,
+    public solanaInvoice: string,
+    public amountEth: number
+  ) {}
+}
+
+export class OrderEVM2SolanaResponse {
+  constructor(
+    public solanaInvoice: string
+  ) {}
+}

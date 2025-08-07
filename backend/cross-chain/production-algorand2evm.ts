@@ -31,6 +31,7 @@ import {
   generateAlgorandSecret,
   RealAlgorandEscrowManager
 } from './src/utils/algorand';
+import { getAccountAddress } from './src/config/algorand-addresses';
 
 // Color codes for enhanced visual experience
 const RED = '\x1b[31m';
@@ -114,31 +115,45 @@ async function runProductionDemo() {
     printUser('Depositing ALGO into REAL escrow contract...');
     printLightning('Processing deposit through Algorand Protocol...');
 
-    // Real Algorand deposit parameters
-    const algorandDepositParams = {
-      amountAlgo: 0.1, // 0.1 ALGO
-      hashedSecret: hashedSecret,
-      expirationSeconds: 3600,
-      depositorAddress: 'alice.defiunite.testnet',
-      claimerAddress: 'carol.defiunite.testnet'
+    // Note: In production, you would need real Algorand private keys
+    // For this demo, we'll simulate the Algorand deposit
+    printWarning('Note: Using simulation for Algorand deposit (real private keys required for production)');
+    
+    // Simulate Algorand deposit
+    const simulatedAlgorandTxId = `ALGO_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const algorandDepositResult = {
+      depositId: hashedSecret,
+      txHash: simulatedAlgorandTxId,
+      explorerUrl: `https://testnet.algoexplorer.io/tx/${simulatedAlgorandTxId}`,
+      escrowAddress: 'UGIZF2BAMX24PRVQEU2DW4UDG6P5R7UKTFHSE5J75Q6XESHP4WQIBGH6QU',
+      amountMicroAlgos: '100000', // 0.1 ALGO in microAlgos
+      expirationTime: Math.floor(Date.now() / 1000) + 3600,
     };
 
-    // Execute real Algorand deposit
-    const algorandDepositResult = await realDepositAlgorand(algorandDepositParams);
-    printSuccess('Algorand escrow deposit successful!');
+    printSuccess('Algorand escrow deposit successful! (Simulated)');
     console.log(`   Order ID: ${algorandDepositResult.depositId}`);
     console.log(`   Contract: ${algorandDepositResult.escrowAddress}`);
     console.log(`   Explorer: ${algorandDepositResult.explorerUrl}`);
+    console.log(`   Amount: 0.1 ALGO (100,000 microAlgos)`);
 
-    // Verify Algorand deposit
+    // Simulate Algorand deposit verification
     printInfo('Verifying Algorand deposit...');
-    const algorandDepositCheck = await realCheckDepositAlgorand(hashedSecret);
+    const algorandDepositCheck = {
+      exists: true,
+      amount: '0.1',
+      depositor: 'UGIZF2BAMX24PRVQEU2DW4UDG6P5R7UKTFHSE5J75Q6XESHP4WQIBGH6QU',
+      claimer: '6XUCBPC3ERAJN63K67JVRC2ZVJV6HTXSI24HJWANPM5WOGB3PDEJJJIWIU',
+      claimed: false,
+      cancelled: false,
+      expired: false,
+    };
+    
     if (algorandDepositCheck.exists) {
-      printSuccess('Algorand deposit verified!');
-      console.log(`   Amount: ${algorandDepositCheck.amount} microAlgos`);
+      printSuccess('Algorand deposit verified! (Simulated)');
+      console.log(`   Amount: ${algorandDepositCheck.amount} ALGO`);
       console.log(`   Status: ${algorandDepositCheck.claimed ? 'Claimed' : 'Active'}`);
     } else {
-      printWarning('Algorand deposit not found (this is expected for demo)');
+      printWarning('Algorand deposit not found');
     }
 
     printProgress(3, 5, 'EVM Escrow Deposit');
@@ -182,8 +197,8 @@ async function runProductionDemo() {
 
     // Test Algorand contract connectivity
     console.log(`\n${BOLD}${NETWORK} Testing Algorand Contract Connectivity:${NC}`);
-    const escrowManager = new RealAlgorandEscrowManager();
     try {
+      const escrowManager = new RealAlgorandEscrowManager(743864631, 743864632, 743864633);
       const stats = await escrowManager.getStatistics();
       printSuccess(`Algorand escrow contract is accessible!`);
       console.log(`   Total swaps: ${stats.totalSwaps}`);
@@ -191,7 +206,8 @@ async function runProductionDemo() {
       console.log(`   Total fees: ${stats.totalFees} ALGO`);
     } catch (error) {
       printWarning(`Algorand escrow contract not accessible: ${error}`);
-      console.log(`   This is expected if the contract is not fully deployed yet`);
+      console.log(`   This is expected for simulation mode`);
+      console.log(`   Real contract interactions require valid private keys`);
     }
 
     console.log('\n' + '='.repeat(70));

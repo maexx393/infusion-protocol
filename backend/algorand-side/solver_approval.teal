@@ -1,0 +1,309 @@
+#pragma version 6
+txn ApplicationID
+int 0
+==
+bnz main_l22
+txn OnCompletion
+int OptIn
+==
+bnz main_l21
+txn OnCompletion
+int CloseOut
+==
+bnz main_l20
+txn OnCompletion
+int UpdateApplication
+==
+bnz main_l19
+txn OnCompletion
+int DeleteApplication
+==
+bnz main_l18
+txn OnCompletion
+int NoOp
+==
+bnz main_l7
+err
+main_l7:
+txna ApplicationArgs 0
+byte "register_solver"
+==
+bnz main_l17
+txna ApplicationArgs 0
+byte "execute_swap"
+==
+bnz main_l16
+txna ApplicationArgs 0
+byte "cancel_swap"
+==
+bnz main_l15
+txna ApplicationArgs 0
+byte "get_solver_info"
+==
+bnz main_l14
+txna ApplicationArgs 0
+byte "get_swap_info"
+==
+bnz main_l13
+err
+main_l13:
+txn NumAppArgs
+int 1
+==
+assert
+int 1
+return
+main_l14:
+txn NumAppArgs
+int 1
+==
+assert
+int 1
+return
+main_l15:
+txn NumAppArgs
+int 1
+==
+assert
+txn Sender
+byte "swap_"
+txna ApplicationArgs 0
+btoi
+itob
+concat
+byte "_status"
+concat
+app_local_get
+int 0
+==
+assert
+txn Sender
+byte "swap_"
+txna ApplicationArgs 0
+btoi
+itob
+concat
+byte "_status"
+concat
+int 3
+app_local_put
+int 1
+return
+main_l16:
+txn NumAppArgs
+int 4
+==
+assert
+txn Sender
+byte "active"
+app_local_get
+int 1
+==
+assert
+txna ApplicationArgs 2
+btoi
+int 0
+>
+assert
+txna ApplicationArgs 3
+btoi
+int 0
+>=
+assert
+txn Sender
+byte "swap_"
+txna ApplicationArgs 0
+btoi
+itob
+concat
+byte "_status"
+concat
+app_local_get
+int 0
+==
+assert
+txn Sender
+byte "swap_"
+txna ApplicationArgs 0
+btoi
+itob
+concat
+byte "_order_id"
+concat
+txna ApplicationArgs 1
+app_local_put
+txn Sender
+byte "swap_"
+txna ApplicationArgs 0
+btoi
+itob
+concat
+byte "_solver"
+concat
+txn Sender
+app_local_put
+txn Sender
+byte "swap_"
+txna ApplicationArgs 0
+btoi
+itob
+concat
+byte "_amount"
+concat
+txna ApplicationArgs 2
+btoi
+app_local_put
+txn Sender
+byte "swap_"
+txna ApplicationArgs 0
+btoi
+itob
+concat
+byte "_fee"
+concat
+txna ApplicationArgs 3
+btoi
+app_local_put
+txn Sender
+byte "swap_"
+txna ApplicationArgs 0
+btoi
+itob
+concat
+byte "_status"
+concat
+int 1
+app_local_put
+txn Sender
+byte "swap_"
+txna ApplicationArgs 0
+btoi
+itob
+concat
+byte "_created"
+concat
+global LatestTimestamp
+app_local_put
+txn Sender
+byte "swaps"
+txn Sender
+byte "swaps"
+app_local_get
+int 1
++
+app_local_put
+txn Sender
+byte "volume"
+txn Sender
+byte "volume"
+app_local_get
+txna ApplicationArgs 2
+btoi
++
+app_local_put
+txn Sender
+byte "fees"
+txn Sender
+byte "fees"
+app_local_get
+txna ApplicationArgs 3
+btoi
++
+app_local_put
+byte "total_swaps"
+byte "total_swaps"
+app_global_get
+int 1
++
+app_global_put
+byte "total_volume"
+byte "total_volume"
+app_global_get
+txna ApplicationArgs 2
+btoi
++
+app_global_put
+byte "total_fees"
+byte "total_fees"
+app_global_get
+txna ApplicationArgs 3
+btoi
++
+app_global_put
+int 1
+return
+main_l17:
+txn NumAppArgs
+int 1
+==
+assert
+txn Sender
+byte "active"
+app_local_get
+int 0
+==
+assert
+txn Sender
+byte "active"
+int 1
+app_local_put
+txn Sender
+byte "fees"
+int 0
+app_local_put
+txn Sender
+byte "swaps"
+int 0
+app_local_put
+txn Sender
+byte "volume"
+int 0
+app_local_put
+byte "total_solvers"
+byte "total_solvers"
+app_global_get
+int 1
++
+app_global_put
+int 1
+return
+main_l18:
+byte "owner"
+app_global_get
+txn Sender
+==
+assert
+int 1
+return
+main_l19:
+byte "owner"
+app_global_get
+txn Sender
+==
+assert
+int 1
+return
+main_l20:
+int 1
+return
+main_l21:
+int 1
+return
+main_l22:
+byte "owner"
+txn Sender
+app_global_put
+byte "total_solvers"
+int 0
+app_global_put
+byte "total_swaps"
+int 0
+app_global_put
+byte "total_volume"
+int 0
+app_global_put
+byte "total_fees"
+int 0
+app_global_put
+int 1
+return

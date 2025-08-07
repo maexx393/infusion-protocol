@@ -54,8 +54,8 @@ export class ResolverEVM2NEAR {
       amountNear: order.amountNear,
       hashedSecret: hashedSecret,
       expirationSeconds: 3600,
-      depositorAddress: 'resolver.defiunite.testnet',
-      claimerAddress: 'alice.defiunite.testnet'
+      depositorAccountId: 'resolver.defiunite.testnet',
+      claimerAccountId: 'alice.defiunite.testnet'
     };
 
     console.log('🤖 RESOLVER: Creating NEAR escrow deposit...');
@@ -128,7 +128,7 @@ export class ResolverEVM2NEAR {
     const claimParams = {
       depositId: 'near_deposit_' + Date.now(),
       secret: secret,
-      claimerAddress: 'resolver.defiunite.testnet'
+      claimerAccountId: 'resolver.defiunite.testnet'
     };
 
     const claimResult = await realClaimNEAR(claimParams);

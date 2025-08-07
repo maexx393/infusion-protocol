@@ -1,44 +1,41 @@
-import { 
-  OrderBTC2EVM, OrderEVM2BTC, OrderBTC2EVMResponse, OrderEVM2BTCResponse,
-  OrderNEAR2EVM, OrderEVM2NEAR, OrderNEAR2EVMResponse, OrderEVM2NEARResponse,
-  OrderAlgorand2EVM, OrderEVM2Algorand, OrderAlgorand2EVMResponse, OrderEVM2AlgorandResponse
-} from '../api/order';
+import { OrderBTC2EVM, OrderEVM2BTC, OrderBTC2EVMResponse, OrderEVM2BTCResponse } from '../api/order';
+import { OrderNEAR2EVM, OrderEVM2NEAR, OrderNEAR2EVMResponse, OrderEVM2NEARResponse } from '../api/order';
+import { OrderAlgorand2EVM, OrderEVM2Algorand, OrderAlgorand2EVMResponse, OrderEVM2AlgorandResponse } from '../api/order';
+import { OrderSolana2EVM, OrderEVM2Solana, OrderSolana2EVMResponse, OrderEVM2SolanaResponse } from '../api/order';
 import { ResolverBTC2EVM, OrderBTC2EVMResult } from './resolver_btc2evm';
 import { ResolverEVM2BTC } from './resolver_evm2btc';
-import { ResolverNEAR2EVM, ResolverResponse as NEARResolverResponse } from './resolver_near2evm';
+import { ResolverNEAR2EVM } from './resolver_near2evm';
 import { ResolverEVM2NEAR, OrderEVM2NEARResult } from './resolver_evm2near';
-import { ResolverAlgorand2EVM, ResolverResponse as AlgorandResolverResponse } from './resolver_algorand2evm';
+import { ResolverAlgorand2EVM } from './resolver_algorand2evm';
 import { ResolverEVM2Algorand, OrderEVM2AlgorandResult } from './resolver_evm2algorand';
+import { ResolverSolana2EVM } from './resolver_solana2evm';
+import { ResolverEVM2Solana, OrderEVM2SolanaResult } from './resolver_evm2solana';
 
-const resolverEVM2BTC = new ResolverEVM2BTC();
 const resolverBTC2EVM = new ResolverBTC2EVM();
+const resolverEVM2BTC = new ResolverEVM2BTC();
 const resolverNEAR2EVM = new ResolverNEAR2EVM();
 const resolverEVM2NEAR = new ResolverEVM2NEAR();
 const resolverAlgorand2EVM = new ResolverAlgorand2EVM();
 const resolverEVM2Algorand = new ResolverEVM2Algorand();
+const resolverSolana2EVM = new ResolverSolana2EVM();
+const resolverEVM2Solana = new ResolverEVM2Solana();
 
 export class Relay {
   private invoiceStartTime: number = 0;
-  
+
   processOrderEVM2BTC(order: OrderEVM2BTC): OrderEVM2BTCResponse {
-    console.log('🔄 Received EVM to BTC order from maker...');
+    console.log('🔄 Processing EVM to BTC order...');
     console.log('📋 Order Type: Single Fill Order (100% Fill)');
-    console.log('Maker Order Details:', {
+    console.log('Order Details:', {
       amountBtc: order.amountBtc,
       btcLightningNetInvoice: order.btcLightningNetInvoice,
       amountEth: order.amountEth
     });
 
-    
-    // here we simulate relay operations by 1inch of processing the order
-    // the order will be import { CrossChainOrder } from '@1inch/cross-chain-sdk'
-    // but now we use our stub order since bitcoin os not supported by 1inch yet
     const resolverResponse = resolverEVM2BTC.sendToResolver(order);
-    
-    // Return empty response as per the class definition
     return new OrderEVM2BTCResponse(resolverResponse.ethAddress);
   }
-  
+
   async processOrderBTC2EVM(order: OrderBTC2EVM): Promise<OrderBTC2EVMResponse> {
     console.log('🔄 Processing BTC to EVM order...');
     console.log('📋 Order Type: Single Fill Order (100% Fill)');
@@ -47,17 +44,15 @@ export class Relay {
       amountEth: order.amountEth,
       ethAddress: order.ethAddress
     });
-    
-    // Generate Lightning Network invoice
+
     const result: OrderBTC2EVMResult = await resolverBTC2EVM.sendToResolver(order);
     
-    // Start async invoice payment checking loop
-    // this.startInvoicePaymentCheck(result, order);
+    // Start monitoring for invoice payment
+    this.startInvoicePaymentCheck(result, order);
     
     return new OrderBTC2EVMResponse(result.lightningInvoice);
   }
 
-  // NEAR Orders
   processOrderNEAR2EVM(order: OrderNEAR2EVM): OrderNEAR2EVMResponse {
     console.log('🔄 Processing NEAR to EVM order...');
     console.log('📋 Order Type: Single Fill Order (100% Fill)');
@@ -84,7 +79,6 @@ export class Relay {
     return new OrderEVM2NEARResponse(result.nearInvoice);
   }
 
-  // Algorand Orders
   processOrderAlgorand2EVM(order: OrderAlgorand2EVM): OrderAlgorand2EVMResponse {
     console.log('🔄 Processing Algorand to EVM order...');
     console.log('📋 Order Type: Single Fill Order (100% Fill)');
@@ -109,6 +103,32 @@ export class Relay {
 
     const result: OrderEVM2AlgorandResult = await resolverEVM2Algorand.sendToResolver(order);
     return new OrderEVM2AlgorandResponse(result.algorandInvoice);
+  }
+
+  processOrderSolana2EVM(order: OrderSolana2EVM): OrderSolana2EVMResponse {
+    console.log('🔄 Processing Solana to EVM order...');
+    console.log('📋 Order Type: Single Fill Order (100% Fill)');
+    console.log('Order Details:', {
+      amountSol: order.amountSol,
+      amountEth: order.amountEth,
+      ethAddress: order.ethAddress
+    });
+
+    const resolverResponse = resolverSolana2EVM.sendToResolver(order);
+    return new OrderSolana2EVMResponse(resolverResponse.ethAddress);
+  }
+
+  async processOrderEVM2Solana(order: OrderEVM2Solana): Promise<OrderEVM2SolanaResponse> {
+    console.log('🔄 Processing EVM to Solana order...');
+    console.log('📋 Order Type: Single Fill Order (100% Fill)');
+    console.log('Order Details:', {
+      amountSol: order.amountSol,
+      solanaInvoice: order.solanaInvoice,
+      amountEth: order.amountEth
+    });
+
+    const result: OrderEVM2SolanaResult = await resolverEVM2Solana.sendToResolver(order);
+    return new OrderEVM2SolanaResponse(result.solanaInvoice);
   }
   
   private async startInvoicePaymentCheck(result: OrderBTC2EVMResult, order: OrderBTC2EVM): Promise<void> {
@@ -185,13 +205,5 @@ export class Relay {
     
     console.log('🤖 RESOLVER: ✅ Deposit pushed successfully to maker');
     console.log('🤖 RESOLVER: Transaction Details:', claimTx);
-    
-    // Print updated balance
-    resolver.printBalance();
-    
-    console.log('----------------------');
-    console.log('🤖 RESOLVER PUSH AUTOMATION COMPLETED');
-    console.log('🎉 Cross-chain swap completed successfully!');
-    console.log('----------------------');
   }
 }

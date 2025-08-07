@@ -62,8 +62,11 @@ python3 -c "
 import os
 import sys
 sys.path.append('scripts')
-from deploy-contracts-production import AlgorandDeployer
-deployer = AlgorandDeployer(os.environ['DEPLOYER_MNEMONIC'])
+import importlib.util
+spec = importlib.util.spec_from_file_location('deploy_contracts_production', 'scripts/deploy-contracts-production.py')
+deploy_contracts_production = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(deploy_contracts_production)
+deployer = deploy_contracts_production.AlgorandDeployer(os.environ['DEPLOYER_MNEMONIC'])
 balance = deployer.check_balance()
 balance_algo = balance / 1_000_000
 print(f'Deployer balance: {balance_algo} ALGO')

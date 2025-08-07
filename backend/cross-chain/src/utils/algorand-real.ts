@@ -8,10 +8,10 @@ const ALGORAND_RPC_URL = 'https://testnet-api.algonode.cloud';
 const ALGORAND_INDEXER_URL = 'https://testnet-idx.algonode.cloud';
 const ALGORAND_NETWORK = 'testnet';
 
-// Contract addresses (will be updated after deployment)
-let ALGORAND_ESCROW_CONTRACT = '0'; // Will be updated with real App ID
-let ALGORAND_SOLVER_CONTRACT = '0'; // Will be updated with real App ID
-let ALGORAND_POOL_CONTRACT = '0'; // Will be updated with real App ID
+// Contract addresses (updated with real deployed App IDs)
+let ALGORAND_ESCROW_CONTRACT = '743876974'; // Real deployed escrow contract
+let ALGORAND_SOLVER_CONTRACT = '743876975'; // Real deployed solver contract
+let ALGORAND_POOL_CONTRACT = '743876985'; // Real deployed pool contract
 
 // Algorand client
 const algodClient = new algosdk.Algodv2('', ALGORAND_RPC_URL, '');
@@ -51,14 +51,15 @@ export class RealAlgorandEscrowManager {
       const suggestedParams = await algodClient.getTransactionParams().do();
       
       const args = [
-        new Uint8Array(Buffer.from(params.depositor)),
-        new Uint8Array(Buffer.from(params.claimer)),
+        new Uint8Array(Buffer.from('create_order', 'utf8')),
+        new Uint8Array(Buffer.from(params.depositor, 'utf8')),
+        new Uint8Array(Buffer.from(params.claimer, 'utf8')),
         algosdk.encodeUint64(params.amount),
         new Uint8Array(Buffer.from(params.hashlock, 'hex'))
       ];
 
       const txn = algosdk.makeApplicationCallTxnFromObject({
-        from: algosdk.addressFromPrivateKey(params.senderPrivateKey),
+        sender: algosdk.encodeAddress(params.senderPrivateKey),
         appIndex: this.escrowAppId,
         onComplete: algosdk.OnApplicationComplete.NoOpOC,
         appArgs: args,
@@ -66,7 +67,8 @@ export class RealAlgorandEscrowManager {
       });
 
       const signedTxn = txn.signTxn(params.senderPrivateKey);
-      const txId = await algodClient.sendRawTransaction(signedTxn).do();
+      const response = await algodClient.sendRawTransaction(signedTxn).do();
+      const txId = response.txid;
       
       // Wait for confirmation
       await this.waitForConfirmation(txId);
@@ -94,12 +96,13 @@ export class RealAlgorandEscrowManager {
       const suggestedParams = await algodClient.getTransactionParams().do();
       
       const args = [
-        algosdk.encodeUint64(parseInt(params.orderId)),
+        new Uint8Array(Buffer.from('claim_order', 'utf8')),
+        new Uint8Array(Buffer.from(params.orderId, 'utf8')),
         new Uint8Array(Buffer.from(params.secret, 'base64'))
       ];
 
       const txn = algosdk.makeApplicationCallTxnFromObject({
-        from: algosdk.addressFromPrivateKey(params.claimerPrivateKey),
+        sender: algosdk.encodeAddress(params.claimerPrivateKey),
         appIndex: this.escrowAppId,
         onComplete: algosdk.OnApplicationComplete.NoOpOC,
         appArgs: args,
@@ -107,7 +110,8 @@ export class RealAlgorandEscrowManager {
       });
 
       const signedTxn = txn.signTxn(params.claimerPrivateKey);
-      const txId = await algodClient.sendRawTransaction(signedTxn).do();
+      const response = await algodClient.sendRawTransaction(signedTxn).do();
+      const txId = response.txid;
       
       // Wait for confirmation
       await this.waitForConfirmation(txId);
@@ -133,11 +137,12 @@ export class RealAlgorandEscrowManager {
       const suggestedParams = await algodClient.getTransactionParams().do();
       
       const args = [
-        algosdk.encodeUint64(parseInt(params.orderId))
+        new Uint8Array(Buffer.from('cancel_order', 'utf8')),
+        new Uint8Array(Buffer.from(params.orderId, 'utf8'))
       ];
 
       const txn = algosdk.makeApplicationCallTxnFromObject({
-        from: algosdk.addressFromPrivateKey(params.senderPrivateKey),
+        sender: algosdk.encodeAddress(params.senderPrivateKey),
         appIndex: this.escrowAppId,
         onComplete: algosdk.OnApplicationComplete.NoOpOC,
         appArgs: args,
@@ -145,7 +150,8 @@ export class RealAlgorandEscrowManager {
       });
 
       const signedTxn = txn.signTxn(params.senderPrivateKey);
-      const txId = await algodClient.sendRawTransaction(signedTxn).do();
+      const response = await algodClient.sendRawTransaction(signedTxn).do();
+      const txId = response.txid;
       
       // Wait for confirmation
       await this.waitForConfirmation(txId);
@@ -162,12 +168,15 @@ export class RealAlgorandEscrowManager {
 
   async getOrderInfo(orderId: string): Promise<any> {
     try {
-      // This would query the application state to get order details
-      // For now, return basic info
+      const appInfo = await algodClient.getApplicationByID(this.escrowAppId).do();
+      // Parse global state to find order info
+      // This is a simplified implementation
       return {
         orderId,
         status: 'active',
-        exists: true
+        amount: 0,
+        depositor: '',
+        claimer: ''
       };
     } catch (error) {
       console.error('Error getting Algorand order info:', error);
@@ -177,21 +186,24 @@ export class RealAlgorandEscrowManager {
 
   private async waitForConfirmation(txId: string, timeout: number = 30): Promise<void> {
     const startTime = Date.now();
+    
     while (Date.now() - startTime < timeout * 1000) {
       try {
         const pendingInfo = await algodClient.pendingTransactionInformation(txId).do();
-        if (pendingInfo['confirmed-round'] && pendingInfo['confirmed-round'] > 0) {
+        if (pendingInfo.confirmedRound && pendingInfo.confirmedRound > 0) {
           return;
         }
-        if (pendingInfo['pool-error'] && pendingInfo['pool-error'].length > 0) {
-          throw new Error(`Transaction failed: ${pendingInfo['pool-error']}`);
+        if (pendingInfo.poolError && pendingInfo.poolError.length > 0) {
+          throw new Error(`Transaction failed: ${pendingInfo.poolError}`);
         }
       } catch (error) {
         // Continue waiting
       }
+      
       await new Promise(resolve => setTimeout(resolve, 1000));
     }
-    throw new Error(`Transaction ${txId} not confirmed within ${timeout} seconds`);
+    
+    throw new Error(`Transaction confirmation timeout: ${txId}`);
   }
 }
 
@@ -213,11 +225,12 @@ export class RealAlgorandSolverManager {
       const suggestedParams = await algodClient.getTransactionParams().do();
       
       const args = [
-        new Uint8Array(Buffer.from(params.solverAddress))
+        new Uint8Array(Buffer.from('register_solver', 'utf8')),
+        new Uint8Array(Buffer.from(params.solverAddress, 'utf8'))
       ];
 
       const txn = algosdk.makeApplicationCallTxnFromObject({
-        from: algosdk.addressFromPrivateKey(params.senderPrivateKey),
+        sender: algosdk.encodeAddress(params.senderPrivateKey),
         appIndex: this.solverAppId,
         onComplete: algosdk.OnApplicationComplete.NoOpOC,
         appArgs: args,
@@ -225,7 +238,8 @@ export class RealAlgorandSolverManager {
       });
 
       const signedTxn = txn.signTxn(params.senderPrivateKey);
-      const txId = await algodClient.sendRawTransaction(signedTxn).do();
+      const response = await algodClient.sendRawTransaction(signedTxn).do();
+      const txId = response.txid;
       
       // Wait for confirmation
       await this.waitForConfirmation(txId);
@@ -254,14 +268,14 @@ export class RealAlgorandSolverManager {
       const suggestedParams = await algodClient.getTransactionParams().do();
       
       const args = [
-        new Uint8Array(Buffer.from(params.solverAddress)),
-        algosdk.encodeUint64(parseInt(params.orderId)),
+        new Uint8Array(Buffer.from('execute_swap', 'utf8')),
+        new Uint8Array(Buffer.from(params.orderId, 'utf8')),
         new Uint8Array(Buffer.from(params.secret, 'base64')),
         algosdk.encodeUint64(params.amount)
       ];
 
       const txn = algosdk.makeApplicationCallTxnFromObject({
-        from: algosdk.addressFromPrivateKey(params.senderPrivateKey),
+        sender: algosdk.encodeAddress(params.senderPrivateKey),
         appIndex: this.solverAppId,
         onComplete: algosdk.OnApplicationComplete.NoOpOC,
         appArgs: args,
@@ -269,7 +283,8 @@ export class RealAlgorandSolverManager {
       });
 
       const signedTxn = txn.signTxn(params.senderPrivateKey);
-      const txId = await algodClient.sendRawTransaction(signedTxn).do();
+      const response = await algodClient.sendRawTransaction(signedTxn).do();
+      const txId = response.txid;
       
       // Wait for confirmation
       await this.waitForConfirmation(txId);
@@ -286,21 +301,24 @@ export class RealAlgorandSolverManager {
 
   private async waitForConfirmation(txId: string, timeout: number = 30): Promise<void> {
     const startTime = Date.now();
+    
     while (Date.now() - startTime < timeout * 1000) {
       try {
         const pendingInfo = await algodClient.pendingTransactionInformation(txId).do();
-        if (pendingInfo['confirmed-round'] && pendingInfo['confirmed-round'] > 0) {
+        if (pendingInfo.confirmedRound && pendingInfo.confirmedRound > 0) {
           return;
         }
-        if (pendingInfo['pool-error'] && pendingInfo['pool-error'].length > 0) {
-          throw new Error(`Transaction failed: ${pendingInfo['pool-error']}`);
+        if (pendingInfo.poolError && pendingInfo.poolError.length > 0) {
+          throw new Error(`Transaction failed: ${pendingInfo.poolError}`);
         }
       } catch (error) {
         // Continue waiting
       }
+      
       await new Promise(resolve => setTimeout(resolve, 1000));
     }
-    throw new Error(`Transaction ${txId} not confirmed within ${timeout} seconds`);
+    
+    throw new Error(`Transaction confirmation timeout: ${txId}`);
   }
 }
 
@@ -323,12 +341,13 @@ export class RealAlgorandPoolManager {
       const suggestedParams = await algodClient.getTransactionParams().do();
       
       const args = [
+        new Uint8Array(Buffer.from('add_liquidity', 'utf8')),
         algosdk.encodeUint64(params.amount),
         algosdk.encodeUint64(params.assetId)
       ];
 
       const txn = algosdk.makeApplicationCallTxnFromObject({
-        from: algosdk.addressFromPrivateKey(params.senderPrivateKey),
+        sender: algosdk.encodeAddress(params.senderPrivateKey),
         appIndex: this.poolAppId,
         onComplete: algosdk.OnApplicationComplete.NoOpOC,
         appArgs: args,
@@ -336,7 +355,8 @@ export class RealAlgorandPoolManager {
       });
 
       const signedTxn = txn.signTxn(params.senderPrivateKey);
-      const txId = await algodClient.sendRawTransaction(signedTxn).do();
+      const response = await algodClient.sendRawTransaction(signedTxn).do();
+      const txId = response.txid;
       
       // Wait for confirmation
       await this.waitForConfirmation(txId);
@@ -362,11 +382,12 @@ export class RealAlgorandPoolManager {
       const suggestedParams = await algodClient.getTransactionParams().do();
       
       const args = [
+        new Uint8Array(Buffer.from('remove_liquidity', 'utf8')),
         algosdk.encodeUint64(params.shares)
       ];
 
       const txn = algosdk.makeApplicationCallTxnFromObject({
-        from: algosdk.addressFromPrivateKey(params.senderPrivateKey),
+        sender: algosdk.encodeAddress(params.senderPrivateKey),
         appIndex: this.poolAppId,
         onComplete: algosdk.OnApplicationComplete.NoOpOC,
         appArgs: args,
@@ -374,7 +395,8 @@ export class RealAlgorandPoolManager {
       });
 
       const signedTxn = txn.signTxn(params.senderPrivateKey);
-      const txId = await algodClient.sendRawTransaction(signedTxn).do();
+      const response = await algodClient.sendRawTransaction(signedTxn).do();
+      const txId = response.txid;
       
       // Wait for confirmation
       await this.waitForConfirmation(txId);
@@ -391,52 +413,51 @@ export class RealAlgorandPoolManager {
 
   private async waitForConfirmation(txId: string, timeout: number = 30): Promise<void> {
     const startTime = Date.now();
+    
     while (Date.now() - startTime < timeout * 1000) {
       try {
         const pendingInfo = await algodClient.pendingTransactionInformation(txId).do();
-        if (pendingInfo['confirmed-round'] && pendingInfo['confirmed-round'] > 0) {
+        if (pendingInfo.confirmedRound && pendingInfo.confirmedRound > 0) {
           return;
         }
-        if (pendingInfo['pool-error'] && pendingInfo['pool-error'].length > 0) {
-          throw new Error(`Transaction failed: ${pendingInfo['pool-error']}`);
+        if (pendingInfo.poolError && pendingInfo.poolError.length > 0) {
+          throw new Error(`Transaction failed: ${pendingInfo.poolError}`);
         }
       } catch (error) {
         // Continue waiting
       }
+      
       await new Promise(resolve => setTimeout(resolve, 1000));
     }
-    throw new Error(`Transaction ${txId} not confirmed within ${timeout} seconds`);
+    
+    throw new Error(`Transaction confirmation timeout: ${txId}`);
   }
 }
 
-// Utility functions
 export function generateAlgorandSecret(): { secret: string; hashedSecret: string } {
   const crypto = require('crypto');
-  const secret = crypto.randomBytes(32).toString('base64');
-  const hashedSecret = crypto.createHash('sha256').update(secret, 'base64').digest('hex');
+  const secretBytes = crypto.randomBytes(32);
+  const secret = Buffer.from(secretBytes).toString('base64');
+  const hashedSecret = crypto.createHash('sha256').update(secretBytes).digest('hex');
   return { secret, hashedSecret };
 }
 
 export function formatAlgorandAmount(microAlgos: string | number, decimals: number = 6): string {
-  const amount = typeof microAlgos === 'string' ? parseInt(microAlgos) : microAlgos;
-  const algos = amount / 1_000_000;
-  return algos.toFixed(decimals);
+  return (Number(microAlgos) / Math.pow(10, decimals)).toFixed(decimals);
 }
 
 export function algoToMicroAlgos(algo: string | number): string {
-  const amount = typeof algo === 'string' ? parseFloat(algo) : algo;
-  return (amount * 1_000_000).toString();
+  return (Number(algo) * 1_000_000).toString();
 }
 
 export function microAlgosToAlgo(microAlgos: string | number): string {
-  const amount = typeof microAlgos === 'string' ? parseInt(microAlgos) : microAlgos;
-  return (amount / 1_000_000).toString();
+  return (Number(microAlgos) / 1_000_000).toString();
 }
 
 export async function getAlgorandAccountBalance(address: string): Promise<string> {
   try {
     const accountInfo = await algodClient.accountInformation(address).do();
-    return formatAlgorandAmount(accountInfo.amount);
+    return formatAlgorandAmount(Number(accountInfo.amount));
   } catch (error) {
     console.error('Error getting Algorand account balance:', error);
     return '0';
@@ -447,7 +468,7 @@ export async function validateAlgorandAddress(address: string): Promise<boolean>
   try {
     algosdk.decodeAddress(address);
     return true;
-  } catch {
+  } catch (error) {
     return false;
   }
 } 

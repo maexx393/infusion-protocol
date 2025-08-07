@@ -171,7 +171,11 @@ export class ResolverAlgorand2EVM {
     console.log('🤖 RESOLVER: Checking deposit...');
     
     try {
-      const depositCheck = await realCheckDepositAlgorand(hashedSecret);
+      const depositCheck = await realCheckDepositAlgorand(
+        hashedSecret, 
+        743876974, // escrowAppId
+        getAccountAddress('resolver') // accountAddress
+      );
       return depositCheck.exists && parseFloat(depositCheck.amount) >= expectedAmount;
     } catch (error) {
       console.error('🤖 RESOLVER: Error checking deposit:', error);

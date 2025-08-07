@@ -1,7 +1,14 @@
 import { OrderEVM2Algorand } from '../api/order';
-import { depositETH, claimETH } from '../utils/evm';
 import { realDepositAlgorand, realCheckDepositAlgorand, realClaimAlgorand, generateAlgorandSecret } from '../utils/algorand';
-import { getAccountAddress } from '../config/algorand-addresses';
+import { getAccountAddress, getAccountMnemonic } from '../config/algorand-addresses';
+import { depositETH } from '../utils/evm';
+import algosdk from 'algosdk';
+
+// Convert mnemonic to private key
+function mnemonicToPrivateKey(mnemonic: string): Uint8Array {
+  const account = algosdk.mnemonicToSecretKey(mnemonic);
+  return account.sk;
+}
 
 export interface AlgorandPaymentReceipt {
   secret: string;
@@ -56,7 +63,9 @@ export class ResolverEVM2Algorand {
       hashedSecret: hashedSecret,
       expirationSeconds: 3600,
       depositorAddress: getAccountAddress('resolver'),
-      claimerAddress: getAccountAddress('alice')
+      depositorPrivateKey: mnemonicToPrivateKey(getAccountMnemonic('resolver')),
+      claimerAddress: getAccountAddress('alice'),
+      escrowAppId: 743876974
     };
 
     console.log('🤖 RESOLVER: Creating Algorand escrow deposit...');
@@ -129,7 +138,9 @@ export class ResolverEVM2Algorand {
     const claimParams = {
       depositId: 'algo_deposit_' + Date.now(),
       secret: secret,
-      claimerAddress: 'RESOLVER_ALGORAND_ADDRESS_58_CHARS_LONG'
+      claimerAddress: getAccountAddress('resolver'),
+      claimerPrivateKey: mnemonicToPrivateKey(getAccountMnemonic('resolver')),
+      escrowAppId: 743876974
     };
 
     const claimResult = await realClaimAlgorand(claimParams);
@@ -145,7 +156,11 @@ export class ResolverEVM2Algorand {
     console.log('🤖 RESOLVER: Checking Algorand deposit...');
     
     try {
-      const depositCheck = await realCheckDepositAlgorand(hashedSecret);
+      const depositCheck = await realCheckDepositAlgorand(
+        hashedSecret,
+        743876974, // escrowAppId
+        getAccountAddress('resolver') // accountAddress
+      );
       return depositCheck.exists && parseFloat(depositCheck.amount) >= expectedAmount;
     } catch (error) {
       console.error('🤖 RESOLVER: Error checking Algorand deposit:', error);

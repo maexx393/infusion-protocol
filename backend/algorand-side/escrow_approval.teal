@@ -1,0 +1,262 @@
+#pragma version 6
+txn ApplicationID
+int 0
+==
+bnz main_l22
+txn OnCompletion
+int OptIn
+==
+bnz main_l21
+txn OnCompletion
+int CloseOut
+==
+bnz main_l20
+txn OnCompletion
+int UpdateApplication
+==
+bnz main_l19
+txn OnCompletion
+int DeleteApplication
+==
+bnz main_l18
+txn OnCompletion
+int NoOp
+==
+bnz main_l7
+err
+main_l7:
+txna ApplicationArgs 0
+byte "create_order"
+==
+bnz main_l17
+txna ApplicationArgs 0
+byte "fund_order"
+==
+bnz main_l16
+txna ApplicationArgs 0
+byte "claim_order"
+==
+bnz main_l15
+txna ApplicationArgs 0
+byte "refund_order"
+==
+bnz main_l14
+txna ApplicationArgs 0
+byte "get_order_info"
+==
+bnz main_l13
+err
+main_l13:
+txn NumAppArgs
+int 1
+==
+assert
+int 1
+return
+main_l14:
+txn NumAppArgs
+int 1
+==
+assert
+txn Sender
+byte "order_status"
+app_local_get
+int 1
+==
+assert
+global LatestTimestamp
+txn Sender
+byte "order_timelock"
+app_local_get
+>
+assert
+txn Sender
+txn Sender
+byte "order_depositor"
+app_local_get
+==
+assert
+txn Sender
+byte "order_status"
+int 3
+app_local_put
+itxn_begin
+int pay
+itxn_field TypeEnum
+txn Sender
+byte "order_amount"
+app_local_get
+itxn_field Amount
+txn Sender
+byte "order_depositor"
+app_local_get
+itxn_field Receiver
+int 0
+itxn_field Fee
+itxn_submit
+int 1
+return
+main_l15:
+txn NumAppArgs
+int 2
+==
+assert
+txn Sender
+byte "order_status"
+app_local_get
+int 1
+==
+assert
+txn Sender
+byte "order_hashlock"
+app_local_get
+txna ApplicationArgs 1
+sha256
+==
+assert
+txn Sender
+txn Sender
+byte "order_claimer"
+app_local_get
+==
+assert
+txn Sender
+byte "order_status"
+int 2
+app_local_put
+itxn_begin
+int pay
+itxn_field TypeEnum
+txn Sender
+byte "order_amount"
+app_local_get
+itxn_field Amount
+txn Sender
+byte "order_claimer"
+app_local_get
+itxn_field Receiver
+int 0
+itxn_field Fee
+itxn_submit
+int 1
+return
+main_l16:
+txn NumAppArgs
+int 1
+==
+assert
+gtxn 0 TypeEnum
+int pay
+==
+assert
+gtxn 0 Sender
+txn Sender
+==
+assert
+gtxn 0 Receiver
+global CurrentApplicationAddress
+==
+assert
+gtxn 0 Amount
+int 0
+>
+assert
+txn Sender
+byte "order_status"
+app_local_get
+int 0
+==
+assert
+txn Sender
+byte "order_amount"
+gtxn 0 Amount
+app_local_put
+txn Sender
+byte "order_status"
+int 1
+app_local_put
+byte "total_volume"
+byte "total_volume"
+app_global_get
+gtxn 0 Amount
++
+app_global_put
+int 1
+return
+main_l17:
+txn NumAppArgs
+int 5
+==
+assert
+txna ApplicationArgs 4
+btoi
+global LatestTimestamp
+>
+assert
+txn Sender
+byte "order_amount"
+int 0
+app_local_put
+txn Sender
+byte "order_depositor"
+txn Sender
+app_local_put
+txn Sender
+byte "order_claimer"
+txna ApplicationArgs 2
+app_local_put
+txn Sender
+byte "order_hashlock"
+txna ApplicationArgs 3
+app_local_put
+txn Sender
+byte "order_timelock"
+txna ApplicationArgs 4
+btoi
+app_local_put
+txn Sender
+byte "order_status"
+int 0
+app_local_put
+byte "total_orders"
+byte "total_orders"
+app_global_get
+int 1
++
+app_global_put
+int 1
+return
+main_l18:
+byte "owner"
+app_global_get
+txn Sender
+==
+assert
+int 1
+return
+main_l19:
+byte "owner"
+app_global_get
+txn Sender
+==
+assert
+int 1
+return
+main_l20:
+int 1
+return
+main_l21:
+int 1
+return
+main_l22:
+byte "owner"
+txn Sender
+app_global_put
+byte "total_orders"
+int 0
+app_global_put
+byte "total_volume"
+int 0
+app_global_put
+int 1
+return
