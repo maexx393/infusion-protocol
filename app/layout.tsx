@@ -1,9 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
-import { AppkitProvider } from '@/components/appkit-provider'
-import { ThemeProvider } from '@/components/theme-provider'
-import { Toaster } from '@/components/ui/toaster'
+import { AppKitProvider } from '@/components/appkit-provider'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -31,21 +29,11 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en">
       <body className={inter.className}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <AppkitProvider>
-            <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-              {children}
-            </div>
-            <Toaster />
-          </AppkitProvider>
-        </ThemeProvider>
+        <AppKitProvider>
+          {children}
+        </AppKitProvider>
       </body>
     </html>
   )

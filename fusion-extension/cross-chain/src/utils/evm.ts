@@ -300,10 +300,9 @@ export async function claimETH(params: ClaimETHParams): Promise<ClaimETHResult> 
     const depositIdHex = params.depositId.startsWith('0x') ? params.depositId : `0x${params.depositId}`;
     const depositIdBytes32 = ethers.getBytes(depositIdHex);
     
-    // Convert secret from base64 to bytes (NEAR format)
-    const secretBytes = Buffer.from(params.secret, 'base64');
-    // Convert to hex string for ethers.js compatibility
-    const secretHex = '0x' + secretBytes.toString('hex');
+    // Convert secret from hex to bytes (Solana format)
+    const secretHex = params.secret.startsWith('0x') ? params.secret : `0x${params.secret}`;
+    const secretBytes = ethers.getBytes(secretHex);
     
     // Get escrow contract address
     const escrowAddress = getEscrowContractAddress();

@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 import React from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -25,7 +25,7 @@ export function AppkitProvider({ children }: { children: React.ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
       <ReownAppkitProvider
-        projectId={process.env.NEXT_PUBLIC_PROJECT_ID || 'demo-project-id'}
+        projectId={process.env.NEXT_PUBLIC_PROJECT_ID || 'infusion-defi-project'}
         metadata={{
           name: 'InFusion',
           description: 'AI-Powered Cross-Chain DeFi Platform',
@@ -59,17 +59,30 @@ export function AppkitProvider({ children }: { children: React.ReactNode }) {
               default: { name: 'Etherscan', url: 'https://sepolia.etherscan.io' }
             }
           },
-          // Polygon
+          // Polygon mainnet
           {
             id: 137,
             name: 'Polygon',
-            nativeCurrency: { name: 'MATIC', symbol: 'MATIC', decimals: 18 },
+            nativeCurrency: { name: 'POL', symbol: 'POL', decimals: 18 },
             rpcUrls: {
               default: { http: [process.env.NEXT_PUBLIC_POLYGON_RPC || 'https://polygon-rpc.com'] },
               public: { http: [process.env.NEXT_PUBLIC_POLYGON_RPC || 'https://polygon-rpc.com'] }
             },
             blockExplorers: {
               default: { name: 'PolygonScan', url: 'https://polygonscan.com' }
+            }
+          },
+          // Polygon Amoy testnet
+          {
+            id: 80002,
+            name: 'Polygon Amoy',
+            nativeCurrency: { name: 'POL', symbol: 'POL', decimals: 18 },
+            rpcUrls: {
+              default: { http: [process.env.NEXT_PUBLIC_POLYGON_AMOY_RPC || 'https://rpc-amoy.polygon.technology'] },
+              public: { http: [process.env.NEXT_PUBLIC_POLYGON_AMOY_RPC || 'https://rpc-amoy.polygon.technology'] }
+            },
+            blockExplorers: {
+              default: { name: 'PolygonScan', url: 'https://amoy.polygonscan.com' }
             }
           },
           // Arbitrum One
@@ -85,7 +98,20 @@ export function AppkitProvider({ children }: { children: React.ReactNode }) {
               default: { name: 'Arbiscan', url: 'https://arbiscan.io' }
             }
           },
-          // Base
+          // Arbitrum Sepolia testnet
+          {
+            id: 421614,
+            name: 'Arbitrum Sepolia',
+            nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+            rpcUrls: {
+              default: { http: [process.env.NEXT_PUBLIC_ARBITRUM_SEPOLIA_RPC || 'https://sepolia-rollup.arbitrum.io/rpc'] },
+              public: { http: [process.env.NEXT_PUBLIC_ARBITRUM_SEPOLIA_RPC || 'https://sepolia-rollup.arbitrum.io/rpc'] }
+            },
+            blockExplorers: {
+              default: { name: 'Arbiscan', url: 'https://sepolia.arbiscan.io' }
+            }
+          },
+          // Base mainnet
           {
             id: 8453,
             name: 'Base',
@@ -98,7 +124,20 @@ export function AppkitProvider({ children }: { children: React.ReactNode }) {
               default: { name: 'BaseScan', url: 'https://basescan.org' }
             }
           },
-          // Optimism
+          // Base Sepolia testnet
+          {
+            id: 84532,
+            name: 'Base Sepolia',
+            nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+            rpcUrls: {
+              default: { http: [process.env.NEXT_PUBLIC_BASE_SEPOLIA_RPC || 'https://sepolia.base.org'] },
+              public: { http: [process.env.NEXT_PUBLIC_BASE_SEPOLIA_RPC || 'https://sepolia.base.org'] }
+            },
+            blockExplorers: {
+              default: { name: 'BaseScan', url: 'https://sepolia.basescan.org' }
+            }
+          },
+          // Optimism mainnet
           {
             id: 10,
             name: 'Optimism',
@@ -111,43 +150,17 @@ export function AppkitProvider({ children }: { children: React.ReactNode }) {
               default: { name: 'Optimistic Etherscan', url: 'https://optimistic.etherscan.io' }
             }
           },
-          // BSC
+          // Optimism Sepolia testnet
           {
-            id: 56,
-            name: 'BNB Smart Chain',
-            nativeCurrency: { name: 'BNB', symbol: 'BNB', decimals: 18 },
+            id: 11155420,
+            name: 'Optimism Sepolia',
+            nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
             rpcUrls: {
-              default: { http: [process.env.NEXT_PUBLIC_BSC_RPC || 'https://bsc-dataseed1.binance.org'] },
-              public: { http: [process.env.NEXT_PUBLIC_BSC_RPC || 'https://bsc-dataseed1.binance.org'] }
+              default: { http: [process.env.NEXT_PUBLIC_OPTIMISM_SEPOLIA_RPC || 'https://sepolia.optimism.io'] },
+              public: { http: [process.env.NEXT_PUBLIC_OPTIMISM_SEPOLIA_RPC || 'https://sepolia.optimism.io'] }
             },
             blockExplorers: {
-              default: { name: 'BscScan', url: 'https://bscscan.com' }
-            }
-          },
-          // Avalanche C-Chain
-          {
-            id: 43114,
-            name: 'Avalanche C-Chain',
-            nativeCurrency: { name: 'Avalanche', symbol: 'AVAX', decimals: 18 },
-            rpcUrls: {
-              default: { http: [process.env.NEXT_PUBLIC_AVALANCHE_RPC || 'https://api.avax.network/ext/bc/C/rpc'] },
-              public: { http: [process.env.NEXT_PUBLIC_AVALANCHE_RPC || 'https://api.avax.network/ext/bc/C/rpc'] }
-            },
-            blockExplorers: {
-              default: { name: 'SnowTrace', url: 'https://snowtrace.io' }
-            }
-          },
-          // Fantom
-          {
-            id: 250,
-            name: 'Fantom Opera',
-            nativeCurrency: { name: 'Fantom', symbol: 'FTM', decimals: 18 },
-            rpcUrls: {
-              default: { http: [process.env.NEXT_PUBLIC_FANTOM_RPC || 'https://rpc.ftm.tools'] },
-              public: { http: [process.env.NEXT_PUBLIC_FANTOM_RPC || 'https://rpc.ftm.tools'] }
-            },
-            blockExplorers: {
-              default: { name: 'FtmScan', url: 'https://ftmscan.com' }
+              default: { name: 'Optimistic Etherscan', url: 'https://sepolia-optimism.etherscan.io' }
             }
           }
         ]}

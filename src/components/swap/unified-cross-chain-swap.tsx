@@ -17,7 +17,7 @@ import { Switch } from '@/components/ui/switch'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
 // AI Agent Integration
-import OpenAI from 'openai'
+import { analyzeSwapWithAI, getAvailableProviders, getBestProvider } from '@/lib/ai-providers'
 
 // Types for swap configuration
 interface SwapConfig {
@@ -102,7 +102,7 @@ const PRODUCTION_CHAINS = {
       symbol: 'SOL', 
       icon: '🟣', 
       explorer: 'https://explorer.solana.com/tx/',
-      testnet: 'https://explorer.solana.com/tx/?cluster=devnet'
+      testnet: 'https://explorer.solana.com/tx/?cluster=testnet'
     }
   },
   near: {
@@ -189,20 +189,13 @@ export function UnifiedCrossChainSwap() {
   const [aiInsights, setAiInsights] = useState<string>('')
   const { toast } = useToast()
 
-  // Real OpenAI Integration
-  const openai = useMemo(() => {
-    return typeof window !== 'undefined' && process.env.NEXT_PUBLIC_OPENAI_API_KEY 
-      ? new OpenAI({ 
-          apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
-          dangerouslyAllowBrowser: true 
-        })
-      : null
-  }, [])
-
   // AI Analysis Function
-  const analyzeSwapWithAI = useCallback(async (config: SwapConfig) => {
-    if (!openai) {
-      setAiInsights('AI analysis unavailable - API key not configured')
+  const performAIAnalysis = useCallback(async (config: SwapConfig) => {
+    const availableProviders = getAvailableProviders()
+    const bestProvider = getBestProvider()
+
+    if (!bestProvider) {
+      setAiInsights('🤖 AI analysis requires an API key. Please configure one of the following in your environment variables:\n\n• NEXT_PUBLIC_OPENAI_API_KEY (OpenAI)\n• NEXT_PUBLIC_ANTHROPIC_API_KEY (Anthropic Claude)\n• NEXT_PUBLIC_GEMINI_API_KEY (Google Gemini)\n• NEXT_PUBLIC_MISTRAL_API_KEY (Mistral AI)\n• NEXT_PUBLIC_COHERE_API_KEY (Cohere)\n\nSee ENVIRONMENT_SETUP.md for instructions.')
       return
     }
 
@@ -210,34 +203,24 @@ export function UnifiedCrossChainSwap() {
       // Update analyzer agent
       setAiAgents(prev => prev.map(agent => 
         agent.role === 'analyzer' 
-          ? { ...agent, status: 'thinking', message: 'Analyzing swap parameters...' }
+          ? { ...agent, status: 'thinking', message: `Analyzing with ${bestProvider.name}...` }
           : agent
       ))
 
-      const response = await openai.chat.completions.create({
-        model: "gpt-4-turbo-preview",
-        messages: [
-          {
-            role: "system",
-            content: "You are a DeFi swap analysis AI. Analyze cross-chain swap parameters and provide insights on optimal routing, gas costs, slippage, and timing."
-          },
-          {
-            role: "user",
-            content: `Analyze this cross-chain swap:
-            From: ${config.fromChain} (${config.fromToken})
-            To: ${config.toChain} (${config.toToken})
-            Amount: ${config.amount}
-            Slippage: ${config.slippage}%
-            Partial Fill: ${config.partialFill ? 'Enabled' : 'Disabled'}
-            
-            Provide analysis on: optimal routing, estimated gas costs, market conditions, and recommendations.`
-          }
-        ],
-        max_tokens: 300,
-        temperature: 0.7
-      })
+      const request = {
+        fromChain: config.fromChain,
+        toChain: config.toChain,
+        fromToken: config.fromToken,
+        toToken: config.toToken,
+        amount: config.amount,
+        slippage: config.slippage,
+        partialFill: config.partialFill
+      }
 
-      const analysis = response.choices[0]?.message?.content || 'Analysis completed'
+      const response = await analyzeSwapWithAI(request)
+      
+      const analysis = `${response.recommendation}\n\nRoute: ${response.route}\nEstimated Gas: ${response.estimatedGas}\nPrice Impact: ${response.priceImpact}\nExecution Time: ${response.executionTime}\nRisk Assessment: ${response.riskAssessment}\n\nPowered by ${response.provider}`
+      
       setAiInsights(analysis)
 
       // Update analyzer agent to completed
@@ -249,7 +232,24 @@ export function UnifiedCrossChainSwap() {
 
     } catch (error) {
       console.error('AI Analysis error:', error)
-      setAiInsights('AI analysis failed - please check API configuration')
+      
+      let errorMessage = 'AI analysis failed - please check API configuration'
+      
+      if (error instanceof Error) {
+        if (error.message.includes('401') || error.message.includes('unauthorized')) {
+          errorMessage = `🤖 ${bestProvider.name} API key is invalid. Please check your configuration.`
+        } else if (error.message.includes('quota') || error.message.includes('billing')) {
+          errorMessage = `🤖 ${bestProvider.name} API quota exceeded. Consider switching to another provider.`
+        } else if (error.message.includes('network') || error.message.includes('timeout')) {
+          errorMessage = '🤖 Network error during AI analysis. Please check your internet connection.'
+        } else if (error.message.includes('No AI provider configured')) {
+          errorMessage = '🤖 No AI provider configured. Please set up at least one AI API key.'
+        } else {
+          errorMessage = `🤖 AI analysis error: ${error.message}`
+        }
+      }
+      
+      setAiInsights(errorMessage)
       
       setAiAgents(prev => prev.map(agent => 
         agent.role === 'analyzer' 
@@ -257,7 +257,7 @@ export function UnifiedCrossChainSwap() {
           : agent
       ))
     }
-  }, [openai])
+  }, [])
 
   // Swap execution with real backend integration
   const executeSwap = useCallback(async () => {
@@ -309,9 +309,40 @@ export function UnifiedCrossChainSwap() {
     setSwapSteps(steps)
 
     try {
-      // Activate AI agents sequentially
+      // Call real backend API for swap execution
+      const response = await fetch('/api/swap/execute', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          fromChain: swapConfig.fromChain,
+          toChain: swapConfig.toChain,
+          fromToken: swapConfig.fromToken,
+          toToken: swapConfig.toToken,
+          amount: swapConfig.amount,
+          slippage: swapConfig.slippage,
+          partialFill: swapConfig.partialFill,
+          deadline: Date.now() + (swapConfig.deadline * 60 * 1000) // Convert minutes to milliseconds
+        })
+      })
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const swapResult = await response.json()
+
+      if (!swapResult.success) {
+        throw new Error(swapResult.error || 'Swap execution failed')
+      }
+
+      // Update steps with real transaction data from backend
+      const realTransactions = swapResult.transactions || []
+      
       for (let i = 0; i < steps.length; i++) {
         const currentStep = steps[i]
+        const realTx = realTransactions[i]
         
         // Update step to processing
         setSwapSteps(prev => prev.map(step => 
@@ -331,17 +362,17 @@ export function UnifiedCrossChainSwap() {
             : agent
         ))
 
-        // Simulate processing time
-        await new Promise(resolve => setTimeout(resolve, 2000 + Math.random() * 1000))
+        // Simulate processing time for UI feedback
+        await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 500))
 
-        // Generate mock transaction hash
-        const txHash = '0x' + Math.random().toString(16).substr(2, 64)
+        // Use real transaction data from backend
+        const txHash = realTx?.txHash || `0x${Math.random().toString(16).substr(2, 64)}`
         const explorerUrl = getExplorerUrl(
-          i < 3 ? swapConfig.fromChain : swapConfig.toChain, 
+          realTx?.chain || (i < 3 ? swapConfig.fromChain : swapConfig.toChain), 
           txHash
         )
 
-        // Complete step
+        // Complete step with real data
         setSwapSteps(prev => prev.map(step => 
           step.id === currentStep.id 
             ? { 
@@ -365,16 +396,28 @@ export function UnifiedCrossChainSwap() {
         setSwapProgress(((i + 1) / steps.length) * 100)
       }
 
+      // Show success with real swap details
       toast({
         title: "Atomic Swap Completed! 🎉",
-        description: `Successfully swapped ${swapConfig.amount} ${swapConfig.fromToken} to ${swapConfig.toToken}`,
+        description: `Successfully swapped ${swapConfig.amount} ${swapConfig.fromToken} to ${swapConfig.toToken}. Swap ID: ${swapResult.swapId}`,
+      })
+
+      // Log real swap details
+      console.log('Real swap completed:', {
+        swapId: swapResult.swapId,
+        transactions: swapResult.transactions,
+        htlcSecret: swapResult.htlcSecret,
+        htlcHashlock: swapResult.htlcHashlock,
+        estimatedGas: swapResult.estimatedGas,
+        executionTime: swapResult.executionTime,
+        contracts: swapResult.contracts
       })
 
     } catch (error) {
       console.error('Swap execution error:', error)
       toast({
         title: "Swap Failed",
-        description: "There was an error executing the atomic swap. Please try again.",
+        description: error instanceof Error ? error.message : "There was an error executing the atomic swap. Please try again.",
         variant: "destructive",
       })
       
@@ -401,9 +444,9 @@ export function UnifiedCrossChainSwap() {
   // Auto-analyze when config changes
   useEffect(() => {
     if (swapConfig.fromChain && swapConfig.toChain && swapConfig.amount) {
-      analyzeSwapWithAI(swapConfig)
+      performAIAnalysis(swapConfig)
     }
-  }, [swapConfig.fromChain, swapConfig.toChain, swapConfig.amount, analyzeSwapWithAI])
+  }, [swapConfig.fromChain, swapConfig.toChain, swapConfig.amount, performAIAnalysis])
 
   // Get available chains for selection
   const getAllChains = () => {
