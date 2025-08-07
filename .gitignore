@@ -305,3 +305,4 @@ config.old/
 local-data/
 dev-data/ 
 .vercel
+.DS_Store
