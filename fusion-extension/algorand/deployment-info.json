@@ -11,9 +11,9 @@
     "pool_contract": "743876985"
   },
   "explorer_urls": {
-    "escrow_contract": "https://testnet.algoexplorer.io/application/743876974",
-    "solver_contract": "https://testnet.algoexplorer.io/application/743876975",
-    "pool_contract": "https://testnet.algoexplorer.io/application/743876985"
+    "escrow_contract": "https://lora.algokit.io/testnet/application/743876974",
+    "solver_contract": "https://lora.algokit.io/testnet/application/743876975",
+    "pool_contract": "https://lora.algokit.io/testnet/application/743876985"
   },
   "deployer_address": "5KUWYUYVK64M6EW6LYBKO53WP7T4XMON5JJE7UUDUTAKBUAXDOQPURVCY4",
   "deployment_timestamp": "2025-08-06T20:30:00Z",

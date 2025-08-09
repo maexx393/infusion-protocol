@@ -1,93 +1,20 @@
 'use client'
 
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { useToast } from '@/hooks/use-toast'
 import { 
   AppKitConnectButton, 
   AppKitAccountButton, 
-  AppKitNetworkButton,
-  useAppKitAccount,
-  useAppKitNetwork
+  AppKitNetworkButton
 } from '@reown/appkit/react'
-import { modal } from '@reown/appkit/react'
 
 export function WalletConnect() {
-  const [isConnecting, setIsConnecting] = useState(false)
-  const { toast } = useToast()
-  const { address, isConnected } = useAppKitAccount()
-  const { caipNetwork } = useAppKitNetwork()
-
-  const handleConnect = async () => {
-    setIsConnecting(true)
-    try {
-      if (modal) {
-        await modal.open()
-        toast({
-          title: "Wallet Modal Opened",
-          description: "Please select your wallet to connect",
-        })
-      }
-    } catch (error) {
-      toast({
-        title: "Connection Failed",
-        description: "Failed to open wallet modal",
-        variant: "destructive",
-      })
-    } finally {
-      setIsConnecting(false)
-    }
-  }
-
-  const handleDisconnect = async () => {
-    try {
-      if (modal) {
-        await modal.disconnect()
-        toast({
-          title: "Wallet Disconnected",
-          description: "Your wallet has been disconnected",
-        })
-      }
-    } catch (error) {
-      toast({
-        title: "Disconnect Failed",
-        description: "Failed to disconnect wallet",
-        variant: "destructive",
-      })
-    }
-  }
-
-  if (!isConnected) {
-    return (
-      <div className="fixed bottom-6 right-6 z-50">
-        <AppKitConnectButton
-          size="md"
-          label={isConnecting ? "Connecting..." : "Connect Wallet"}
-          loadingLabel="Connecting..."
-        />
-      </div>
-    )
-  }
-
   return (
     <div className="fixed bottom-6 right-6 z-50">
-      <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-4 py-2 flex items-center space-x-3">
-        <div className="flex items-center space-x-2">
-          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-          <span className="text-white text-sm font-medium">
-            {address ? `${address.slice(0, 6)}...${address.slice(-4)}` : 'Connected'}
-          </span>
-          {caipNetwork && (
-            <span className="text-gray-300 text-xs">
-              {caipNetwork.name}
-            </span>
-          )}
-        </div>
-        <div className="flex items-center space-x-2">
-          <AppKitNetworkButton />
-          <AppKitAccountButton />
-        </div>
-      </div>
+      <AppKitConnectButton
+        size="md"
+        label="Connect Wallet"
+        loadingLabel="Connecting..."
+        className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-6 py-3 rounded-full font-semibold shadow-lg"
+      />
     </div>
   )
 }

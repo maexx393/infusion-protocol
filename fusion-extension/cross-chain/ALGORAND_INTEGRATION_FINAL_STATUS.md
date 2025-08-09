@@ -24,9 +24,9 @@
 ## 🔑 **Deployed Algorand Contracts**
 
 ### **Contract Details**
-- **Escrow Contract**: `743864631` - [View on Explorer](https://testnet.algoexplorer.io/application/743864631)
-- **Solver Contract**: `743864632` - [View on Explorer](https://testnet.algoexplorer.io/application/743864632)
-- **Pool Contract**: `743864633` - [View on Explorer](https://testnet.algoexplorer.io/application/743864633)
+- **Escrow Contract**: `743864631` - [View on Explorer](https://lora.algokit.io/testnet/application/743864631)
+- **Solver Contract**: `743864632` - [View on Explorer](https://lora.algokit.io/testnet/application/743864632)
+- **Pool Contract**: `743864633` - [View on Explorer](https://lora.algokit.io/testnet/application/743864633)
 
 ### **Account Details**
 - **Deployer**: `5KUWYUYVK64M6EW6LYBKO53WP7T4XMON5JJE7UUDUTAKBUAXDOQPURVCY4` (10 ALGO)

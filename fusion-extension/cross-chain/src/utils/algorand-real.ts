@@ -76,7 +76,7 @@ export class RealAlgorandEscrowManager {
       return {
         orderId: txId,
         txId,
-        explorerUrl: `https://testnet.algoexplorer.io/tx/${txId}`
+        explorerUrl: `https://lora.algokit.io/testnet/tx/${txId}`
       };
     } catch (error) {
       console.error('Error creating Algorand order:', error);
@@ -118,7 +118,7 @@ export class RealAlgorandEscrowManager {
 
       return {
         txId,
-        explorerUrl: `https://testnet.algoexplorer.io/tx/${txId}`
+        explorerUrl: `https://lora.algokit.io/testnet/tx/${txId}`
       };
     } catch (error) {
       console.error('Error claiming Algorand order:', error);
@@ -158,7 +158,7 @@ export class RealAlgorandEscrowManager {
 
       return {
         txId,
-        explorerUrl: `https://testnet.algoexplorer.io/tx/${txId}`
+        explorerUrl: `https://lora.algokit.io/testnet/tx/${txId}`
       };
     } catch (error) {
       console.error('Error cancelling Algorand order:', error);
@@ -246,7 +246,7 @@ export class RealAlgorandSolverManager {
 
       return {
         txId,
-        explorerUrl: `https://testnet.algoexplorer.io/tx/${txId}`
+        explorerUrl: `https://lora.algokit.io/testnet/tx/${txId}`
       };
     } catch (error) {
       console.error('Error registering Algorand solver:', error);
@@ -291,7 +291,7 @@ export class RealAlgorandSolverManager {
 
       return {
         txId,
-        explorerUrl: `https://testnet.algoexplorer.io/tx/${txId}`
+        explorerUrl: `https://lora.algokit.io/testnet/tx/${txId}`
       };
     } catch (error) {
       console.error('Error executing Algorand swap:', error);
@@ -363,7 +363,7 @@ export class RealAlgorandPoolManager {
 
       return {
         txId,
-        explorerUrl: `https://testnet.algoexplorer.io/tx/${txId}`
+        explorerUrl: `https://lora.algokit.io/testnet/tx/${txId}`
       };
     } catch (error) {
       console.error('Error adding Algorand liquidity:', error);
@@ -403,7 +403,7 @@ export class RealAlgorandPoolManager {
 
       return {
         txId,
-        explorerUrl: `https://testnet.algoexplorer.io/tx/${txId}`
+        explorerUrl: `https://lora.algokit.io/testnet/tx/${txId}`
       };
     } catch (error) {
       console.error('Error removing Algorand liquidity:', error);

@@ -157,7 +157,7 @@ Step 1/5: Order Processing
 ✅ Algorand escrow deposit successful! (REAL TRANSACTION)
    Order ID: 636b8e43d80b32630ccdd416bf49d1076960b508c66c8e5f1a4e1c77a1811a54
    Contract: 6XUCBPC3ERAJN63K67JVRC2ZVJV6HTXSI24HJWANPM5WOGB3PDEJJJIWIU
-   Explorer: https://testnet.algoexplorer.io/tx/ALGO_1754478311668_2r8v061xs
+   Explorer: https://lora.algokit.io/testnet/tx/ALGO_1754478311668_2r8v061xs
 
 ✅ Algorand deposit verified! (REAL)
    Amount: 0.1 ALGO
@@ -188,7 +188,7 @@ Step 1/5: Order Processing
 
 ### **Algorand Transactions**
 - **Network**: Algorand Testnet
-- **Explorer**: https://testnet.algoexplorer.io/
+- **Explorer**: https://lora.algokit.io/testnet/
 - **Block Time**: ~4 seconds
 - **Transaction Fees**: ~0.001 ALGO per transaction
 

@@ -66,8 +66,8 @@ async function runEvmToAlgorandExample() {
 
     // Step 2: Get account addresses
     printInfo('Step 2: Setting up account addresses...');
-    const aliceAddress = getAccountAddress('alice');
-    const carolAddress = getAccountAddress('carol');
+    const aliceAddress = getAccountAddress('stacy');
+          const carolAddress = getAccountAddress('silvio');
     const resolverAddress = getAccountAddress('resolver');
     
     printSuccess(`Alice (EVM): ${carolAddress}`);
@@ -109,7 +109,7 @@ async function runEvmToAlgorandExample() {
     const algorandDeposit = {
       depositId: hashedSecret,
       txHash: simulatedTxId,
-      explorerUrl: `https://testnet.algoexplorer.io/tx/${simulatedTxId}`,
+      explorerUrl: `https://lora.algokit.io/testnet/tx/${simulatedTxId}`,
       escrowAddress: 'SIM_ESCROW_ADDRESS',
       amountMicroAlgos: (algoAmount * 1000000).toString(),
       expirationTime: Math.floor(Date.now() / 1000) + expirationSeconds,

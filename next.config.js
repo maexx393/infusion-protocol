@@ -5,6 +5,12 @@ const nextConfig = {
     config.resolve.fallback = {
       ...config.resolve.fallback,
       fs: false,
+      net: false,
+      tls: false,
+    };
+    config.resolve.alias = {
+      ...(config.resolve.alias || {}),
+      'near-api-js$': 'near-api-js/lib/browser-index',
     };
     return config;
   },
@@ -20,6 +26,7 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  transpilePackages: ['near-api-js'],
 }
 
 module.exports = nextConfig 

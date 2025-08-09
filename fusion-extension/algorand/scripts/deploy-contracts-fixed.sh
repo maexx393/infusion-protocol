@@ -123,9 +123,9 @@ generate_deployment_info() {
         "pool_contract": "TO_BE_DEPLOYED"
     },
     "explorer_urls": {
-        "escrow_contract": "https://testnet.algoexplorer.io/application/TO_BE_DEPLOYED",
-        "solver_contract": "https://testnet.algoexplorer.io/application/TO_BE_DEPLOYED",
-        "pool_contract": "https://testnet.algoexplorer.io/application/TO_BE_DEPLOYED"
+        "escrow_contract": "https://lora.algokit.io/testnet/application/TO_BE_DEPLOYED",
+        "solver_contract": "https://lora.algokit.io/testnet/application/TO_BE_DEPLOYED",
+        "pool_contract": "https://lora.algokit.io/testnet/application/TO_BE_DEPLOYED"
     },
     "notes": "Contracts are ready for deployment. Fund accounts and run deployment commands.",
     "deployment_commands": [

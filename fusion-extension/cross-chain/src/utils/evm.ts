@@ -300,10 +300,19 @@ export async function claimETH(params: ClaimETHParams): Promise<ClaimETHResult> 
     const depositIdHex = params.depositId.startsWith('0x') ? params.depositId : `0x${params.depositId}`;
     const depositIdBytes32 = ethers.getBytes(depositIdHex);
     
-    // Convert secret from base64 to bytes (NEAR format)
-    const secretBytes = Buffer.from(params.secret, 'base64');
-    // Convert to hex string for ethers.js compatibility
-    const secretHex = '0x' + secretBytes.toString('hex');
+    // Convert secret to bytes - handle both hex and base64 formats
+    let secretBytes;
+    if (params.secret.startsWith('0x')) {
+      // Hex format
+      secretBytes = ethers.getBytes(params.secret);
+    } else if (params.secret.match(/^[A-Za-z0-9+/]*={0,2}$/)) {
+      // Base64 format (from Algorand secret generation)
+      const secretBuffer = Buffer.from(params.secret, 'base64');
+      secretBytes = new Uint8Array(secretBuffer);
+    } else {
+      // Assume hex without 0x prefix
+      secretBytes = ethers.getBytes(`0x${params.secret}`);
+    }
     
     // Get escrow contract address
     const escrowAddress = getEscrowContractAddress();
@@ -344,7 +353,7 @@ export async function claimETH(params: ClaimETHParams): Promise<ClaimETHResult> 
     console.log(`   Current nonce: ${nonce}`);
     
     // Create claim transaction with explicit nonce
-    const tx = await escrowContract.claim(depositIdBytes32, secretHex, {
+    const tx = await escrowContract.claim(depositIdBytes32, secretBytes, {
       nonce: nonce
     });
     

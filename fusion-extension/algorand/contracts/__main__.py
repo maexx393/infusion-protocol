@@ -55,9 +55,9 @@ def deploy() -> None:
                 "pool_contract": "SIMULATED_POOL_ID"
             },
             "explorer_urls": {
-                "escrow_contract": "https://testnet.algoexplorer.io/application/SIMULATED_ESCROW_ID",
-                "solver_contract": "https://testnet.algoexplorer.io/application/SIMULATED_SOLVER_ID",
-                "pool_contract": "https://testnet.algoexplorer.io/application/SIMULATED_POOL_ID"
+                "escrow_contract": "https://lora.algokit.io/testnet/application/SIMULATED_ESCROW_ID",
+                "solver_contract": "https://lora.algokit.io/testnet/application/SIMULATED_SOLVER_ID",
+                "pool_contract": "https://lora.algokit.io/testnet/application/SIMULATED_POOL_ID"
             },
             "deployer_address": "SIMULATED_DEPLOYER_ADDRESS",
             "deployment_timestamp": "2024-01-15T12:00:00Z",

@@ -50,7 +50,7 @@ export class ResolverAlgorand2EVM {
       amountAlgo: order.amountAlgo,
       hashedSecret: hashedSecret,
       expirationSeconds: 3600,
-      depositorAddress: getAccountAddress('alice'),
+      depositorAddress: getAccountAddress('stacy'),
       claimerAddress: getAccountAddress('resolver')
     };
 

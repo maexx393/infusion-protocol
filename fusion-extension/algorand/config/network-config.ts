@@ -33,7 +33,7 @@ export const ALGORAND_NETWORKS = {
     name: 'testnet',
     algodUrl: 'https://testnet-api.algonode.cloud',
     indexerUrl: 'https://testnet-idx.algonode.cloud',
-    explorerUrl: 'https://testnet.algoexplorer.io',
+    explorerUrl: 'https://lora.algokit.io/testnet',
     port: 443,
     token: ''
   },

@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { Header } from '@/components/header'
 import { Sidebar } from '@/components/sidebar'
-import { DashboardGrid } from '@/components/dashboard-grid'
+import { UnifiedCrossChainSwap } from '@/components/swap/unified-cross-chain-swap'
 import { AIPortfolioDashboard } from '@/components/dashboard/ai-portfolio-dashboard'
 import { AchievementCard } from '@/components/gamification/achievement-card'
 import { Toaster } from '@/components/ui/toaster'
@@ -19,8 +19,6 @@ import { Separator } from '@/components/ui/separator'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { useToast } from '@/hooks/use-toast'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-
-
 
 export default function Home() {
   return (
@@ -51,10 +49,10 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Dashboard Grid */}
+            {/* Agentic AI Swap Interface */}
             <div className="bg-black/20 backdrop-blur-md border border-white/10 rounded-xl p-6">
-              <h2 className="text-2xl font-bold text-white mb-6">Quick Actions</h2>
-              <DashboardGrid />
+              <h2 className="text-2xl font-bold text-white mb-6">⚛️ Agentic Atomic Swaps</h2>
+              <UnifiedCrossChainSwap />
             </div>
 
             {/* AI Portfolio Dashboard */}

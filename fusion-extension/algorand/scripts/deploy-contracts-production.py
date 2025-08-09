@@ -117,7 +117,7 @@ class AlgorandDeployer:
                 'app_id': app_id,
                 'tx_id': tx_id,
                 'deployer_address': self.deployer_address,
-                'explorer_url': f"https://testnet.algoexplorer.io/application/{app_id}",
+                'explorer_url': f"https://lora.algokit.io/testnet/application/{app_id}",
                 'deployment_time': time.time()
             }
         except Exception as e:
@@ -160,7 +160,7 @@ class AlgorandDeployer:
             print("⚠️  Warning: Insufficient balance for deployment.")
             print("   Please fund the deployer account with at least 1 ALGO.")
             print("   You can use the Algorand testnet dispenser:")
-            print(f"   https://testnet.algoexplorer.io/dispenser?addr={self.deployer_address}")
+            print(f"   https://lora.algokit.io/testnet/dispenser?addr={self.deployer_address}")
             print("\n   Or continue with simulation deployment...")
             
             # For now, let's continue with simulation
@@ -205,7 +205,7 @@ class AlgorandDeployer:
                     'app_id': f"SIM_{contract_name.upper()}_123",
                     'tx_id': f"SIM_TX_{contract_name}_{int(time.time())}",
                     'deployer_address': self.deployer_address,
-                    'explorer_url': f"https://testnet.algoexplorer.io/application/SIM_{contract_name.upper()}_123",
+                    'explorer_url': f"https://lora.algokit.io/testnet/application/SIM_{contract_name.upper()}_123",
                     'deployment_time': time.time(),
                     'simulated': True
                 }

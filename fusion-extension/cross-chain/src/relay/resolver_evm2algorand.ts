@@ -64,7 +64,7 @@ export class ResolverEVM2Algorand {
       expirationSeconds: 3600,
       depositorAddress: getAccountAddress('resolver'),
       depositorPrivateKey: mnemonicToPrivateKey(getAccountMnemonic('resolver')),
-      claimerAddress: getAccountAddress('alice'),
+      claimerAddress: getAccountAddress('stacy'),
       escrowAppId: 743876974
     };
 
