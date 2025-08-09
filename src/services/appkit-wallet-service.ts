@@ -1,5 +1,4 @@
 import { getNetworkById } from '@/lib/network-config'
-import { PeraWalletConnect } from '@perawallet/connect'
 import { Connection, PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js'
 
 export interface WalletConnection {
@@ -164,6 +163,7 @@ export class AppKitWalletService {
     }
 
     try {
+      const { PeraWalletConnect } = await import('@perawallet/connect')
       const peraWallet = new PeraWalletConnect({
         chainId: chain.includes('testnet') ? 416001 : 416002
       })
