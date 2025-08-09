@@ -2,10 +2,10 @@
 // This file contains all the configuration variables needed by the production utilities
 
 // Environment variables with fallbacks
-export const ALICE_PRIVATE_KEY = process.env.ALICE_PRIVATE_KEY || '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef';
-export const CAROL_PRIVATE_KEY = process.env.CAROL_PRIVATE_KEY || '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef';
-export const STACY_PRIVATE_KEY = process.env.STACY_PRIVATE_KEY || '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef';
-export const SILVIO_PRIVATE_KEY = process.env.SILVIO_PRIVATE_KEY || '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef';
+export const ALICE_PRIVATE_KEY = process.env.ALICE_PRIVATE_KEY || '0xeccaf5dd8c05b8586da6ccf06ff333c298726a655ae245c087180be33adfbfe9';
+export const CAROL_PRIVATE_KEY = process.env.CAROL_PRIVATE_KEY || '0x0550e6c715b17f464b81f166e0d2ac8e614f14844f109dbf0d5299c72270aafe';
+export const STACY_PRIVATE_KEY = process.env.STACY_PRIVATE_KEY || '0x45bb1f2fc507264d00921c8af6b66e420344d80c131de7a44c3ae575972649f2a19192e82065f5c7c6b025343b7283379fd8fe8a994f22753fec3d7248efe5a0';
+export const SILVIO_PRIVATE_KEY = process.env.SILVIO_PRIVATE_KEY || '0xeccaf5dd8c05b8586da6ccf06ff333c298726a655ae245c087180be33adfbfe9';
 
 // Solana private keys (64 bytes)
 export const SOLANA_PRIVATE_KEY = process.env.SOLANA_PRIVATE_KEY || '1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef';
@@ -28,8 +28,8 @@ export const SOLANA_DEPOSITOR_ADDRESS = process.env.SOLANA_DEPOSITOR_ADDRESS || 
 export const SOLANA_CLAIMER_ADDRESS = process.env.SOLANA_CLAIMER_ADDRESS || '8M3aUYmP5o4NSj6cTyDtoEsf5CdXD2sojEAceydgff7b';
 
 // Algorand addresses
-export const ALGORAND_DEPOSITOR_ADDRESS = process.env.ALGORAND_DEPOSITOR_ADDRESS || 'alice.defiunite.testnet';
-export const ALGORAND_CLAIMER_ADDRESS = process.env.ALGORAND_CLAIMER_ADDRESS || 'carol.defiunite.testnet';
+export const ALGORAND_DEPOSITOR_ADDRESS = process.env.ALGORAND_DEPOSITOR_ADDRESS || 'UGIZF2BAMX24PRVQEU2DW4UDG6P5R7UKTFHSE5J75Q6XESHP4WQIBGH6QU';
+export const ALGORAND_CLAIMER_ADDRESS = process.env.ALGORAND_CLAIMER_ADDRESS || '4VZTY6CVXP2GGTICCNU5E4AMQRKNVDHHDGAIKWPKACNM2RTSEM64OXIK4Y';
 
 // RPC URLs
 export const ETHEREUM_RPC_URL = process.env.ETHEREUM_RPC_URL || 'https://eth-mainnet.g.alchemy.com/v2/E-LLa6qeTOzgnGgIhe8q3';
@@ -85,19 +85,19 @@ export function getAddressUrl(address: string): string {
 }
 
 export function hasValidPrivateKeys(): boolean {
-  return ALICE_PRIVATE_KEY !== '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef' &&
-         CAROL_PRIVATE_KEY !== '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef';
+  return ALICE_PRIVATE_KEY !== '0xeccaf5dd8c05b8586da6ccf06ff333c298726a655ae245c087180be33adfbfe9' &&
+         CAROL_PRIVATE_KEY !== '0xeccaf5dd8c05b8586da6ccf06ff333c298726a655ae245c087180be33adfbfe9';
 }
 
 export function hasValidAlicePrivateKey(): boolean {
-  return ALICE_PRIVATE_KEY !== '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef';
+  return ALICE_PRIVATE_KEY !== '0xeccaf5dd8c05b8586da6ccf06ff333c298726a655ae245c087180be33adfbfe9';
 }
 
 export function hasValidCarolPrivateKey(): boolean {
-  return CAROL_PRIVATE_KEY !== '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef';
+  return CAROL_PRIVATE_KEY !== '0xeccaf5dd8c05b8586da6ccf06ff333c298726a655ae245c087180be33adfbfe9';
 }
 
 export function hasValidAlgorandPrivateKeys(): boolean {
-  return ALGORAND_PRIVATE_KEY !== '1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef' &&
-         ALGORAND_CLAIMER_PRIVATE_KEY !== '1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef';
+  return ALGORAND_PRIVATE_KEY !== '0x45bb1f2fc507264d00921c8af6b66e420344d80c131de7a44c3ae575972649f2a19192e82065f5c7c6b025343b7283379fd8fe8a994f22753fec3d7248efe5a0' &&
+         ALGORAND_CLAIMER_PRIVATE_KEY !== '0x90ec00bb74d5e1a7ae9f4122f50e24cf901e1daebb778bdbc4e8a4d8fc7815fce5733c7855bbf4634d021369d2700c8454da8ce719808559ea009acd4672233d';
 }

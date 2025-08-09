@@ -75,7 +75,7 @@ NEXT_PUBLIC_FANTOM_TESTNET_RPC=https://rpc.testnet.fantom.network
 
 # Solana Networks
 NEXT_PUBLIC_SOLANA_MAINNET_RPC=https://api.mainnet-beta.solana.com
-NEXT_PUBLIC_SOLANA_DEVNET_RPC=https://api.devnet.solana.com
+NEXT_PUBLIC_SOLANA_TESTNET_RPC=https://api.devnet.solana.com
 
 # NEAR Networks
 NEXT_PUBLIC_NEAR_MAINNET_RPC=https://rpc.mainnet.near.org

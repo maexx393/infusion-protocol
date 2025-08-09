@@ -10,10 +10,10 @@ const { ethers } = require('ethers');
 // Import real production utilities (if available)
 let realEVMUtils: any, realSolanaUtils: any, realAlgorandUtils: any, realNEARUtils: any;
 try {
-  realEVMUtils = require('../fusion-extension/cross-chain/src/utils/evm');
-  realSolanaUtils = require('../fusion-extension/cross-chain/src/utils/solana');
-  realAlgorandUtils = require('../fusion-extension/cross-chain/src/utils/algorand');
-  realNEARUtils = require('../fusion-extension/cross-chain/src/utils/near-real');
+  realEVMUtils = require('../../fusion-extension/cross-chain/src/utils/evm');
+  realSolanaUtils = require('../../fusion-extension/cross-chain/src/utils/solana');
+  realAlgorandUtils = require('../../fusion-extension/cross-chain/src/utils/algorand');
+  realNEARUtils = require('../../fusion-extension/cross-chain/src/utils/near-real');
 } catch (error) {
   console.log('Real production utilities not available, using enhanced simulation');
 }
@@ -105,7 +105,7 @@ const PRODUCTION_CHAINS = {
     testnet: 'Testnet',
     rpcUrl: process.env.ALGORAND_RPC_URL || 'https://testnet-api.algonode.cloud',
     chainId: 'testnet',
-    explorer: 'https://testnet.algoexplorer.io',
+    explorer: 'https://lora.algokit.io/testnet',
     escrowContract: '743881611', // Real deployed app ID
     solverContract: '743881612',
     poolContract: '743881613',

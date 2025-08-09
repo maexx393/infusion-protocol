@@ -231,7 +231,7 @@ export function QuickNetworkSwitcher() {
           size="sm"
           className={`text-xs ${
             currentNetwork?.id === network.id 
-              ? 'bg-purple-600 text-white' 
+              ? 'bg-purple-600 text-white' n
               : 'bg-black/30 border-white/20 text-white hover:bg-white/10'
           }`}
         >

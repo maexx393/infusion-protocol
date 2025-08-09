@@ -89,7 +89,7 @@ async function runAlgorandToEvmExample() {
     const algorandDeposit = {
       depositId: hashedSecret,
       txHash: simulatedTxId,
-      explorerUrl: `https://testnet.algoexplorer.io/tx/${simulatedTxId}`,
+      explorerUrl: `https://lora.algokit.io/testnet/tx/${simulatedTxId}`,
       escrowAddress: 'SIM_ESCROW_ADDRESS',
       amountMicroAlgos: (algoAmount * 1000000).toString(),
       expirationTime: Math.floor(Date.now() / 1000) + expirationSeconds,

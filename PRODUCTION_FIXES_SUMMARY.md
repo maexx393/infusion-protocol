@@ -202,7 +202,7 @@ NEXT_PUBLIC_POLYGON_AMOY_RPC=https://rpc-amoy.polygon.technology
 
 # Solana Networks
 NEXT_PUBLIC_SOLANA_MAINNET_RPC=https://api.mainnet-beta.solana.com
-NEXT_PUBLIC_SOLANA_DEVNET_RPC=https://api.devnet.solana.com
+NEXT_PUBLIC_SOLANA_TESTNET_RPC=https://api.devnet.solana.com
 
 # Bitcoin Networks
 NEXT_PUBLIC_BITCOIN_MAINNET_RPC=https://blockstream.info/api

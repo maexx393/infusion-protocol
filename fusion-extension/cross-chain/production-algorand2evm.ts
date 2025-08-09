@@ -124,7 +124,7 @@ async function runProductionDemo() {
     const algorandDepositResult = {
       depositId: hashedSecret,
       txHash: simulatedAlgorandTxId,
-      explorerUrl: `https://testnet.algoexplorer.io/tx/${simulatedAlgorandTxId}`,
+      explorerUrl: `https://lora.algokit.io/testnet/tx/${simulatedAlgorandTxId}`,
       escrowAddress: 'UGIZF2BAMX24PRVQEU2DW4UDG6P5R7UKTFHSE5J75Q6XESHP4WQIBGH6QU',
       amountMicroAlgos: '100000', // 0.1 ALGO in microAlgos
       expirationTime: Math.floor(Date.now() / 1000) + 3600,

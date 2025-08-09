@@ -81,7 +81,7 @@ export const ALGORAND_NETWORK_CONFIG = {
   testnet: {
     algodUrl: 'https://testnet-api.algonode.cloud',
     indexerUrl: 'https://testnet-idx.algonode.cloud',
-    explorerUrl: 'https://testnet.algoexplorer.io',
+    explorerUrl: 'https://lora.algokit.io/testnet',
     dispenserUrl: 'https://bank.testnet.algorand.network/'
   },
   mainnet: {

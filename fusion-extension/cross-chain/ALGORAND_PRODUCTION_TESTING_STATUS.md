@@ -6,9 +6,9 @@
 
 | Contract | App ID | Explorer URL | Status |
 |----------|--------|--------------|--------|
-| **Escrow** | `743876974` | [View on Explorer](https://testnet.algoexplorer.io/application/743876974) | ✅ Deployed |
-| **Solver** | `743876975` | [View on Explorer](https://testnet.algoexplorer.io/application/743876975) | ✅ Deployed |
-| **Pool** | `743876985` | [View on Explorer](https://testnet.algoexplorer.io/application/743876985) | ✅ Deployed |
+| **Escrow** | `743876974` | [View on Explorer](https://lora.algokit.io/testnet/application/743876974) | ✅ Deployed |
+| **Solver** | `743876975` | [View on Explorer](https://lora.algokit.io/testnet/application/743876975) | ✅ Deployed |
+| **Pool** | `743876985` | [View on Explorer](https://lora.algokit.io/testnet/application/743876985) | ✅ Deployed |
 
 ### 🔧 Configuration Updated
 

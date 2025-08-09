@@ -138,9 +138,9 @@ deploy_contracts() {
         "pool_contract": "SIMULATED_POOL_CONTRACT_ID"
     },
     "explorer_urls": {
-        "escrow_contract": "https://testnet.algoexplorer.io/application/SIMULATED_ESCROW_CONTRACT_ID",
-        "solver_contract": "https://testnet.algoexplorer.io/application/SIMULATED_SOLVER_CONTRACT_ID",
-        "pool_contract": "https://testnet.algoexplorer.io/application/SIMULATED_POOL_CONTRACT_ID"
+        "escrow_contract": "https://lora.algokit.io/testnet/application/SIMULATED_ESCROW_CONTRACT_ID",
+        "solver_contract": "https://lora.algokit.io/testnet/application/SIMULATED_SOLVER_CONTRACT_ID",
+        "pool_contract": "https://lora.algokit.io/testnet/application/SIMULATED_POOL_CONTRACT_ID"
     },
     "notes": "Contracts compiled successfully. For real deployment, use manual AlgoKit commands.",
     "next_steps": [

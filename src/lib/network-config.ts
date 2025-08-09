@@ -210,11 +210,11 @@ export const NETWORK_CONFIGS: NetworkConfig[] = [
     isMainnet: true
   },
   {
-    id: 'solana-devnet',
-    name: 'Solana Devnet',
+    id: 'solana-testnet',
+    name: 'Solana Testnet',
     symbol: 'SOL',
     icon: '🟣',
-    rpcUrl: process.env.NEXT_PUBLIC_SOLANA_DEVNET_RPC || 'https://api.devnet.solana.com',
+    rpcUrl: process.env.NEXT_PUBLIC_SOLANA_TESTNET_RPC || 'https://api.testnet.solana.com',
     explorerUrl: 'https://explorer.solana.com/?cluster=devnet',
     nativeCurrency: { name: 'Solana', symbol: 'SOL', decimals: 9 },
     category: 'solana',
@@ -287,7 +287,7 @@ export const NETWORK_CONFIGS: NetworkConfig[] = [
     symbol: 'ALGO',
     icon: '🔵',
     rpcUrl: process.env.NEXT_PUBLIC_ALGORAND_TESTNET_RPC || 'https://testnet-api.algonode.cloud',
-    explorerUrl: 'https://testnet.algoexplorer.io',
+    explorerUrl: 'https://lora.algokit.io/testnet',
     nativeCurrency: { name: 'Algorand', symbol: 'ALGO', decimals: 6 },
     category: 'algorand',
     isTestnet: true
@@ -295,7 +295,8 @@ export const NETWORK_CONFIGS: NetworkConfig[] = [
 ];
 
 export function getNetworkById(id: string | number): NetworkConfig | undefined {
-  return NETWORK_CONFIGS.find(network => network.id === id);
+  const idStr = String(id)
+  return NETWORK_CONFIGS.find(network => String(network.id) === idStr);
 }
 
 export function getNetworksByCategory(category: NetworkConfig['category']): NetworkConfig[] {

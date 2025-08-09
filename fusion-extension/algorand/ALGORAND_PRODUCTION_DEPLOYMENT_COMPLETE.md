@@ -12,9 +12,9 @@ Your Algorand-EVM cross-chain integration has been **successfully deployed to pr
 
 | Contract | App ID | Transaction ID | Explorer URL |
 |----------|--------|----------------|--------------|
-| **Escrow** | `743864631` | `CZSQ5VVPINRAIQMCMUKSM5QFN527F4IQJDCWZUO4SC4R7LWBT5PA` | [View on Explorer](https://testnet.algoexplorer.io/application/743864631) |
-| **Solver** | `743864632` | `FZG2UPFQZR2O5YRGQIPV7LHFXVI4K2A2WK7OP4JJNBM5RGYE6TGA` | [View on Explorer](https://testnet.algoexplorer.io/application/743864632) |
-| **Pool** | `743864633` | `GVR4ITOXABDAASGLJMU5ZEREDZLLWJ6FJLOA77AQZ6NIN57ABYXA` | [View on Explorer](https://testnet.algoexplorer.io/application/743864633) |
+| **Escrow** | `743864631` | `CZSQ5VVPINRAIQMCMUKSM5QFN527F4IQJDCWZUO4SC4R7LWBT5PA` | [View on Explorer](https://lora.algokit.io/testnet/application/743864631) |
+| **Solver** | `743864632` | `FZG2UPFQZR2O5YRGQIPV7LHFXVI4K2A2WK7OP4JJNBM5RGYE6TGA` | [View on Explorer](https://lora.algokit.io/testnet/application/743864632) |
+| **Pool** | `743864633` | `GVR4ITOXABDAASGLJMU5ZEREDZLLWJ6FJLOA77AQZ6NIN57ABYXA` | [View on Explorer](https://lora.algokit.io/testnet/application/743864633) |
 
 ### **💰 Deployment Details**
 - **Deployer Address**: `5KUWYUYVK64M6EW6LYBKO53WP7T4XMON5JJE7UUDUTAKBUAXDOQPURVCY4`

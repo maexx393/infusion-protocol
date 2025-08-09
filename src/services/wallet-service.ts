@@ -1,15 +1,6 @@
-import { ethers } from 'ethers'
 import { Connection, PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js'
-import { PeraWalletConnect } from '@perawallet/connect'
+import { connect, ConnectConfig } from 'near-api-js'
 import { getNetworkById } from '@/lib/network-config'
-
-export interface WalletBalance {
-  chain: string
-  address: string
-  balance: string
-  symbol: string
-  decimals: number
-}
 
 export interface WalletConnection {
   chain: string
@@ -19,313 +10,351 @@ export interface WalletConnection {
   balance?: string
 }
 
-// Initialize Pera Wallet
-const peraWallet = new PeraWalletConnect({
-  chainId: 416001, // Algorand testnet
-  network: 'testnet'
-})
-
-// RPC URLs for different networks
-const RPC_URLS = {
-  'polygon-amoy': process.env.NEXT_PUBLIC_POLYGON_AMOY_RPC || 'https://rpc-amoy.polygon.technology',
-  'ethereum-sepolia': process.env.NEXT_PUBLIC_ETHEREUM_SEPOLIA_RPC || 'https://sepolia.infura.io/v3/demo',
-  'arbitrum-sepolia': process.env.NEXT_PUBLIC_ARBITRUM_SEPOLIA_RPC || 'https://sepolia-rollup.arbitrum.io/rpc',
-  'base-sepolia': process.env.NEXT_PUBLIC_BASE_SEPOLIA_RPC || 'https://sepolia.base.org',
-  'optimism-sepolia': process.env.NEXT_PUBLIC_OPTIMISM_SEPOLIA_RPC || 'https://sepolia.optimism.io',
-  'bsc-testnet': process.env.NEXT_PUBLIC_BSC_TESTNET_RPC || 'https://data-seed-prebsc-1-s1.binance.org:8545',
-  'avalanche-fuji': process.env.NEXT_PUBLIC_AVALANCHE_FUJI_RPC || 'https://api.avax-test.network/ext/bc/C/rpc',
-  'fantom-testnet': process.env.NEXT_PUBLIC_FANTOM_TESTNET_RPC || 'https://rpc.testnet.fantom.network',
-  'solana-devnet': process.env.NEXT_PUBLIC_SOLANA_DEVNET_RPC || 'https://api.devnet.solana.com',
-  'near-testnet': process.env.NEXT_PUBLIC_NEAR_TESTNET_RPC || 'https://rpc.testnet.near.org',
-  'algorand-testnet': process.env.NEXT_PUBLIC_ALGORAND_TESTNET_RPC || 'https://testnet-api.algonode.cloud',
-  'bitcoin-testnet': process.env.NEXT_PUBLIC_BITCOIN_TESTNET_RPC || 'https://blockstream.info/testnet/api'
-}
-
-// Token symbols for different chains
-const TOKEN_SYMBOLS = {
-  'polygon-amoy': 'POL',
-  'ethereum-sepolia': 'ETH',
-  'arbitrum-sepolia': 'ETH',
-  'base-sepolia': 'ETH',
-  'optimism-sepolia': 'ETH',
-  'bsc-testnet': 'BNB',
-  'avalanche-fuji': 'AVAX',
-  'fantom-testnet': 'FTM',
-  'solana-devnet': 'SOL',
-  'near-testnet': 'NEAR',
-  'algorand-testnet': 'ALGO',
-  'bitcoin-testnet': 'BTC'
-}
-
-// Token decimals for different chains
-const TOKEN_DECIMALS = {
-  'polygon-amoy': 18,
-  'ethereum-sepolia': 18,
-  'arbitrum-sepolia': 18,
-  'base-sepolia': 18,
-  'optimism-sepolia': 18,
-  'bsc-testnet': 18,
-  'avalanche-fuji': 18,
-  'fantom-testnet': 18,
-  'solana-devnet': 9,
-  'near-testnet': 24,
-  'algorand-testnet': 6,
-  'bitcoin-testnet': 8
-}
-
 export class WalletService {
-  // Get balance for EVM chains
-  static async getEVMBalance(chain: string, address: string): Promise<WalletBalance> {
+  private static instance: WalletService
+  private connections: Map<string, WalletConnection> = new Map()
+
+  static getInstance(): WalletService {
+    if (!WalletService.instance) {
+      WalletService.instance = new WalletService()
+    }
+    return WalletService.instance
+  }
+
+  // EVM Wallet Connection (MetaMask)
+  async connectEVMWallet(chain: string): Promise<WalletConnection> {
+    if (typeof window === 'undefined' || !window.ethereum) {
+      throw new Error('MetaMask not found. Please install MetaMask extension.')
+    }
+
+    const network = getNetworkById(chain)
+    if (!network) {
+      throw new Error(`Network ${chain} not supported`)
+    }
+
     try {
-      const rpcUrl = RPC_URLS[chain as keyof typeof RPC_URLS]
-      if (!rpcUrl) {
-        throw new Error(`No RPC URL found for chain: ${chain}`)
+      // Request account access
+      const accounts = await (window.ethereum as any).request({ 
+        method: 'eth_requestAccounts' 
+      })
+
+      if (accounts.length === 0) {
+        throw new Error('No accounts found')
       }
 
-      const provider = new ethers.JsonRpcProvider(rpcUrl)
-      const balance = await provider.getBalance(address)
-      const symbol = TOKEN_SYMBOLS[chain as keyof typeof TOKEN_SYMBOLS] || 'ETH'
-      const decimals = TOKEN_DECIMALS[chain as keyof typeof TOKEN_DECIMALS] || 18
+      const address = accounts[0]
 
-      return {
+      // Check and switch network if needed
+      await this.ensureEVMNetwork(chain)
+
+      // Get balance
+      const balance = await (window.ethereum as any).request({
+        method: 'eth_getBalance',
+        params: [address, 'latest']
+      })
+
+      const connection: WalletConnection = {
         chain,
+        walletType: 'metamask',
         address,
-        balance: ethers.formatUnits(balance, decimals),
-        symbol,
-        decimals
+        isConnected: true,
+        balance: (parseInt(balance, 16) / Math.pow(10, 18)).toFixed(4)
       }
+
+      this.connections.set(chain, connection)
+      return connection
     } catch (error) {
-      console.error(`Error fetching EVM balance for ${chain}:`, error)
-      throw new Error(`Failed to fetch balance for ${chain}: ${error}`)
+      throw new Error(`Failed to connect EVM wallet: ${error}`)
     }
   }
 
-  // Get balance for Solana
-  static async getSolanaBalance(chain: string, address: string): Promise<WalletBalance> {
+  // Solana Wallet Connection (Phantom)
+  async connectSolanaWallet(chain: string): Promise<WalletConnection> {
+    if (typeof window === 'undefined' || !window.solana?.isPhantom) {
+      throw new Error('Phantom wallet not found. Please install Phantom extension.')
+    }
+
+    const network = getNetworkById(chain)
+    if (!network) {
+      throw new Error(`Network ${chain} not supported`)
+    }
+
     try {
-      const rpcUrl = RPC_URLS[chain as keyof typeof RPC_URLS]
-      if (!rpcUrl) {
-        throw new Error(`No RPC URL found for chain: ${chain}`)
-      }
+      // Connect to Phantom wallet
+      const response = await window.solana.connect()
+      const address = response.publicKey.toString()
+      
+      // Get balance using Solana RPC
+      const connection = new Connection(network.rpcUrl)
+      const balance = await connection.getBalance(new PublicKey(address))
 
-      const connection = new Connection(rpcUrl)
-      const publicKey = new PublicKey(address)
-      const balance = await connection.getBalance(publicKey)
-      const symbol = TOKEN_SYMBOLS[chain as keyof typeof TOKEN_SYMBOLS] || 'SOL'
-      const decimals = TOKEN_DECIMALS[chain as keyof typeof TOKEN_DECIMALS] || 9
-
-      return {
+      const walletConnection: WalletConnection = {
         chain,
+        walletType: 'phantom',
         address,
-        balance: (balance / LAMPORTS_PER_SOL).toString(),
-        symbol,
-        decimals
+        isConnected: true,
+        balance: (balance / LAMPORTS_PER_SOL).toFixed(4)
       }
+
+      this.connections.set(chain, walletConnection)
+      return walletConnection
     } catch (error) {
-      console.error(`Error fetching Solana balance for ${chain}:`, error)
-      throw new Error(`Failed to fetch Solana balance: ${error}`)
+      throw new Error(`Failed to connect Solana wallet: ${error}`)
     }
   }
 
-  // Get balance for Algorand
-  static async getAlgorandBalance(chain: string, address: string): Promise<WalletBalance> {
-    try {
-      const rpcUrl = RPC_URLS[chain as keyof typeof RPC_URLS]
-      if (!rpcUrl) {
-        throw new Error(`No RPC URL found for chain: ${chain}`)
-      }
-
-      // Use Algorand SDK to fetch balance
-      const response = await fetch(`${rpcUrl}/v2/accounts/${address}`)
-      if (!response.ok) {
-        throw new Error(`Failed to fetch Algorand account: ${response.statusText}`)
-      }
-
-      const accountData = await response.json()
-      const balance = accountData.amount || 0
-      const symbol = TOKEN_SYMBOLS[chain as keyof typeof TOKEN_SYMBOLS] || 'ALGO'
-      const decimals = TOKEN_DECIMALS[chain as keyof typeof TOKEN_DECIMALS] || 6
-
-      return {
-        chain,
-        address,
-        balance: (balance / Math.pow(10, decimals)).toString(),
-        symbol,
-        decimals
-      }
-    } catch (error) {
-      console.error(`Error fetching Algorand balance for ${chain}:`, error)
-      throw new Error(`Failed to fetch Algorand balance: ${error}`)
+  // Algorand Wallet Connection (Pera)
+  async connectAlgorandWallet(chain: string): Promise<WalletConnection> {
+    const network = getNetworkById(chain)
+    if (!network) {
+      throw new Error(`Network ${chain} not supported`)
     }
-  }
 
-  // Get balance for NEAR
-  static async getNEARBalance(chain: string, address: string): Promise<WalletBalance> {
     try {
-      const rpcUrl = RPC_URLS[chain as keyof typeof RPC_URLS]
-      if (!rpcUrl) {
-        throw new Error(`No RPC URL found for chain: ${chain}`)
+      // Import PeraWalletConnect dynamically to avoid SSR issues
+      const { PeraWalletConnect } = await import('@perawallet/connect')
+      
+      const peraWallet = new PeraWalletConnect({
+        chainId: chain.includes('testnet') ? 416001 : 416002 // Algorand testnet/mainnet
+      })
+
+      // Connect to Pera wallet
+      const accounts = await peraWallet.connect()
+      
+      if (accounts.length === 0) {
+        throw new Error('No Algorand accounts found')
       }
 
-      // Use NEAR RPC to fetch balance
-      const response = await fetch(rpcUrl, {
+      const address = accounts[0]
+
+      // Get balance using Algorand RPC
+      const balanceResponse = await fetch(network.rpcUrl, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           jsonrpc: '2.0',
-          id: 'dontcare',
+          id: 1,
+          method: 'account_info',
+          params: [address]
+        })
+      })
+
+      const balanceData = await balanceResponse.json()
+      const balance = balanceData.result ? (balanceData.result.account.amount / Math.pow(10, 6)).toFixed(4) : '0.0'
+
+      const connection: WalletConnection = {
+        chain,
+        walletType: 'pera',
+        address,
+        isConnected: true,
+        balance
+      }
+
+      this.connections.set(chain, connection)
+      return connection
+    } catch (error) {
+      throw new Error(`Failed to connect Algorand wallet: ${error}`)
+    }
+  }
+
+  // NEAR Wallet Connection
+  async connectNEARWallet(chain: string): Promise<WalletConnection> {
+    if (typeof window === 'undefined' || !window.near) {
+      throw new Error('NEAR wallet not found. Please install NEAR wallet extension.')
+    }
+
+    const network = getNetworkById(chain)
+    if (!network) {
+      throw new Error(`Network ${chain} not supported`)
+    }
+
+    try {
+      // Connect to NEAR wallet
+      const account = await window.near.connect()
+      const address = account.accountId
+
+      // Get balance using NEAR RPC
+      const balanceResponse = await fetch(network.rpcUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          jsonrpc: '2.0',
+          id: 1,
           method: 'query',
           params: {
             request_type: 'view_account',
-            finality: 'final',
             account_id: address,
-          },
-        }),
+            finality: 'final'
+          }
+        })
       })
 
-      if (!response.ok) {
-        throw new Error(`Failed to fetch NEAR account: ${response.statusText}`)
-      }
+      const balanceData = await balanceResponse.json()
+      const balance = balanceData.result ? (parseInt(balanceData.result.amount) / Math.pow(10, 24)).toFixed(4) : '0.0'
 
-      const data = await response.json()
-      const balance = data.result.amount || '0'
-      const symbol = TOKEN_SYMBOLS[chain as keyof typeof TOKEN_SYMBOLS] || 'NEAR'
-      const decimals = TOKEN_DECIMALS[chain as keyof typeof TOKEN_DECIMALS] || 24
-
-      return {
+      const connection: WalletConnection = {
         chain,
+        walletType: 'near',
         address,
-        balance: (parseInt(balance) / Math.pow(10, decimals)).toString(),
-        symbol,
-        decimals
+        isConnected: true,
+        balance
       }
+
+      this.connections.set(chain, connection)
+      return connection
     } catch (error) {
-      console.error(`Error fetching NEAR balance for ${chain}:`, error)
-      throw new Error(`Failed to fetch NEAR balance: ${error}`)
+      throw new Error(`Failed to connect NEAR wallet: ${error}`)
     }
   }
 
-  // Get balance for Bitcoin
-  static async getBitcoinBalance(chain: string, address: string): Promise<WalletBalance> {
+  // Bitcoin Wallet Connection (Lightning Network)
+  async connectBitcoinWallet(chain: string): Promise<WalletConnection> {
+    if (typeof window === 'undefined' || !window.bitcoin) {
+      throw new Error('Bitcoin wallet not found. Please install a Bitcoin Lightning wallet extension.')
+    }
+
+    const network = getNetworkById(chain)
+    if (!network) {
+      throw new Error(`Network ${chain} not supported`)
+    }
+
     try {
-      const rpcUrl = RPC_URLS[chain as keyof typeof RPC_URLS]
-      if (!rpcUrl) {
-        throw new Error(`No RPC URL found for chain: ${chain}`)
-      }
+      // Connect to Bitcoin wallet (assuming Lightning Network)
+      const account = await window.bitcoin.connect()
+      const address = account.address
 
-      // Use Blockstream API to fetch balance
-      const response = await fetch(`${rpcUrl}/address/${address}`)
-      if (!response.ok) {
-        throw new Error(`Failed to fetch Bitcoin address: ${response.statusText}`)
-      }
+      // Get balance using Bitcoin RPC
+      const balanceResponse = await fetch(network.rpcUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          jsonrpc: '2.0',
+          id: 1,
+          method: 'getbalance',
+          params: []
+        })
+      })
 
-      const data = await response.json()
-      const balance = data.chain_stats.funded_txo_sum - data.chain_stats.spent_txo_sum
-      const symbol = TOKEN_SYMBOLS[chain as keyof typeof TOKEN_SYMBOLS] || 'BTC'
-      const decimals = TOKEN_DECIMALS[chain as keyof typeof TOKEN_DECIMALS] || 8
+      const balanceData = await balanceResponse.json()
+      const balance = balanceData.result ? balanceData.result.toFixed(8) : '0.00000000'
 
-      return {
+      const connection: WalletConnection = {
         chain,
+        walletType: 'bitcoin',
         address,
-        balance: (balance / Math.pow(10, decimals)).toString(),
-        symbol,
-        decimals
+        isConnected: true,
+        balance
       }
+
+      this.connections.set(chain, connection)
+      return connection
     } catch (error) {
-      console.error(`Error fetching Bitcoin balance for ${chain}:`, error)
-      throw new Error(`Failed to fetch Bitcoin balance: ${error}`)
+      throw new Error(`Failed to connect Bitcoin wallet: ${error}`)
     }
   }
 
-  // Get balance for any chain
-  static async getBalance(chain: string, address: string): Promise<WalletBalance> {
-    if (chain.includes('ethereum') || chain.includes('polygon') || chain.includes('arbitrum') || 
-        chain.includes('base') || chain.includes('optimism') || chain.includes('bsc') || 
-        chain.includes('avalanche') || chain.includes('fantom')) {
-      return this.getEVMBalance(chain, address)
-    } else if (chain.includes('solana')) {
-      return this.getSolanaBalance(chain, address)
-    } else if (chain.includes('algorand')) {
-      return this.getAlgorandBalance(chain, address)
-    } else if (chain.includes('near')) {
-      return this.getNEARBalance(chain, address)
-    } else if (chain.includes('bitcoin')) {
-      return this.getBitcoinBalance(chain, address)
-    } else {
-      throw new Error(`Unsupported chain: ${chain}`)
+  // Ensure EVM network is correct
+  private async ensureEVMNetwork(chain: string): Promise<void> {
+    if (typeof window === 'undefined' || !window.ethereum) {
+      return
     }
-  }
 
-  // Validate address format for different chains
-  static validateAddress(chain: string, address: string): boolean {
-    try {
-      if (chain.includes('ethereum') || chain.includes('polygon') || chain.includes('arbitrum') || 
-          chain.includes('base') || chain.includes('optimism') || chain.includes('bsc') || 
-          chain.includes('avalanche') || chain.includes('fantom')) {
-        return ethers.isAddress(address)
-      } else if (chain.includes('solana')) {
-        try {
-          new PublicKey(address)
-          return true
-        } catch {
-          return false
+    const network = getNetworkById(chain)
+    if (!network) {
+      throw new Error(`Network ${chain} not supported`)
+    }
+
+    const currentChainId = await (window.ethereum as any).request({ 
+      method: 'eth_chainId' 
+    })
+
+    const targetChainId = `0x${Number(network.id).toString(16)}`
+
+    if (currentChainId !== targetChainId) {
+      try {
+        // Try to switch to the target network
+        await (window.ethereum as any).request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: targetChainId }],
+        })
+      } catch (switchError: any) {
+        // If the network doesn't exist in MetaMask, add it
+        if (switchError.code === 4902) {
+          await (window.ethereum as any).request({
+            method: 'wallet_addEthereumChain',
+            params: [{
+              chainId: targetChainId,
+              chainName: network.name,
+              nativeCurrency: network.nativeCurrency || {
+                name: network.symbol,
+                symbol: network.symbol,
+                decimals: 18
+              },
+              rpcUrls: [network.rpcUrl],
+              blockExplorerUrls: [network.explorerUrl]
+            }],
+          })
+        } else {
+          throw new Error(`Failed to switch to ${network.name}: ${switchError.message}`)
         }
-      } else if (chain.includes('algorand')) {
-        // Algorand addresses are 58 characters long and start with A
-        return address.length === 58 && address.startsWith('A')
-      } else if (chain.includes('near')) {
-        // NEAR addresses end with .near or .testnet
-        return address.endsWith('.near') || address.endsWith('.testnet')
-      } else if (chain.includes('bitcoin')) {
-        // Basic Bitcoin address validation
-        return address.length >= 26 && address.length <= 35
       }
-      return false
-    } catch {
-      return false
     }
   }
 
-  // Get wallet type for a chain
-  static getWalletTypeForChain(chain: string): 'metamask' | 'phantom' | 'pera' | 'near' | 'bitcoin' {
-    if (chain.includes('ethereum') || chain.includes('polygon') || chain.includes('arbitrum') || 
-        chain.includes('base') || chain.includes('optimism') || chain.includes('bsc') || 
-        chain.includes('avalanche') || chain.includes('fantom')) {
-      return 'metamask'
-    } else if (chain.includes('solana')) {
-      return 'phantom'
-    } else if (chain.includes('algorand')) {
-      return 'pera'
-    } else if (chain.includes('near')) {
-      return 'near'
-    } else if (chain.includes('bitcoin')) {
-      return 'bitcoin'
+  // Disconnect wallet
+  disconnectWallet(chain: string): void {
+    this.connections.delete(chain)
+  }
+
+  // Get connected wallet
+  getConnectedWallet(chain: string): WalletConnection | undefined {
+    return this.connections.get(chain)
+  }
+
+  // Get all connected wallets
+  getAllConnectedWallets(): WalletConnection[] {
+    return Array.from(this.connections.values())
+  }
+
+  // Check if wallet is connected
+  isWalletConnected(chain: string): boolean {
+    return this.connections.has(chain) && this.connections.get(chain)?.isConnected === true
+  }
+
+  // Get wallet type for chain
+  getWalletTypeForChain(chain: string): 'metamask' | 'phantom' | 'pera' | 'near' | 'bitcoin' {
+    const net = getNetworkById(chain)
+    switch (net?.category) {
+      case 'evm': return 'metamask'
+      case 'solana': return 'phantom'
+      case 'algorand': return 'pera'
+      case 'near': return 'near'
+      case 'bitcoin': return 'bitcoin'
+      default: return 'metamask'
     }
-    return 'metamask' // default
   }
 
-  // Get network icon
-  static getNetworkIcon(chain: string): string {
-    if (chain.includes('ethereum')) return '🔷'
-    if (chain.includes('polygon')) return '🟣'
-    if (chain.includes('solana')) return '🟣'
-    if (chain.includes('algorand')) return '🟡'
-    if (chain.includes('near')) return '🟢'
-    if (chain.includes('bitcoin')) return '🟠'
-    return '🔗'
-  }
-
-  // Get wallet icon
-  static getWalletIcon(walletType: string): string {
+  // Connect wallet based on chain type
+  async connectWallet(chain: string): Promise<WalletConnection> {
+    const walletType = this.getWalletTypeForChain(chain)
+    
     switch (walletType) {
-      case 'metamask': return '🦊'
-      case 'phantom': return '👻'
-      case 'pera': return '🔵'
-      case 'near': return '🟢'
-      case 'bitcoin': return '🟠'
-      default: return '💳'
+      case 'metamask':
+        return this.connectEVMWallet(chain)
+      case 'phantom':
+        return this.connectSolanaWallet(chain)
+      case 'pera':
+        return this.connectAlgorandWallet(chain)
+      case 'near':
+        return this.connectNEARWallet(chain)
+      case 'bitcoin':
+        return this.connectBitcoinWallet(chain)
+      default:
+        throw new Error(`Unsupported wallet type for chain: ${chain}`)
     }
   }
+}
+
+// Export singleton instance
+export const walletService = WalletService.getInstance() 
 } 

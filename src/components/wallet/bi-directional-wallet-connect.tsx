@@ -6,22 +6,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { useToast } from '@/hooks/use-toast'
-import { 
-  AppKitProvider, 
-  AppKitConnectButton, 
-  AppKitAccountButton,
-  useAppKitConnection
-} from '@reown/appkit/react'
-import { PeraWalletConnect } from '@perawallet/connect'
-import { getNetworkById, getNetworksByCategory } from '@/lib/network-config'
-
-interface WalletConnection {
-  chain: string
-  walletType: 'metamask' | 'phantom' | 'pera' | 'near' | 'bitcoin'
-  address: string
-  isConnected: boolean
-  balance?: string
-}
+import { getNetworkById } from '@/lib/network-config'
+import { appKitWalletService, WalletConnection } from '@/services/appkit-wallet-service'
 
 interface BiDirectionalWalletConnectProps {
   fromChain: string
@@ -30,11 +16,6 @@ interface BiDirectionalWalletConnectProps {
   onToWalletConnect: (connection: WalletConnection) => void
   onSwapReady: (fromWallet: WalletConnection, toWallet: WalletConnection) => void
 }
-
-// Initialize Pera Wallet
-const peraWallet = new PeraWalletConnect({
-  chainId: 416001 // Algorand testnet
-})
 
 export function BiDirectionalWalletConnect({
   fromChain,
@@ -49,61 +30,37 @@ export function BiDirectionalWalletConnect({
   const [isConnectingTo, setIsConnectingTo] = useState(false)
   const { toast } = useToast()
 
-  // AppKit connection hooks
-  const { connection: appKitConnection } = useAppKitConnection()
-
   // Get network configurations
   const fromNetwork = getNetworkById(fromChain)
   const toNetwork = getNetworkById(toChain)
-
-  // Determine wallet types based on chains
-  const getWalletTypeForChain = (chain: string): 'metamask' | 'phantom' | 'pera' | 'near' | 'bitcoin' => {
-    if (chain.includes('ethereum') || chain.includes('polygon') || chain.includes('arbitrum') || 
-        chain.includes('base') || chain.includes('optimism') || chain.includes('bsc') || 
-        chain.includes('avalanche') || chain.includes('fantom')) {
-      return 'metamask'
-    } else if (chain.includes('solana')) {
-      return 'phantom'
-    } else if (chain.includes('algorand')) {
-      return 'pera'
-    } else if (chain.includes('near')) {
-      return 'near'
-    } else if (chain.includes('bitcoin')) {
-      return 'bitcoin'
-    }
-    return 'metamask' // default
-  }
 
   // Connect to source chain wallet
   const connectFromWallet = async () => {
     setIsConnectingFrom(true)
     try {
-      const walletType = getWalletTypeForChain(fromChain)
+      const connection = await appKitWalletService.connectWallet(fromChain)
+      setFromWallet(connection)
+      onFromWalletConnect(connection)
       
-      switch (walletType) {
-        case 'metamask':
-          await connectEVMWallet(fromChain, 'from')
-          break
-        case 'phantom':
-          await connectSolanaWallet(fromChain, 'from')
-          break
-        case 'pera':
-          await connectAlgorandWallet(fromChain, 'from')
-          break
-        case 'near':
-          await connectNEARWallet(fromChain, 'from')
-          break
-        case 'bitcoin':
-          await connectBitcoinWallet(fromChain, 'from')
-          break
-      }
+      toast({
+        title: "Wallet Connected",
+        description: `Connected to ${fromNetwork?.name} wallet: ${connection.address.slice(0, 6)}...${connection.address.slice(-4)}`,
+      })
     } catch (error) {
       console.error('Error connecting from wallet:', error)
-      toast({
-        title: "Connection Failed",
-        description: `Failed to connect ${fromNetwork?.name} wallet: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        variant: "destructive",
-      })
+      const msg = error instanceof Error ? error.message : 'Unknown error'
+      if (msg.includes('Redirecting to NEAR Wallet')) {
+        toast({
+          title: 'NEAR Wallet Authorization',
+          description: 'Opening NEAR web wallet for sign-in... Return after approving.',
+        })
+      } else {
+        toast({
+          title: 'Connection Failed',
+          description: `Failed to connect ${fromNetwork?.name} wallet: ${msg}`,
+          variant: 'destructive',
+        })
+      }
     } finally {
       setIsConnectingFrom(false)
     }
@@ -113,184 +70,39 @@ export function BiDirectionalWalletConnect({
   const connectToWallet = async () => {
     setIsConnectingTo(true)
     try {
-      const walletType = getWalletTypeForChain(toChain)
+      const connection = await appKitWalletService.connectWallet(toChain)
+      setToWallet(connection)
+      onToWalletConnect(connection)
       
-      switch (walletType) {
-        case 'metamask':
-          await connectEVMWallet(toChain, 'to')
-          break
-        case 'phantom':
-          await connectSolanaWallet(toChain, 'to')
-          break
-        case 'pera':
-          await connectAlgorandWallet(toChain, 'to')
-          break
-        case 'near':
-          await connectNEARWallet(toChain, 'to')
-          break
-        case 'bitcoin':
-          await connectBitcoinWallet(toChain, 'to')
-          break
-      }
+      toast({
+        title: "Wallet Connected",
+        description: `Connected to ${toNetwork?.name} wallet: ${connection.address.slice(0, 6)}...${connection.address.slice(-4)}`,
+      })
     } catch (error) {
       console.error('Error connecting to wallet:', error)
-      toast({
-        title: "Connection Failed",
-        description: `Failed to connect ${toNetwork?.name} wallet: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        variant: "destructive",
-      })
+      const msg = error instanceof Error ? error.message : 'Unknown error'
+      if (msg.includes('Redirecting to NEAR Wallet')) {
+        toast({
+          title: 'NEAR Wallet Authorization',
+          description: 'Opening NEAR web wallet for sign-in... Return after approving.',
+        })
+      } else {
+        toast({
+          title: 'Connection Failed',
+          description: `Failed to connect ${toNetwork?.name} wallet: ${msg}`,
+          variant: 'destructive',
+        })
+      }
     } finally {
       setIsConnectingTo(false)
     }
   }
 
-  // Connect EVM wallet (MetaMask, etc.)
-  const connectEVMWallet = async (chain: string, direction: 'from' | 'to') => {
-    try {
-      // For now, simulate EVM wallet connection
-      const connection: WalletConnection = {
-        chain,
-        walletType: 'metamask',
-        address: '0x742d35Cc6634C0532925a3b8D4C9db96C4b4d8b6', // Demo address
-        isConnected: true,
-        balance: '1.5'
-      }
-
-      if (direction === 'from') {
-        setFromWallet(connection)
-        onFromWalletConnect(connection)
-      } else {
-        setToWallet(connection)
-        onToWalletConnect(connection)
-      }
-
-      toast({
-        title: "Wallet Connected",
-        description: `Connected to ${getNetworkById(chain)?.name} wallet`,
-      })
-    } catch (error) {
-      throw new Error(`Failed to connect EVM wallet: ${error}`)
-    }
-  }
-
-  // Connect Solana wallet (Phantom)
-  const connectSolanaWallet = async (chain: string, direction: 'from' | 'to') => {
-    try {
-      // For now, simulate Solana wallet connection
-      const connection: WalletConnection = {
-        chain,
-        walletType: 'phantom',
-        address: '9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM', // Demo address
-        isConnected: true,
-        balance: '2.3'
-      }
-
-      if (direction === 'from') {
-        setFromWallet(connection)
-        onFromWalletConnect(connection)
-      } else {
-        setToWallet(connection)
-        onToWalletConnect(connection)
-      }
-
-      toast({
-        title: "Phantom Connected",
-        description: `Connected to Solana wallet: ${connection.address.slice(0, 6)}...${connection.address.slice(-4)}`,
-      })
-    } catch (error) {
-      throw new Error(`Failed to connect Solana wallet: ${error}`)
-    }
-  }
-
-  // Connect Algorand wallet (Pera)
-  const connectAlgorandWallet = async (chain: string, direction: 'from' | 'to') => {
-    try {
-      // For now, simulate Algorand wallet connection
-      const connection: WalletConnection = {
-        chain,
-        walletType: 'pera',
-        address: 'A7NMWS3NT3IUDMLVO26ULGXGIIOUQ3ND2TXSER6EBGRZNOBOUIQXHIBGDE', // Demo address
-        isConnected: true,
-        balance: '100.5'
-      }
-
-      if (direction === 'from') {
-        setFromWallet(connection)
-        onFromWalletConnect(connection)
-      } else {
-        setToWallet(connection)
-        onToWalletConnect(connection)
-      }
-
-      toast({
-        title: "Pera Wallet Connected",
-        description: `Connected to Algorand wallet: ${connection.address.slice(0, 6)}...${connection.address.slice(-4)}`,
-      })
-    } catch (error) {
-      throw new Error(`Failed to connect Algorand wallet: ${error}`)
-    }
-  }
-
-  // Connect NEAR wallet
-  const connectNEARWallet = async (chain: string, direction: 'from' | 'to') => {
-    try {
-      // For now, simulate NEAR wallet connection
-      const connection: WalletConnection = {
-        chain,
-        walletType: 'near',
-        address: 'alice.defiunite.testnet', // Demo address
-        isConnected: true,
-        balance: '50.2'
-      }
-
-      if (direction === 'from') {
-        setFromWallet(connection)
-        onFromWalletConnect(connection)
-      } else {
-        setToWallet(connection)
-        onToWalletConnect(connection)
-      }
-
-      toast({
-        title: "NEAR Wallet Connected",
-        description: `Connected to NEAR wallet`,
-      })
-    } catch (error) {
-      throw new Error(`Failed to connect NEAR wallet: ${error}`)
-    }
-  }
-
-  // Connect Bitcoin wallet
-  const connectBitcoinWallet = async (chain: string, direction: 'from' | 'to') => {
-    try {
-      // For now, simulate Bitcoin wallet connection
-      const connection: WalletConnection = {
-        chain,
-        walletType: 'bitcoin',
-        address: 'bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh', // Demo address
-        isConnected: true,
-        balance: '0.001'
-      }
-
-      if (direction === 'from') {
-        setFromWallet(connection)
-        onFromWalletConnect(connection)
-      } else {
-        setToWallet(connection)
-        onToWalletConnect(connection)
-      }
-
-      toast({
-        title: "Bitcoin Wallet Connected",
-        description: `Connected to Bitcoin Lightning wallet`,
-      })
-    } catch (error) {
-      throw new Error(`Failed to connect Bitcoin wallet: ${error}`)
-    }
-  }
-
   // Disconnect wallet
   const disconnectWallet = (direction: 'from' | 'to') => {
+    const chain = direction === 'from' ? fromChain : toChain
+    appKitWalletService.disconnectWallet(chain)
+    
     if (direction === 'from') {
       setFromWallet(null)
       onFromWalletConnect({ chain: '', walletType: 'metamask', address: '', isConnected: false })
@@ -343,7 +155,7 @@ export function BiDirectionalWalletConnect({
             🔗 Bi-Directional Wallet Connection
           </CardTitle>
           <CardDescription>
-            Connect wallets for both sending and receiving chains
+            Connect wallets for both sending and receiving chains using AppKit
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -353,7 +165,7 @@ export function BiDirectionalWalletConnect({
               <div className="flex items-center gap-2">
                 <span className="text-lg">{getNetworkIcon(fromChain)}</span>
                 <h3 className="font-semibold">Source Chain: {fromNetwork?.name}</h3>
-                <Badge variant="secondary">{getWalletTypeForChain(fromChain)}</Badge>
+                <Badge variant="secondary">{appKitWalletService.getWalletTypeForChain(fromChain)}</Badge>
               </div>
               {fromWallet?.isConnected && (
                 <Badge variant="default" className="bg-green-500">
@@ -368,7 +180,7 @@ export function BiDirectionalWalletConnect({
                 disabled={isConnectingFrom}
                 className="w-full"
               >
-                {isConnectingFrom ? 'Connecting...' : `Connect ${fromNetwork?.name} Wallet`}
+                {isConnectingFrom ? 'Connecting...' : `Connect ${fromNetwork?.name ?? 'Source'} Wallet`}
               </Button>
             ) : (
               <div className="flex items-center justify-between p-3 border rounded-lg">
@@ -384,7 +196,7 @@ export function BiDirectionalWalletConnect({
                   </div>
                 </div>
                 <Button 
-                  variant="outline" 
+                  variant="neutral" 
                   size="sm"
                   onClick={() => disconnectWallet('from')}
                 >
@@ -402,7 +214,7 @@ export function BiDirectionalWalletConnect({
               <div className="flex items-center gap-2">
                 <span className="text-lg">{getNetworkIcon(toChain)}</span>
                 <h3 className="font-semibold">Destination Chain: {toNetwork?.name}</h3>
-                <Badge variant="secondary">{getWalletTypeForChain(toChain)}</Badge>
+                <Badge variant="secondary">{appKitWalletService.getWalletTypeForChain(toChain)}</Badge>
               </div>
               {toWallet?.isConnected && (
                 <Badge variant="default" className="bg-green-500">
@@ -417,7 +229,7 @@ export function BiDirectionalWalletConnect({
                 disabled={isConnectingTo}
                 className="w-full"
               >
-                {isConnectingTo ? 'Connecting...' : `Connect ${toNetwork?.name} Wallet`}
+                {isConnectingTo ? 'Connecting...' : `Connect ${toNetwork?.name ?? 'Destination'} Wallet`}
               </Button>
             ) : (
               <div className="flex items-center justify-between p-3 border rounded-lg">
@@ -433,7 +245,7 @@ export function BiDirectionalWalletConnect({
                   </div>
                 </div>
                 <Button 
-                  variant="outline" 
+                  variant="neutral" 
                   size="sm"
                   onClick={() => disconnectWallet('to')}
                 >
@@ -461,15 +273,4 @@ export function BiDirectionalWalletConnect({
       </Card>
     </div>
   )
-}
-
-// Extend window object for Solana
-declare global {
-  interface Window {
-    solana?: {
-      isPhantom?: boolean
-      connect: () => Promise<{ publicKey: { toString: () => string } }>
-      disconnect: () => Promise<void>
-    }
-  }
 } 

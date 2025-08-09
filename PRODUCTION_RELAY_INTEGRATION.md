@@ -249,7 +249,7 @@ NEXT_PUBLIC_ETHEREUM_SEPOLIA_RPC=https://sepolia.infura.io/v3/your-key
 NEXT_PUBLIC_ARBITRUM_SEPOLIA_RPC=https://sepolia-rollup.arbitrum.io/rpc
 
 # Non-EVM Networks
-NEXT_PUBLIC_SOLANA_DEVNET_RPC=https://api.devnet.solana.com
+NEXT_PUBLIC_SOLANA_TESTNET_RPC=https://api.devnet.solana.com
 NEXT_PUBLIC_BITCOIN_TESTNET_RPC=https://blockstream.info/testnet/api
 NEXT_PUBLIC_NEAR_TESTNET_RPC=https://rpc.testnet.near.org
 NEXT_PUBLIC_ALGORAND_TESTNET_RPC=https://testnet-api.algonode.cloud

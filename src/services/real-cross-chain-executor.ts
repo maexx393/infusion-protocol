@@ -66,7 +66,7 @@ const RPC_URLS = {
   'polygon-amoy': process.env.NEXT_PUBLIC_POLYGON_AMOY_RPC || 'https://rpc-amoy.polygon.technology',
   'ethereum-sepolia': process.env.NEXT_PUBLIC_SEPOLIA_RPC || 'https://sepolia.infura.io/v3/demo',
   'arbitrum-sepolia': process.env.NEXT_PUBLIC_ARBITRUM_SEPOLIA_RPC || 'https://sepolia-rollup.arbitrum.io/rpc',
-  'solana-devnet': process.env.NEXT_PUBLIC_SOLANA_DEVNET_RPC || 'https://api.devnet.solana.com',
+  'solana-devnet': process.env.NEXT_PUBLIC_SOLANA_TESTNET_RPC || 'https://api.devnet.solana.com',
   'bitcoin-testnet': process.env.NEXT_PUBLIC_BITCOIN_TESTNET_RPC || 'https://blockstream.info/testnet/api',
   'near-testnet': process.env.NEXT_PUBLIC_NEAR_TESTNET_RPC || 'https://rpc.testnet.near.org',
 };

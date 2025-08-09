@@ -9,7 +9,7 @@
       "app_id": 743881611,
       "tx_id": "65CN6TSKUMTUGWU5CODNZNTP4CC7J2THEDV3I4MPG3I6Y6IN2XCQ",
       "deployer_address": "5KUWYUYVK64M6EW6LYBKO53WP7T4XMON5JJE7UUDUTAKBUAXDOQPURVCY4",
-      "explorer_url": "https://testnet.algoexplorer.io/application/743881611",
+      "explorer_url": "https://lora.algokit.io/testnet/application/743881611",
       "deployment_time": 1754515696.950193
     },
     "solver": {
@@ -17,7 +17,7 @@
       "app_id": 743881612,
       "tx_id": "YATNRSNGRVBPSXRSYJV3NZJMKVMHSCZZDHHOYBCMSKUCAA57XOIA",
       "deployer_address": "5KUWYUYVK64M6EW6LYBKO53WP7T4XMON5JJE7UUDUTAKBUAXDOQPURVCY4",
-      "explorer_url": "https://testnet.algoexplorer.io/application/743881612",
+      "explorer_url": "https://lora.algokit.io/testnet/application/743881612",
       "deployment_time": 1754515702.540025
     },
     "pool": {
@@ -25,7 +25,7 @@
       "app_id": 743881613,
       "tx_id": "TPIF4BLTENKXMV7PTNRLDHZDVD2NNEQWECVWVCKK7DVACSH5M4GQ",
       "deployer_address": "5KUWYUYVK64M6EW6LYBKO53WP7T4XMON5JJE7UUDUTAKBUAXDOQPURVCY4",
-      "explorer_url": "https://testnet.algoexplorer.io/application/743881613",
+      "explorer_url": "https://lora.algokit.io/testnet/application/743881613",
       "deployment_time": 1754515707.985462
     }
   }
